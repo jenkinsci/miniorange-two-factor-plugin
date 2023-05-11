@@ -1,0 +1,64 @@
+<?jelly escape-by-default='true'?>
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:l="/lib/layout">
+
+    <l:layout title="Security Questions" type="full-screen">
+
+        <l:main-panel>
+            <style>
+                #main-panel{
+                display: inline-block;
+                padding: 30px !important;
+                width: 500px;
+                margin: auto;
+                }
+
+                .form-header {
+                display: flex;
+                gap: 10px;
+                }
+
+                .form-header-title{
+                font-size: 22px;
+                font-weight: 500;
+                padding-top: 5px;
+                }
+
+                .form-header-img{
+                height: 40px;
+                }
+            </style>
+
+            <f:form method="post" action="securityQuestionAuthenticate" name="replace" descriptor="${it.DESCRIPTOR}">
+                <div class="form-header">
+                    <img class="form-header-img" src="/plugin/miniorange-two-factor/images/logo.svg"
+                         alt="Img not found"/>
+                    <span class="form-header-title">Validate Security Questions</span>
+                </div>
+                <j:if test="${it.getShowWrongCredentialWarning()}">
+                    <p class="alert alert-danger">
+                        <b>Wrong credentials</b>
+                    </p>
+                </j:if>
+
+                <hr style="margin-bottom: 18px"/>
+                <h3 style="margin-bottom: 18px">Hello, ${it.getUserId()}</h3>
+                <p class="alert alert-info">
+                    <b>Please enter valid answers of the questions given below to get the access of Jenkins.</b>
+                </p>
+                <p class="jenkins-section__title">${it.getFirstRandomSecurityQuestion()}</p>
+                <f:entry field="userFirstAuthenticationAnswer">
+                    <f:textbox placeholder="Please enter your answer here"/>
+                </f:entry>
+                <p class="jenkins-section__title">${it.getSecondRandomSecurityQuestion()}</p>
+                <f:entry field="userSecondAuthenticationAnswer">
+                    <f:textbox placeholder="Please enter your answer here"/>
+                </f:entry>
+                <f:submit value="${%validate}"/>
+                <a href="../" style="display: inline-block; margin-left: 15px;">Back</a>
+            </f:form>
+
+        </l:main-panel>
+    </l:layout>
+</j:jelly>
+

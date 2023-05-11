@@ -1,0 +1,30 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:f="/lib/form">
+
+    <l:layout title="TWO FACTOR CONFIG">
+
+            <l:side-panel>
+                <l:tasks>
+                    <l:task title="back" href="../" icon="symbol-arrow-up"/>
+                </l:tasks>
+            </l:side-panel>
+
+            <l:main-panel>
+
+                <div class="global-config-view">
+                    <f:form method="post" action="saveGlobalTfaSettings" name="replace">
+                        <h2> Two Factor-Authentication Global configurations</h2>
+
+                        <f:entry title="Enable 2FA for all users" field="enableTfa" help="/plugin/miniorange-two-factor/help/enableTfa.html">
+                            <f:checkbox checked="${it.getEnableTfa()}"/>
+                        </f:entry>
+
+                        <f:bottomButtonBar>
+                            <f:submit value="${%Save}"/>
+                        </f:bottomButtonBar>
+                    </f:form>
+                </div>
+
+            </l:main-panel>
+        </l:layout>
+</j:jelly>

@@ -1,0 +1,62 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout">
+
+    <l:layout title="2FA Config" type="full-screen">
+
+
+        <l:main-panel>
+
+            <style>
+                #main-panel{
+                display: inline-block;
+                padding: 30px !important;
+                width: auto;
+                margin: auto;
+                text-align: center;
+                }
+
+                .form-header > img{
+                height: 130px;
+                }
+
+                .custom{
+                display: block;
+                margin-bottom: 14px;
+                background: #063f61;
+                color: #fff !important;
+                }
+
+                .form-body-para {
+                font-weight: 500;
+                margin-bottom: 25px;
+                }
+
+                .logout-link{
+                display: block;
+                color:#063f61 !important;
+                }
+
+                .logout-link:hover{
+                color: ##0062d1;
+                }
+
+            </style>
+
+            <div class="form-header">
+                <img class="form-header-img" src="/plugin/miniorange-two-factor/images/logo.svg" alt="Img not found"/>
+                <h1 class="form-header-title">Validate Two Factor</h1>
+            </div>
+
+            <p class="form-body-para">Please choose 2FA method for validation.</p>
+            <div class="user-security-methods">
+                <a class="submit jenkins-button custom" href="./securityQuestionAuth/">
+                    Security Questions
+                </a>
+            </div>
+
+            <a href="/logout" class="logout-link">Cancel</a>
+        </l:main-panel>
+    </l:layout>
+</j:jelly>
+
+

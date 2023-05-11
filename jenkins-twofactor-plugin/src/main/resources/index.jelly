@@ -1,0 +1,4 @@
+<?jelly escape-by-default='true'?>
+<div>
+    Secure login and restrict unauthorized access to Jenkins using this simple and easy to setup Two Factor Authentication app.
+</div>
