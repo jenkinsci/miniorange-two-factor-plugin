@@ -1,0 +1,21 @@
+#main-panel{
+    display: inline-block;
+    padding: 30px !important;
+    width: 500px;
+    margin: auto;
+}
+
+.form-header {
+    display: flex;
+    gap: 10px;
+}
+
+.form-header-title{
+    font-size: 22px;
+    font-weight: 500;
+    padding-top: 5px;
+}
+
+.form-header-img{
+    height: 40px;
+}

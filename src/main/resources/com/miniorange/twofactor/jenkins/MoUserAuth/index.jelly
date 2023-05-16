@@ -1,46 +1,11 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout">
+<j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:st="jelly:stapler">
 
     <l:layout title="2FA Config" type="full-screen">
 
-
         <l:main-panel>
 
-            <style>
-                #main-panel{
-                display: inline-block;
-                padding: 30px !important;
-                width: auto;
-                margin: auto;
-                text-align: center;
-                }
-
-                .form-header > img{
-                height: 130px;
-                }
-
-                .custom{
-                display: block;
-                margin-bottom: 14px;
-                background: #063f61;
-                color: #fff !important;
-                }
-
-                .form-body-para {
-                font-weight: 500;
-                margin-bottom: 25px;
-                }
-
-                .logout-link{
-                display: block;
-                color:#063f61 !important;
-                }
-
-                .logout-link:hover{
-                color: ##0062d1;
-                }
-
-            </style>
+            <st:adjunct includes="com.miniorange.twofactor.jenkins.assets.moUserAuth"/>
 
             <div class="form-header">
                 <img class="form-header-img" src="/plugin/miniorange-two-factor/images/logo.svg" alt="Img not found"/>
@@ -55,7 +20,9 @@
             </div>
 
             <a href="/logout" class="logout-link">Cancel</a>
+
         </l:main-panel>
+
     </l:layout>
 </j:jelly>
 

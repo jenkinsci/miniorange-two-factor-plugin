@@ -12,10 +12,10 @@
             <l:main-panel>
 
                 <div class="global-config-view">
-                    <f:form method="post" action="saveGlobalTfaSettings" name="replace">
+                    <f:form method="post" action="saveGlobalTfaSettings" name="replace" descriptor="${it.getGlobalConfigDescriptor()}">
                         <h2> Two Factor-Authentication Global configurations</h2>
 
-                        <f:entry title="Enable 2FA for all users" field="enableTfa" help="/plugin/miniorange-two-factor/help/enableTfa.html">
+                        <f:entry title="Enable 2FA for all users" field="enableTfa">
                             <f:checkbox checked="${it.getEnableTfa()}"/>
                         </f:entry>
 

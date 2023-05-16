@@ -1,33 +1,10 @@
 <?jelly escape-by-default='true'?>
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:l="/lib/layout">
-
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:l="/lib/layout" xmlns:st="jelly:stapler">
     <l:layout title="Security Questions" type="full-screen">
-
         <l:main-panel>
-            <style>
-                #main-panel{
-                display: inline-block;
-                padding: 30px !important;
-                width: 500px;
-                margin: auto;
-                }
 
-                .form-header {
-                display: flex;
-                gap: 10px;
-                }
-
-                .form-header-title{
-                font-size: 22px;
-                font-weight: 500;
-                padding-top: 5px;
-                }
-
-                .form-header-img{
-                height: 40px;
-                }
-            </style>
+            <st:adjunct includes="com.miniorange.twofactor.jenkins.assets.moSecurityQuestionAuth"/>
 
             <f:form method="post" action="securityQuestionAuthenticate" name="replace" descriptor="${it.DESCRIPTOR}">
                 <div class="form-header">
