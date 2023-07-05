@@ -1,7 +1,7 @@
-#main-panel{
-    display: inline-block;
+#main-panel {
+    display: inline-block !important;
     padding: 30px !important;
-    width: 500px;
+    width: 500px !important;
     margin: auto;
 }
 
@@ -10,12 +10,16 @@
     gap: 10px;
 }
 
-.form-header-title{
+.form-header-title {
     font-size: 22px;
     font-weight: 500;
     padding-top: 5px;
 }
 
-.form-header-img{
+.form-header-img {
     height: 40px;
+}
+
+.other-method-redirection-link{
+    text-decoration: none;
 }

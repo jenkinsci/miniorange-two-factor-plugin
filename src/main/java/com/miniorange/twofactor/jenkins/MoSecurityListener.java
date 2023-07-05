@@ -22,24 +22,25 @@
 package com.miniorange.twofactor.jenkins;
 
 import static com.miniorange.twofactor.jenkins.MoFilter.userAuthenticationStatus;
-import static com.miniorange.twofactor.jenkins.tfaMethodsAuth.MoSecurityQuestionAuth.showWrongCredentialWarning;
+//import static com.miniorange.twofactor.jenkins.tfaMethodsAuth.MoSecurityQuestionAuth.showWrongCredentialWarning;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import java.util.logging.Logger;
+
+import hudson.ExtensionList;
 import jenkins.security.SecurityListener;
 
 @SuppressWarnings("unused")
 @Extension
 public class MoSecurityListener extends SecurityListener {
-
   private static final Logger LOGGER = Logger.getLogger(MoSecurityListener.class.getName());
 
   @Override
   public void loggedOut(@NonNull String username) {
-
     userAuthenticationStatus.put(username, false);
-    showWrongCredentialWarning.remove(username);
+    MoUserAuth moUserAuth = ExtensionList.lookupSingleton(MoUserAuth.class);
+    moUserAuth.cleanUserAuthResource(username);
     LOGGER.fine("Executing logged out event for username " + username);
   }
 }

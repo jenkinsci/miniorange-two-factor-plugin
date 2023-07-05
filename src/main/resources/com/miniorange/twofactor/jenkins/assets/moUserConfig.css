@@ -1,4 +1,4 @@
-#main-panel{
+#main-panel {
     display: inline-block;
     padding: 30px !important;
     width: auto;
@@ -6,11 +6,11 @@
     text-align: center;
 }
 
-.form-header-img{
+.form-header-img {
     height: 130px;
 }
 
-.custom{
+.custom {
     display: block;
     margin-bottom: 14px;
     background: #063f61;
@@ -22,11 +22,11 @@
     margin-bottom: 25px;
 }
 
-.logout-link{
+.logout-link {
     display: block;
-    color:#063f61 !important;
+    color: #063f61 !important;
 }
 
-.logout-link:hover{
+.logout-link:hover {
     color: #0062d1;
 }

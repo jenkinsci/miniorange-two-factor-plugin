@@ -21,8 +21,7 @@
  */
 package com.miniorange.twofactor.jenkins;
 
-import static com.miniorange.twofactor.constants.MoGlobalConfigConstant.AdminConfiguration.ENABLE_2FA;
-import static com.miniorange.twofactor.jenkins.MoFilter.userAuthenticationStatus;
+import static com.miniorange.twofactor.constants.MoPluginUrls.Urls.MO_TFA_GLOBAL_CONFIG;
 import static jenkins.model.Jenkins.get;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -30,16 +29,22 @@ import hudson.Extension;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.model.ManagementLink;
-import hudson.model.User;
 import hudson.util.FormApply;
+import hudson.util.FormValidation;
+import hudson.util.Secret;
+import io.jenkins.cli.shaded.org.apache.commons.lang.StringUtils;
 import java.io.IOException;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.servlet.ServletException;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
+import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.interceptor.RequirePOST;
+import org.kohsuke.stapler.verb.POST;
 
 @SuppressWarnings("unused")
 @Extension
@@ -48,23 +53,6 @@ public class MoGlobalConfigView extends ManagementLink implements Describable<Mo
   private static final Logger LOGGER = Logger.getLogger(MoGlobalConfigView.class.getName());
 
   public MoGlobalConfigView() {}
-
-  public boolean getEnableTfa() {
-    return MoGlobalConfig.get().getEnableTfa();
-  }
-
-  public boolean doNotShowHeader() {
-    try {
-      User user = User.current();
-      assert user != null;
-      return (userAuthenticationStatus.get(ENABLE_2FA.getSetting())
-          && !userAuthenticationStatus.getOrDefault(user.getId(), false));
-
-    } catch (Exception e) {
-      LOGGER.fine("Error in doNotShowHeader calculation " + e.getMessage());
-      return false;
-    }
-  }
 
   @Override
   public String getIconFileName() {
@@ -79,12 +67,28 @@ public class MoGlobalConfigView extends ManagementLink implements Describable<Mo
 
   @Override
   public String getUrlName() {
-    return "tfaGlobalConfig";
+    return MO_TFA_GLOBAL_CONFIG.getUrl();
   }
 
   @Override
   public String getDescription() {
     return "Configure two factor settings for your jenkins instance";
+  }
+
+  public boolean getEnableTfa() {
+    return MoGlobalConfig.get().getEnableTfa();
+  }
+
+  public boolean getEnableSecurityQuestion() {
+    return MoGlobalConfig.get().isEnableSecurityQuestionsAuthentication();
+  }
+
+  public boolean getEnableOtpOverEmail() {
+    return MoGlobalConfig.get().isEnableOtpOverEmailAuthentication();
+  }
+
+  public String getSenderEmailAddress() {
+    return MoGlobalConfig.get().getSenderEmailAddress();
   }
 
   @RequirePOST
@@ -123,5 +127,33 @@ public class MoGlobalConfigView extends ManagementLink implements Describable<Mo
 
   public MoGlobalConfig.DescriptorImpl getGlobalConfigDescriptor() {
     return MoGlobalConfig.DESCRIPTOR;
+  }
+
+  public MoGlobalConfig getGlobalConfig() {
+    return MoGlobalConfig.get();
+  }
+
+  @Extension
+  public static final class DescriptorImpl extends Descriptor<MoGlobalConfigView> {
+    public DescriptorImpl() {}
+
+    @POST
+    public FormValidation doCheckSenderEmailAddress(@QueryParameter String senderEmailAddress) {
+      String regex = "^(.+)@(.+)$";
+      Pattern pattern = Pattern.compile(regex);
+      Matcher matcher = pattern.matcher(senderEmailAddress);
+      if (StringUtils.isEmpty(senderEmailAddress)) {
+        return FormValidation.error("Email is required.");
+      } else if (!matcher.matches()) {
+        return FormValidation.error("Please enter valid email");
+      } else {
+        return FormValidation.ok();
+      }
+    }
+
+    public FormValidation doCheckEnableOtpOverEmail(@QueryParameter boolean enableOtpOverEmail) {
+      if (enableOtpOverEmail) return FormValidation.ok();
+      else return FormValidation.error("Please enable OTP Over Email first");
+    }
   }
 }

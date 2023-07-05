@@ -21,12 +21,19 @@
  */
 package com.miniorange.twofactor.jenkins;
 
+import static com.miniorange.twofactor.constants.MoPluginUrls.Urls.MO_USER_AUTH;
+
+import com.miniorange.twofactor.jenkins.tfaMethodsAuth.MoOtpOverEmailAuth;
 import com.miniorange.twofactor.jenkins.tfaMethodsAuth.MoSecurityQuestionAuth;
+import com.miniorange.twofactor.jenkins.tfaMethodsConfig.MoOtpOverEmailConfig;
+import com.miniorange.twofactor.jenkins.tfaMethodsConfig.MoSecurityQuestionConfig;
 import hudson.Extension;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.model.RootAction;
 import hudson.model.User;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Logger;
 import jenkins.model.Jenkins;
@@ -34,10 +41,10 @@ import jenkins.model.Jenkins;
 @SuppressWarnings("unused")
 @Extension
 public class MoUserAuth implements RootAction, Describable<MoUserAuth> {
-
   private static final Logger LOGGER = Logger.getLogger(MoUserAuth.class.getName());
-
-  public MoUserAuth() {}
+  Map<String, MoSecurityQuestionAuth> moSecurityQuestionAuthMap =
+          new HashMap<>();
+  Map<String, MoOtpOverEmailAuth> moOtpOverEmailAuthMap = new HashMap<>();
 
   @Override
   public String getIconFileName() {
@@ -46,12 +53,12 @@ public class MoUserAuth implements RootAction, Describable<MoUserAuth> {
 
   @Override
   public String getDisplayName() {
-    return "tfaUserAuth";
+    return MO_USER_AUTH.getUrl();
   }
 
   @Override
   public String getUrlName() {
-    return "tfaUserAuth";
+    return MO_USER_AUTH.getUrl();
   }
 
   public String getUserId() {
@@ -60,7 +67,43 @@ public class MoUserAuth implements RootAction, Describable<MoUserAuth> {
 
   @SuppressWarnings("unused")
   public MoSecurityQuestionAuth getSecurityQuestionAuth() {
-    return new MoSecurityQuestionAuth();
+    if (moSecurityQuestionAuthMap.get(getUserId()) == null) {
+      moSecurityQuestionAuthMap.put(getUserId(), new MoSecurityQuestionAuth());
+    }
+    return moSecurityQuestionAuthMap.get(getUserId());
+  }
+
+  @SuppressWarnings("unused")
+  public MoOtpOverEmailAuth getOtpOverEmailAuth() {
+    if (moOtpOverEmailAuthMap.get(getUserId()) == null) {
+      moOtpOverEmailAuthMap.put(getUserId(), new MoOtpOverEmailAuth());
+    }
+    return moOtpOverEmailAuthMap.get(getUserId());
+  }
+
+  public void cleanUserAuthResource(String userId) {
+    moSecurityQuestionAuthMap.remove(userId);
+    moOtpOverEmailAuthMap.remove(userId);
+  }
+
+  public boolean showSecurityQuestionForConfiguration() {
+    User user = User.current();
+    assert user != null;
+    MoSecurityQuestionConfig securityQuestionConfig =
+        user.getProperty(MoSecurityQuestionConfig.class);
+    boolean isConfigured = securityQuestionConfig != null && securityQuestionConfig.isConfigured();
+    boolean isEnabled = MoGlobalConfig.get().isEnableSecurityQuestionsAuthentication();
+    return isConfigured && isEnabled;
+  }
+
+  @SuppressWarnings("unused")
+  public boolean showOtpOverEmailForConfiguration() {
+    User user = User.current();
+    assert user != null;
+    MoOtpOverEmailConfig otpOverEmailConfig = user.getProperty(MoOtpOverEmailConfig.class);
+    boolean isConfigured = otpOverEmailConfig != null && otpOverEmailConfig.isConfigured();
+    boolean isEnabled = MoGlobalConfig.get().isEnableOtpOverEmailAuthentication();
+    return isConfigured && isEnabled;
   }
 
   @SuppressWarnings("unchecked")

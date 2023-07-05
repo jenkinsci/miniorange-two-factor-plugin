@@ -21,6 +21,8 @@
  */
 package com.miniorange.twofactor.jenkins.tfaMethodsConfig;
 
+import static com.miniorange.twofactor.constants.MoPluginUrls.Urls.MO_SECURITY_QUESTION_CONFIG;
+import static com.miniorange.twofactor.constants.MoPluginUrls.Urls.MO_USER_CONFIG;
 import static com.miniorange.twofactor.constants.MoSecurityQuestionsConstant.SecurityQuestions;
 import static com.miniorange.twofactor.constants.MoSecurityQuestionsConstant.SecurityQuestions.SELECT_SECURITY_QUESTION;
 import static com.miniorange.twofactor.constants.MoSecurityQuestionsConstant.UserSecurityQuestionKey.*;
@@ -32,8 +34,10 @@ import hudson.util.FormApply;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import hudson.util.Secret;
+import java.io.IOException;
 import java.util.Objects;
 import java.util.logging.Logger;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
@@ -49,29 +53,25 @@ public class MoSecurityQuestionConfig extends UserProperty implements Action {
   private Secret firstSecurityQuestionAnswer;
   private Secret secondSecurityQuestionAnswer;
   private Secret customSecurityQuestionAnswer;
+  private boolean isConfigured;
 
   @DataBoundConstructor
   public MoSecurityQuestionConfig(
-      Secret firstSecurityQuestion,
-      Secret secondSecurityQuestion,
-      Secret customSecurityQuestion,
-      Secret firstSecurityQuestionAnswer,
-      Secret secondSecurityQuestionAnswer,
-      Secret customSecurityQuestionAnswer) {
+          Secret firstSecurityQuestion,
+          Secret secondSecurityQuestion,
+          Secret customSecurityQuestion,
+          Secret firstSecurityQuestionAnswer,
+          Secret secondSecurityQuestionAnswer,
+          Secret customSecurityQuestionAnswer,
+          boolean isConfigured) {
     this.firstSecurityQuestion = firstSecurityQuestion;
     this.secondSecurityQuestion = secondSecurityQuestion;
     this.customSecurityQuestion = customSecurityQuestion;
     this.firstSecurityQuestionAnswer = firstSecurityQuestionAnswer;
     this.secondSecurityQuestionAnswer = secondSecurityQuestionAnswer;
     this.customSecurityQuestionAnswer = customSecurityQuestionAnswer;
+    this.isConfigured = isConfigured;
   }
-
-  public boolean getLoggedIn() {
-    MoSecurityQuestionConfig userTfaData = user.getProperty(MoSecurityQuestionConfig.class);
-    return userTfaData.getFirstSecurityQuestion().equals("");
-  }
-
-  public MoSecurityQuestionConfig() {}
 
   @Override
   public String getIconFileName() {
@@ -85,56 +85,142 @@ public class MoSecurityQuestionConfig extends UserProperty implements Action {
 
   @Override
   public String getUrlName() {
-    return "securityQuestion";
+    return MO_SECURITY_QUESTION_CONFIG.getUrl();
   }
 
   @SuppressWarnings("unused")
   public boolean isUserAuthenticatedFromTfa() {
-    User user = User.current();
-    assert user != null;
     return userAuthenticationStatus.getOrDefault(user.getId(), false);
+  }
+
+  private boolean isFormFilledCorrectly(net.sf.json.JSONObject json) {
+    return !json.getString(USER_FIRST_SECURITY_QUESTION.getKey())
+            .equals(json.getString(USER_SECOND_SECURITY_QUESTION.getKey()))
+            && !json.getString(USER_FIRST_SECURITY_QUESTION.getKey())
+            .equals(SELECT_SECURITY_QUESTION.getQuestion())
+            && !json.getString(USER_SECOND_SECURITY_QUESTION.getKey())
+            .equals(SELECT_SECURITY_QUESTION.getQuestion())
+            && StringUtils.isNotBlank(json.getString(USER_CUSTOM_SECURITY_QUESTION.getKey()))
+            && StringUtils.isNotBlank(json.getString(USER_FIRST_SECURITY_QUESTION_ANSWER.getKey()))
+            && StringUtils.isNotBlank(json.getString(USER_SECOND_SECURITY_QUESTION_ANSWER.getKey()))
+            && StringUtils.isNotBlank(json.getString(USER_CUSTOM_SECURITY_QUESTION_ANSWER.getKey()));
+  }
+
+  @SuppressWarnings("unused")
+  @RequirePOST
+  public void doSaveSecurityQuestion(StaplerRequest req, StaplerResponse rsp) throws Exception {
+    LOGGER.fine("Saving user security questions");
+    net.sf.json.JSONObject json = req.getSubmittedForm();
+    String redirectUrl = req.getContextPath() + "./";
+    boolean firstTimeUserLogIn = false;
+    User user = User.current();
+    try {
+      if (isFormFilledCorrectly(json)) {
+        if (user != null) {
+          MoSecurityQuestionConfig userSecurityQuestion =
+                  user.getProperty(MoSecurityQuestionConfig.class);
+          userSecurityQuestion.setFirstSecurityQuestion(
+                  Secret.fromString(json.getString(USER_FIRST_SECURITY_QUESTION.getKey())));
+          userSecurityQuestion.setSecondSecurityQuestion(
+                  Secret.fromString(json.getString(USER_SECOND_SECURITY_QUESTION.getKey())));
+          userSecurityQuestion.setCustomSecurityQuestion(
+                  Secret.fromString(json.getString(USER_CUSTOM_SECURITY_QUESTION.getKey())));
+          userSecurityQuestion.setFirstSecurityQuestionAnswer(
+                  Secret.fromString(json.getString(USER_FIRST_SECURITY_QUESTION_ANSWER.getKey())));
+          userSecurityQuestion.setSecondSecurityQuestionAnswer(
+                  Secret.fromString(json.getString(USER_SECOND_SECURITY_QUESTION_ANSWER.getKey())));
+          userSecurityQuestion.setCustomSecurityQuestionAnswer(
+                  Secret.fromString(json.getString(USER_CUSTOM_SECURITY_QUESTION_ANSWER.getKey())));
+          userSecurityQuestion.setConfigured(true);
+          user.save();
+        }
+        HttpSession session = req.getSession(false);
+        assert user != null;
+        userAuthenticationStatus.put(user.getId(), true);
+        if (session != null) {
+          redirectUrl = (String) session.getAttribute("tfaRelayState");
+          session.removeAttribute("tfaRelayState");
+        }
+
+        if (redirectUrl != null) {
+          LOGGER.fine("Saved security questions, redirecting user to " + redirectUrl);
+          FormApply.success(redirectUrl).generateResponse(req, rsp, null);
+        }
+      }
+    } catch (Exception e) {
+      LOGGER.fine("Error in saving security questions, Form is not filled correctly ");
+      throw new Exception("Cannot save security questions, exception is " + e.getMessage());
+    }
+    if (redirectUrl == null) {
+      redirectUrl = Jenkins.get().getRootUrl();
+    }
+    LOGGER.fine("Redirecting user to " + redirectUrl);
+    FormApply.success(redirectUrl).generateResponse(req, rsp, null);
+  }
+
+  @SuppressWarnings("unused")
+  public void doReset(StaplerRequest req, StaplerResponse rsp)
+          throws IOException, ServletException {
+    try {
+      MoSecurityQuestionConfig userSecurityQuestion =
+              user.getProperty(MoSecurityQuestionConfig.class);
+      userSecurityQuestion.setFirstSecurityQuestion(Secret.fromString(""));
+      userSecurityQuestion.setSecondSecurityQuestion(Secret.fromString(""));
+      userSecurityQuestion.setCustomSecurityQuestion(Secret.fromString(""));
+      userSecurityQuestion.setFirstSecurityQuestionAnswer(Secret.fromString(""));
+      userSecurityQuestion.setSecondSecurityQuestionAnswer(Secret.fromString(""));
+      userSecurityQuestion.setCustomSecurityQuestionAnswer(Secret.fromString(""));
+      userSecurityQuestion.setConfigured(false);
+      LOGGER.fine("Resetting the security question authentication method");
+      user.save();
+    } catch (Exception e) {
+      LOGGER.fine("Error in resetting the configuration " + e.getMessage());
+    }
+
+    FormApply.success(req.getContextPath() + "../" + MO_USER_CONFIG.getUrl() + "/")
+            .generateResponse(req, rsp, null);
   }
 
   public String getFirstSecurityQuestion() {
     return Objects.requireNonNull(User.current())
-        .getProperty(MoSecurityQuestionConfig.class)
-        .firstSecurityQuestion
-        .getPlainText();
+            .getProperty(MoSecurityQuestionConfig.class)
+            .firstSecurityQuestion
+            .getPlainText();
   }
 
   public String getSecondSecurityQuestion() {
     return Objects.requireNonNull(User.current())
-        .getProperty(MoSecurityQuestionConfig.class)
-        .secondSecurityQuestion
-        .getPlainText();
+            .getProperty(MoSecurityQuestionConfig.class)
+            .secondSecurityQuestion
+            .getPlainText();
   }
 
   public String getCustomSecurityQuestion() {
     return Objects.requireNonNull(User.current())
-        .getProperty(MoSecurityQuestionConfig.class)
-        .customSecurityQuestion
-        .getPlainText();
+            .getProperty(MoSecurityQuestionConfig.class)
+            .customSecurityQuestion
+            .getPlainText();
   }
 
   public String getFirstSecurityQuestionAnswer() {
     return Objects.requireNonNull(User.current())
-        .getProperty(MoSecurityQuestionConfig.class)
-        .firstSecurityQuestionAnswer
-        .getPlainText();
+            .getProperty(MoSecurityQuestionConfig.class)
+            .firstSecurityQuestionAnswer
+            .getPlainText();
   }
 
   public String getSecondSecurityQuestionAnswer() {
     return Objects.requireNonNull(User.current())
-        .getProperty(MoSecurityQuestionConfig.class)
-        .secondSecurityQuestionAnswer
-        .getPlainText();
+            .getProperty(MoSecurityQuestionConfig.class)
+            .secondSecurityQuestionAnswer
+            .getPlainText();
   }
 
   public String getCustomSecurityQuestionAnswer() {
     return Objects.requireNonNull(User.current())
-        .getProperty(MoSecurityQuestionConfig.class)
-        .customSecurityQuestionAnswer
-        .getPlainText();
+            .getProperty(MoSecurityQuestionConfig.class)
+            .customSecurityQuestionAnswer
+            .getPlainText();
   }
 
   public void setFirstSecurityQuestion(Secret firstSecurityQuestion) {
@@ -162,68 +248,12 @@ public class MoSecurityQuestionConfig extends UserProperty implements Action {
     this.customSecurityQuestionAnswer = customSecurityQuestionAnswer;
   }
 
-  private boolean isFormFilledCorrectly(net.sf.json.JSONObject json) {
-    return !json.getString(USER_FIRST_SECURITY_QUESTION.getKey())
-            .equals(json.getString(USER_SECOND_SECURITY_QUESTION.getKey()))
-        && !json.getString(USER_FIRST_SECURITY_QUESTION.getKey())
-            .equals(SELECT_SECURITY_QUESTION.getQuestion())
-        && !json.getString(USER_SECOND_SECURITY_QUESTION.getKey())
-            .equals(SELECT_SECURITY_QUESTION.getQuestion())
-        && StringUtils.isNotBlank(json.getString(USER_CUSTOM_SECURITY_QUESTION.getKey()))
-        && StringUtils.isNotBlank(json.getString(USER_FIRST_SECURITY_QUESTION_ANSWER.getKey()))
-        && StringUtils.isNotBlank(json.getString(USER_SECOND_SECURITY_QUESTION_ANSWER.getKey()))
-        && StringUtils.isNotBlank(json.getString(USER_CUSTOM_SECURITY_QUESTION_ANSWER.getKey()));
+  public boolean isConfigured() {
+    return isConfigured;
   }
 
-  @SuppressWarnings("unused")
-  @RequirePOST
-  public void doSaveSecurityQuestion(StaplerRequest req, StaplerResponse rsp) throws Exception {
-    LOGGER.fine("Saving user security questions");
-    net.sf.json.JSONObject json = req.getSubmittedForm();
-    String redirectUrl = req.getContextPath() + "./";
-    boolean firstTimeUserLogIn = false;
-    User user = User.current();
-    try {
-      if (isFormFilledCorrectly(json)) {
-        if (user != null) {
-          MoSecurityQuestionConfig userSecurityQuestion =
-              user.getProperty(MoSecurityQuestionConfig.class);
-          userSecurityQuestion.setFirstSecurityQuestion(
-              Secret.fromString(json.getString(USER_FIRST_SECURITY_QUESTION.getKey())));
-          userSecurityQuestion.setSecondSecurityQuestion(
-              Secret.fromString(json.getString(USER_SECOND_SECURITY_QUESTION.getKey())));
-          userSecurityQuestion.setCustomSecurityQuestion(
-              Secret.fromString(json.getString(USER_CUSTOM_SECURITY_QUESTION.getKey())));
-          userSecurityQuestion.setFirstSecurityQuestionAnswer(
-              Secret.fromString(json.getString(USER_FIRST_SECURITY_QUESTION_ANSWER.getKey())));
-          userSecurityQuestion.setSecondSecurityQuestionAnswer(
-              Secret.fromString(json.getString(USER_SECOND_SECURITY_QUESTION_ANSWER.getKey())));
-          userSecurityQuestion.setCustomSecurityQuestionAnswer(
-              Secret.fromString(json.getString(USER_CUSTOM_SECURITY_QUESTION_ANSWER.getKey())));
-          user.save();
-        }
-        HttpSession session = req.getSession(false);
-        assert user != null;
-        userAuthenticationStatus.put(user.getId(), true);
-        if (session != null) {
-          redirectUrl = (String) session.getAttribute("tfaRelayState");
-          session.removeAttribute("tfaRelayState");
-        }
-
-        if (redirectUrl != null) {
-          LOGGER.fine("Saved security questions, redirecting user to " + redirectUrl);
-          FormApply.success(redirectUrl).generateResponse(req, rsp, null);
-        }
-      }
-    } catch (Exception e) {
-      LOGGER.fine("Error in saving security questions, Form is not filled correctly ");
-      throw new Exception("Cannot save security questions, exception is " + e.getMessage());
-    }
-    if (redirectUrl == null) {
-      redirectUrl = Jenkins.get().getRootUrl();
-    }
-    LOGGER.fine("Redirecting user to " + redirectUrl);
-    FormApply.success(redirectUrl).generateResponse(req, rsp, null);
+  public void setConfigured(boolean Configured) {
+    isConfigured = Configured;
   }
 
   @Override
@@ -233,7 +263,7 @@ public class MoSecurityQuestionConfig extends UserProperty implements Action {
 
   @SuppressWarnings("unused")
   public static final MoSecurityQuestionConfig.DescriptorImpl DESCRIPTOR =
-      new MoSecurityQuestionConfig.DescriptorImpl();
+          new MoSecurityQuestionConfig.DescriptorImpl();
 
   @Extension
   public static class DescriptorImpl extends UserPropertyDescriptor {
@@ -244,12 +274,13 @@ public class MoSecurityQuestionConfig extends UserProperty implements Action {
     @Override
     public UserProperty newInstance(User user) {
       return new MoSecurityQuestionConfig(
-          Secret.fromString(""),
-          Secret.fromString(""),
-          Secret.fromString(""),
-          Secret.fromString(""),
-          Secret.fromString(""),
-          Secret.fromString(""));
+              Secret.fromString(""),
+              Secret.fromString(""),
+              Secret.fromString(""),
+              Secret.fromString(""),
+              Secret.fromString(""),
+              Secret.fromString(""),
+              false);
     }
 
     @NonNull
@@ -288,56 +319,56 @@ public class MoSecurityQuestionConfig extends UserProperty implements Action {
     @SuppressWarnings("unused")
     @RequirePOST
     public FormValidation doCheckFirstSecurityQuestion(
-        @QueryParameter String firstSecurityQuestion,
-        @QueryParameter String secondSecurityQuestion) {
+            @QueryParameter String firstSecurityQuestion,
+            @QueryParameter String secondSecurityQuestion) {
       return validateForm(
-          firstSecurityQuestion.equals(SELECT_SECURITY_QUESTION.getQuestion())
-              || firstSecurityQuestion.equals(secondSecurityQuestion),
-          "Please select a valid security question");
+              firstSecurityQuestion.equals(SELECT_SECURITY_QUESTION.getQuestion())
+                      || firstSecurityQuestion.equals(secondSecurityQuestion),
+              "Please select a valid security question");
     }
 
     @SuppressWarnings("unused")
     @RequirePOST
     public FormValidation doCheckFirstSecurityQuestionAnswer(
-        @QueryParameter String firstSecurityQuestionAnswer,
-        @QueryParameter String secondSecurityQuestion) {
+            @QueryParameter String firstSecurityQuestionAnswer,
+            @QueryParameter String secondSecurityQuestion) {
       return validateForm(
-          StringUtils.isBlank(firstSecurityQuestionAnswer), "Please Enter valid answer");
+              StringUtils.isBlank(firstSecurityQuestionAnswer), "Please Enter valid answer");
     }
 
     @SuppressWarnings("unused")
     @RequirePOST
     public FormValidation doCheckSecondSecurityQuestion(
-        @QueryParameter String secondSecurityQuestion,
-        @QueryParameter String firstSecurityQuestion) {
+            @QueryParameter String secondSecurityQuestion,
+            @QueryParameter String firstSecurityQuestion) {
       return validateForm(
-          secondSecurityQuestion.equals(SELECT_SECURITY_QUESTION.getQuestion())
-              || secondSecurityQuestion.equals(firstSecurityQuestion),
-          "Please select a valid security question");
+              secondSecurityQuestion.equals(SELECT_SECURITY_QUESTION.getQuestion())
+                      || secondSecurityQuestion.equals(firstSecurityQuestion),
+              "Please select a valid security question");
     }
 
     @SuppressWarnings("unused")
     @RequirePOST
     public FormValidation doCheckSecondSecurityQuestionAnswer(
-        @QueryParameter String secondSecurityQuestionAnswer) {
+            @QueryParameter String secondSecurityQuestionAnswer) {
       return validateForm(
-          StringUtils.isBlank(secondSecurityQuestionAnswer), "Please Enter valid answer");
+              StringUtils.isBlank(secondSecurityQuestionAnswer), "Please Enter valid answer");
     }
 
     @SuppressWarnings("unused")
     @RequirePOST
     public FormValidation doCheckCustomSecurityQuestion(
-        @QueryParameter String customSecurityQuestion) {
+            @QueryParameter String customSecurityQuestion) {
       return validateForm(
-          StringUtils.isBlank(customSecurityQuestion), "Please select a valid security question");
+              StringUtils.isBlank(customSecurityQuestion), "Please select a valid security question");
     }
 
     @SuppressWarnings("unused")
     @RequirePOST
     public FormValidation doCheckCustomSecurityQuestionAnswer(
-        @QueryParameter String customSecurityQuestionAnswer) {
+            @QueryParameter String customSecurityQuestionAnswer) {
       return validateForm(
-          StringUtils.isBlank(customSecurityQuestionAnswer), "Please Enter valid answer");
+              StringUtils.isBlank(customSecurityQuestionAnswer), "Please Enter valid answer");
     }
   }
 }

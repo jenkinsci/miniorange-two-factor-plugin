@@ -21,19 +21,16 @@
  */
 package com.miniorange.twofactor.jenkins.tfaMethodsAuth;
 
+import static com.miniorange.twofactor.constants.MoPluginUrls.Urls.MO_SECURITY_QUESTION_AUTH;
 import static com.miniorange.twofactor.jenkins.MoFilter.userAuthenticationStatus;
 import static jenkins.model.Jenkins.get;
 
 import com.miniorange.twofactor.jenkins.tfaMethodsConfig.MoSecurityQuestionConfig;
 import hudson.Extension;
-import hudson.model.Action;
-import hudson.model.Describable;
-import hudson.model.Descriptor;
-import hudson.model.User;
+import hudson.model.*;
 import hudson.util.FormApply;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Random;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpSession;
@@ -49,32 +46,33 @@ public class MoSecurityQuestionAuth implements Action, Describable<MoSecurityQue
   int secondRandomSecurityQuestionIndex = 1;
   private String[] securityQuestionArray;
   private String[] securityAnswerArray;
-  public static Map<String, Boolean> showWrongCredentialWarning = new HashMap<>();
+  public Map<String, Boolean> showWrongCredentialWarning = new HashMap<>();
+  private final User user;
 
   public MoSecurityQuestionAuth() {
-    try {
-      User user = User.current();
-      if (user != null) {
+    this.user = User.current();
 
+    try {
+      if (user != null) {
         MoSecurityQuestionConfig securityQuestion =
-            user.getProperty(MoSecurityQuestionConfig.class);
+                user.getProperty(MoSecurityQuestionConfig.class);
         this.securityQuestionArray =
-            new String[] {
-              securityQuestion.getFirstSecurityQuestion(),
-              securityQuestion.getSecondSecurityQuestion(),
-              securityQuestion.getCustomSecurityQuestion()
-            };
+                new String[] {
+                        securityQuestion.getFirstSecurityQuestion(),
+                        securityQuestion.getSecondSecurityQuestion(),
+                        securityQuestion.getCustomSecurityQuestion()
+                };
         this.securityAnswerArray =
-            new String[] {
-              securityQuestion.getFirstSecurityQuestionAnswer(),
-              securityQuestion.getSecondSecurityQuestionAnswer(),
-              securityQuestion.getCustomSecurityQuestionAnswer()
-            };
+                new String[] {
+                        securityQuestion.getFirstSecurityQuestionAnswer(),
+                        securityQuestion.getSecondSecurityQuestionAnswer(),
+                        securityQuestion.getCustomSecurityQuestionAnswer()
+                };
       }
     } catch (Exception e) {
       LOGGER.fine(
-          "Error in getting security questions and answers for user authentication "
-              + e.getMessage());
+              "Error in getting security questions and answers for user authentication "
+                      + e.getMessage());
     }
   }
 
@@ -85,17 +83,17 @@ public class MoSecurityQuestionAuth implements Action, Describable<MoSecurityQue
 
   @Override
   public String getDisplayName() {
-    return "securityQuestionAuth";
+    return MO_SECURITY_QUESTION_AUTH.getUrl();
   }
 
   @Override
   public String getUrlName() {
-    return "securityQuestionAuth";
+    return MO_SECURITY_QUESTION_AUTH.getUrl();
   }
 
   @SuppressWarnings("unused")
   public String getUserId() {
-    return User.current() != null ? Objects.requireNonNull(User.current()).getId() : "";
+    return user != null ? user.getId() : "";
   }
 
   private void initializeRandomTwoIndex() {
@@ -128,9 +126,7 @@ public class MoSecurityQuestionAuth implements Action, Describable<MoSecurityQue
 
   @SuppressWarnings("unused")
   public boolean getShowWrongCredentialWarning() {
-    User user = User.current();
-    assert user != null;
-    return showWrongCredentialWarning.get(user.getId()) != null;
+    return showWrongCredentialWarning.getOrDefault(user.getId(), false);
   }
 
   private boolean validateUserAnswers(net.sf.json.JSONObject formData) {
@@ -138,7 +134,7 @@ public class MoSecurityQuestionAuth implements Action, Describable<MoSecurityQue
             .get("userFirstAuthenticationAnswer")
             .toString()
             .equals(getFirstRandomSecurityQuestionAnswer())
-        && formData
+            && formData
             .get("userSecondAuthenticationAnswer")
             .toString()
             .equals(getSecondRandomSecurityQuestionAnswer());
@@ -147,9 +143,8 @@ public class MoSecurityQuestionAuth implements Action, Describable<MoSecurityQue
   @SuppressWarnings("unused")
   @RequirePOST
   public void doSecurityQuestionAuthenticate(
-      StaplerRequest staplerRequest, StaplerResponse staplerResponse) throws Exception {
+          StaplerRequest staplerRequest, StaplerResponse staplerResponse) throws Exception {
     net.sf.json.JSONObject formData = staplerRequest.getSubmittedForm();
-    User user = User.current();
     HttpSession session = staplerRequest.getSession(false);
     String redirectUrl = get().getRootUrl();
     LOGGER.fine("Authenticating user tfa security answers");

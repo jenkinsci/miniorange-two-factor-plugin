@@ -21,15 +21,21 @@
  */
 package com.miniorange.twofactor.jenkins;
 
-import static com.miniorange.twofactor.constants.MoGlobalConfigConstant.AdminConfiguration.ENABLE_2FA;
-
+import static com.miniorange.twofactor.constants.MoGlobalConfigConstant.AdminConfiguration.*;
+import static com.miniorange.twofactor.constants.MoPluginUrls.Urls.*;
+import com.miniorange.twofactor.jenkins.tfaMethodsConfig.MoOtpOverEmailConfig;
 import com.miniorange.twofactor.jenkins.tfaMethodsConfig.MoSecurityQuestionConfig;
 import hudson.Extension;
+import hudson.XmlFile;
 import hudson.init.Initializer;
 import hudson.model.User;
+import hudson.model.UserProperty;
 import hudson.util.PluginServletFilter;
+import hudson.util.Secret;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import javax.servlet.Filter;
@@ -41,18 +47,19 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
 
 @Extension
 public class MoFilter implements Filter {
   public static Map<String, Boolean> userAuthenticationStatus = new HashMap<>();
-
+  public static Map<String, Boolean> moPluginSettings = new HashMap<>();
   private static final Logger LOGGER = Logger.getLogger(MoFilter.class.getName());
 
   @Override
   public void init(FilterConfig filterConfig) {
     try {
-      userAuthenticationStatus.put(ENABLE_2FA.getSetting(), MoGlobalConfig.get().getEnableTfa());
+      moPluginSettings.put(ENABLE_2FA.getKey(), MoGlobalConfig.get().getEnableTfa());
     } catch (Exception e) {
       LOGGER.fine(
           "Exception while initializing filter for global TFA authentication, error is "
@@ -67,36 +74,99 @@ public class MoFilter implements Filter {
     PluginServletFilter.addFilter(new MoFilter());
   }
 
+  private String getRedirectUrlForTfaAuthentication(User user) {
+
+    LOGGER.fine(" Calculating redirection url for 2FA authentication");
+    String redirectUrl = null;
+    int totalConfiguredMethods = 0;
+    int totalEnabledMethods = 0;
+    for (UserProperty property : user.getAllProperties()) {
+      switch (property.getClass().getSimpleName()) {
+        case "MoSecurityQuestionConfig":
+          if (MoGlobalConfig.get().isEnableSecurityQuestionsAuthentication()) {
+            totalEnabledMethods++;
+            if (((MoSecurityQuestionConfig) property).isConfigured()) {
+              redirectUrl = MO_USER_AUTH.getUrl() + "/" + MO_SECURITY_QUESTION_AUTH.getUrl() + "/";
+              totalConfiguredMethods++;
+            }
+          }
+          break;
+        case "MoOtpOverEmailConfig":
+          if (MoGlobalConfig.get().isEnableOtpOverEmailAuthentication()) {
+            totalEnabledMethods++;
+            if (((MoOtpOverEmailConfig) property).isConfigured()) {
+              redirectUrl = MO_USER_AUTH.getUrl() + "/" + MO_OTP_OVER_EMAIL_AUTH.getUrl() + "/";
+              totalConfiguredMethods++;
+              break;
+            }
+          }
+          break;
+      }
+    }
+
+    if ((totalEnabledMethods != 0) && (totalConfiguredMethods == 0)) {
+      LOGGER.fine(
+          "User has not configured any authentication method, redirecting to user configuration");
+      redirectUrl = "user/" + user.getId() + "/" + MO_USER_CONFIG.getUrl() + "/";
+    } else if ((totalEnabledMethods != 0) && totalConfiguredMethods > 1) {
+      LOGGER.fine(
+          "User has configured multiple authentication methods, redirecting to user authentication");
+      redirectUrl = MO_USER_AUTH.getUrl() + "/";
+    } else if (totalEnabledMethods == 0) {
+      LOGGER.fine("Admin has not enabled any authentication methods, terminating 2FA");
+      redirectUrl = "SKIP_FILTER";
+    }
+
+    LOGGER.fine("Redirecting to url " + redirectUrl);
+    return redirectUrl;
+  }
+
   private String sanitizeRequestURI(String requestURI) {
     requestURI = requestURI.trim();
     requestURI = requestURI.substring(0, Math.min(requestURI.length(), 60));
     return requestURI;
   }
 
+  private boolean urlsToAvoidRedirect(String url, List<String> urlsToCheck) {
+    for (String avoidUrl : urlsToCheck) {
+      if (url.contains(avoidUrl)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   private boolean JenkinsUrlsToAvoidRedirect(String url) {
-    return url.contains("/logout")
-        || url.contains("/login")
-        || url.contains("/adjuncts")
-        || url.contains("/static")
-        || url.contains("PopupContent")
-        || url.contains("/ajaxBuildQueue")
-        || url.contains("/ajaxExecutors")
-        || url.contains("/descriptorByName")
-        || url.contains("/checkPluginUrl")
-        || url.contains("/log");
+    List<String> jenkinsUrls =
+        Arrays.asList(
+            "/logout",
+            "/login",
+            "/adjuncts",
+            "/static",
+            "PopupContent",
+            "/ajaxBuildQueue",
+            "/ajaxExecutors",
+            "/descriptorByName",
+            "/checkPluginUrl",
+            "/log");
+    return urlsToAvoidRedirect(url, jenkinsUrls);
   }
 
   private boolean tfaPluginUrlsToAvoidRedirect(String url) {
-    return url.contains("tfaConfiguration/")
-        || url.contains("/MoSecurityQuestionIcon.png")
-        || url.contains("/securityQuestion/")
-        || url.contains("/miniorange-two-factor")
-        || url.contains("/tfaUserAuth");
+    List<String> tfaPluginUrls =
+        Arrays.asList(
+            MO_USER_CONFIG.getUrl() + "/",
+            "/MoSecurityQuestionIcon.png",
+            MO_SECURITY_QUESTION_CONFIG.getUrl(),
+            "/miniorange-two-factor",
+            MO_OTP_OVER_EMAIL_CONFIG.getUrl(),
+            MO_USER_AUTH.getUrl() + "/");
+    return urlsToAvoidRedirect(url, tfaPluginUrls);
   }
 
   private boolean guardConditions(User user, String url) {
     return user == null
-        || !userAuthenticationStatus.getOrDefault(ENABLE_2FA.getSetting(), false)
+        || !moPluginSettings.getOrDefault(ENABLE_2FA.getKey(), false)
         || userAuthenticationStatus.getOrDefault(user.getId(), false)
         || tfaPluginUrlsToAvoidRedirect(url)
         || JenkinsUrlsToAvoidRedirect(url);
@@ -116,10 +186,14 @@ public class MoFilter implements Filter {
         return;
       }
 
+      String redirectUrl = getRedirectUrlForTfaAuthentication(user);
+
+      if (redirectUrl.equals("SKIP_FILTER")) {
+        filterChain.doFilter(servletRequest, servletResponse);
+        return;
+      }
+
       HttpServletResponse rsp = (HttpServletResponse) servletResponse;
-
-      MoSecurityQuestionConfig userTfaData = user.getProperty(MoSecurityQuestionConfig.class);
-
       String relayState = req.getRequestURI();
 
       if (session.getAttribute("tfaRelayState") == null) {
@@ -130,12 +204,8 @@ public class MoFilter implements Filter {
           req.getRequestURI()
               + " is being redirecting for 2FA, saved relay state is "
               + relayState);
-      if (userTfaData.getFirstSecurityQuestion().equals("")) {
-        rsp.sendRedirect(
-            Jenkins.get().getRootUrl() + "user/" + user.getId() + "/tfaConfiguration/");
-      } else {
-        rsp.sendRedirect(Jenkins.get().getRootUrl() + "tfaUserAuth/");
-      }
+
+      rsp.sendRedirect(Jenkins.get().getRootUrl() + redirectUrl);
     } catch (Exception e) {
       filterChain.doFilter(servletRequest, servletResponse);
       LOGGER.fine("Error in filter processing " + e.getMessage());
