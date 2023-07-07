@@ -63,7 +63,7 @@ public class MoOtpOverEmailConfig extends UserProperty implements Action {
 
   @SuppressWarnings("unused")
   public void doReset(StaplerRequest req, StaplerResponse rsp)
-          throws IOException, ServletException {
+      throws IOException, ServletException {
     try {
       MoOtpOverEmailConfig otpOverEmailConfig = user.getProperty(MoOtpOverEmailConfig.class);
       otpOverEmailConfig.setConfigured(false);
@@ -74,7 +74,7 @@ public class MoOtpOverEmailConfig extends UserProperty implements Action {
     }
 
     FormApply.success(req.getContextPath() + "../" + MO_USER_CONFIG.getUrl() + "/")
-            .generateResponse(req, rsp, null);
+        .generateResponse(req, rsp, null);
   }
 
   public Boolean isConfigured() {

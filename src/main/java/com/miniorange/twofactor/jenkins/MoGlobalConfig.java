@@ -21,6 +21,9 @@
  */
 package com.miniorange.twofactor.jenkins;
 
+import static com.miniorange.twofactor.constants.MoGlobalConfigConstant.AdminConfiguration.ENABLE_2FA;
+import static com.miniorange.twofactor.jenkins.MoFilter.moPluginSettings;
+
 import com.miniorange.twofactor.jenkins.DTO.MoOtpOverEmailDto;
 import hudson.Extension;
 import hudson.model.Descriptor;
@@ -29,9 +32,6 @@ import jenkins.model.GlobalConfiguration;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.StaplerRequest;
-
-import static com.miniorange.twofactor.constants.MoGlobalConfigConstant.AdminConfiguration.ENABLE_2FA;
-import static com.miniorange.twofactor.jenkins.MoFilter.moPluginSettings;
 
 @Extension
 public class MoGlobalConfig extends GlobalConfiguration {

@@ -23,15 +23,14 @@ package com.miniorange.twofactor.jenkins;
 
 import static com.miniorange.twofactor.constants.MoGlobalConfigConstant.AdminConfiguration.*;
 import static com.miniorange.twofactor.constants.MoPluginUrls.Urls.*;
+
 import com.miniorange.twofactor.jenkins.tfaMethodsConfig.MoOtpOverEmailConfig;
 import com.miniorange.twofactor.jenkins.tfaMethodsConfig.MoSecurityQuestionConfig;
 import hudson.Extension;
-import hudson.XmlFile;
 import hudson.init.Initializer;
 import hudson.model.User;
 import hudson.model.UserProperty;
 import hudson.util.PluginServletFilter;
-import hudson.util.Secret;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -47,7 +46,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
 
 @Extension
@@ -156,7 +154,6 @@ public class MoFilter implements Filter {
     List<String> tfaPluginUrls =
         Arrays.asList(
             MO_USER_CONFIG.getUrl() + "/",
-            "/MoSecurityQuestionIcon.png",
             MO_SECURITY_QUESTION_CONFIG.getUrl(),
             "/miniorange-two-factor",
             MO_OTP_OVER_EMAIL_CONFIG.getUrl(),

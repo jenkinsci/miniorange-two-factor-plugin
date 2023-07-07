@@ -23,10 +23,12 @@ package com.miniorange.twofactor.jenkins.tfaMethodsAuth;
 
 import static com.miniorange.twofactor.constants.MoPluginUrls.Urls.MO_OTP_OVER_EMAIL_AUTH;
 import static com.miniorange.twofactor.jenkins.MoFilter.userAuthenticationStatus;
+import static hudson.tasks.Mailer.stringToAddress;
 
 import com.miniorange.twofactor.jenkins.MoGlobalConfig;
 import com.miniorange.twofactor.jenkins.tfaMethodsConfig.MoOtpOverEmailConfig;
 import hudson.Extension;
+import hudson.Util;
 import hudson.model.Action;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
@@ -38,12 +40,10 @@ import hudson.util.Secret;
 import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
-import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 import jenkins.model.Jenkins;
+import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.interceptor.RequirePOST;
@@ -115,61 +115,120 @@ public class MoOtpOverEmailAuth implements Action, Describable<MoOtpOverEmailAut
     return String.valueOf(otp);
   }
 
+  private static jakarta.mail.Session createSession(
+      String smtpHost,
+      String smtpPort,
+      boolean useSsl,
+      boolean useTls,
+      String smtpAuthUserName,
+      Secret smtpAuthPassword) {
+    final String SMTP_PORT_PROPERTY = "mail.smtp.port";
+    final String SMTP_SOCKETFACTORY_PORT_PROPERTY = "mail.smtp.socketFactory.port";
+    final String SMTP_SSL_ENABLE_PROPERTY = "mail.smtp.ssl.enable";
+
+    smtpHost = Util.fixEmptyAndTrim(smtpHost);
+    smtpPort = Util.fixEmptyAndTrim(smtpPort);
+    smtpAuthUserName = Util.fixEmptyAndTrim(smtpAuthUserName);
+
+    Properties props = new Properties(System.getProperties());
+    if (smtpHost != null) {
+      props.put("mail.smtp.host", smtpHost);
+    }
+    if (smtpPort != null) {
+      props.put(SMTP_PORT_PROPERTY, smtpPort);
+    }
+    if (useSsl) {
+      if (props.getProperty(SMTP_SOCKETFACTORY_PORT_PROPERTY) == null) {
+        String port = smtpPort == null ? "465" : smtpPort;
+        props.put(SMTP_PORT_PROPERTY, port);
+        props.put(SMTP_SOCKETFACTORY_PORT_PROPERTY, port);
+      }
+      if (props.getProperty(SMTP_SSL_ENABLE_PROPERTY) == null) {
+        props.put(SMTP_SSL_ENABLE_PROPERTY, "true");
+        props.put("mail.smtp.ssl.checkserveridentity", true);
+      }
+      props.put("mail.smtp.socketFactory.fallback", "false");
+      if (props.getProperty("mail.smtp.ssl.checkserveridentity") == null) {
+        props.put("mail.smtp.ssl.checkserveridentity", "true");
+      }
+    }
+    if (useTls) {
+      if (props.getProperty(SMTP_SOCKETFACTORY_PORT_PROPERTY) == null) {
+        String port = smtpPort == null ? "587" : smtpPort;
+        props.put(SMTP_PORT_PROPERTY, port);
+        props.put(SMTP_SOCKETFACTORY_PORT_PROPERTY, port);
+      }
+      props.put("mail.smtp.starttls.enable", "true");
+      props.put("mail.smtp.starttls.required", "true");
+    }
+    if (smtpAuthUserName != null) props.put("mail.smtp.auth", "true");
+
+    props.put("mail.smtp.timeout", "60000");
+    props.put("mail.smtp.connectiontimeout", "60000");
+
+    return jakarta.mail.Session.getInstance(
+        props, getAuthenticator(smtpAuthUserName, Secret.toString(smtpAuthPassword)));
+  }
+
+  private static jakarta.mail.Authenticator getAuthenticator(
+      final String smtpAuthUserName, final String smtpAuthPassword) {
+    if (smtpAuthUserName == null) {
+      return null;
+    }
+    return new jakarta.mail.Authenticator() {
+      @Override
+      protected jakarta.mail.PasswordAuthentication getPasswordAuthentication() {
+        return new jakarta.mail.PasswordAuthentication(smtpAuthUserName, smtpAuthPassword);
+      }
+    };
+  }
+
   public void sendMail() {
     try {
       LOGGER.fine("Sending mail for otpOverEmail method");
 
-      Session session = null;
-      try {
-        Mailer.DescriptorImpl mailerDescriptor =
-                Jenkins.get().getDescriptorByType(Mailer.DescriptorImpl.class);
-
-        String smtpHost = mailerDescriptor.getSmtpHost();
-        String smtpPort = mailerDescriptor.getSmtpPort();
-        SMTPAuthentication authentication = mailerDescriptor.getAuthentication();
-
-        assert authentication != null;
-        String smtpUsername = authentication.getUsername();
-        Secret smtpPassword = authentication.getPassword();
-        Properties properties = new Properties();
-        properties.put("mail.smtp.host", smtpHost);
-        properties.put("mail.smtp.port", smtpPort != null ? smtpPort : "587");
-        properties.put("mail.smtp.auth", "true");
-        session =
-                Session.getInstance(
-                        properties,
-                        new Authenticator() {
-                          protected PasswordAuthentication getPasswordAuthentication() {
-                            return new PasswordAuthentication(smtpUsername, Secret.toString(smtpPassword));
-                          }
-                        });
-      } catch (Exception e) {
-        LOGGER.fine(
-                "Error in sending mail, can not make session : some problem in Jenkins Mailer plugin");
-      }
-
-      Message message = new MimeMessage(session);
+      Mailer.DescriptorImpl mailerDescriptor = Mailer.descriptor();
+      String smtpHost = mailerDescriptor.getSmtpHost();
       String senderEmailAddress = MoGlobalConfig.get().getOtpOverEmailDto().getSenderEmailAddress();
-      message.setFrom(new InternetAddress(senderEmailAddress));
-      String email = getUserEmailAddress();
-      message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
-      message.setSubject("Jenkins 2FA Verification Code");
+      SMTPAuthentication MailerAuthentication = mailerDescriptor.getAuthentication();
+      String username = MailerAuthentication != null ? MailerAuthentication.getUsername() : null;
+      Secret password = MailerAuthentication != null ? MailerAuthentication.getPassword() : null;
+      boolean useSsl = mailerDescriptor.getUseSsl();
+      boolean useTls = mailerDescriptor.getUseTls();
+      String smtpPort = mailerDescriptor.getSmtpPort();
+      String charset = mailerDescriptor.getCharset();
+      String sendTestMailTo = getUserEmailAddress();
+
+      jakarta.mail.internet.MimeMessage msg =
+          new jakarta.mail.internet.MimeMessage(
+              createSession(smtpHost, smtpPort, useSsl, useTls, username, password));
+
+      msg.setSubject("Jenkins 2FA Verification Code");
       String otpToSend = createOtp(5);
       sentOtp.put(user.getId(), otpToSend);
-      message.setContent(
-              "<html><body><h1>Jenkins Account Verification Code</h1><p>Your verification code is: "
-                      + sentOtp.get(user.getId())
-                      + "</p></body></html>",
-              "text/html");
-      Transport.send(message);
+      msg.setContent(
+          "<html><body><h1>Jenkins Account Verification Code</h1><p>Your verification code is: "
+              + sentOtp.get(user.getId())
+              + "</p></body></html>",
+          "text/html");
+      msg.setFrom(stringToAddress(senderEmailAddress, charset));
+      if (StringUtils.isNotBlank(sendTestMailTo)) {
+        msg.setReplyTo(new jakarta.mail.Address[] {stringToAddress(sendTestMailTo, charset)});
+      }
+
+      msg.setSentDate(new Date());
+      msg.setRecipient(
+          jakarta.mail.Message.RecipientType.TO, stringToAddress(sendTestMailTo, charset));
+
+      jakarta.mail.Transport.send(msg);
     } catch (Exception e) {
-      LOGGER.fine("Failed to send mail to user " + e.getMessage());
+      LOGGER.fine("Failed in sending mail, error is " + e.getMessage());
     }
   }
 
   @SuppressWarnings("unused")
   public void doResendOtp(StaplerRequest req, StaplerResponse rsp)
-          throws ServletException, IOException {
+      throws ServletException, IOException {
     try {
       sendMail();
     } catch (Exception e) {
@@ -181,7 +240,7 @@ public class MoOtpOverEmailAuth implements Action, Describable<MoOtpOverEmailAut
   @SuppressWarnings("unused")
   @RequirePOST
   public void doSaveOrValidateOtpOverEmailConfig(StaplerRequest req, StaplerResponse rsp)
-          throws Exception {
+      throws Exception {
 
     if (sentOtp.get(user.getId()) == null) {
       return;
@@ -256,7 +315,7 @@ public class MoOtpOverEmailAuth implements Action, Describable<MoOtpOverEmailAut
 
   @SuppressWarnings("unused")
   public static final MoOtpOverEmailAuth.DescriptorImpl DESCRIPTOR =
-          new MoOtpOverEmailAuth.DescriptorImpl();
+      new MoOtpOverEmailAuth.DescriptorImpl();
 
   @Extension
   public static class DescriptorImpl extends Descriptor<MoOtpOverEmailAuth> {}

@@ -42,8 +42,7 @@ import jenkins.model.Jenkins;
 @Extension
 public class MoUserAuth implements RootAction, Describable<MoUserAuth> {
   private static final Logger LOGGER = Logger.getLogger(MoUserAuth.class.getName());
-  Map<String, MoSecurityQuestionAuth> moSecurityQuestionAuthMap =
-          new HashMap<>();
+  Map<String, MoSecurityQuestionAuth> moSecurityQuestionAuthMap = new HashMap<>();
   Map<String, MoOtpOverEmailAuth> moOtpOverEmailAuthMap = new HashMap<>();
 
   @Override

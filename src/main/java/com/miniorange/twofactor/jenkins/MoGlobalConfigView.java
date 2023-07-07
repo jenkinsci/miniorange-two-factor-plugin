@@ -31,7 +31,6 @@ import hudson.model.Descriptor;
 import hudson.model.ManagementLink;
 import hudson.util.FormApply;
 import hudson.util.FormValidation;
-import hudson.util.Secret;
 import io.jenkins.cli.shaded.org.apache.commons.lang.StringUtils;
 import java.io.IOException;
 import java.util.logging.Logger;

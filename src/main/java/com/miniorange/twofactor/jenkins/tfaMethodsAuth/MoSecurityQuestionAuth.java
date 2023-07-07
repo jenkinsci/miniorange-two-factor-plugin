@@ -55,24 +55,24 @@ public class MoSecurityQuestionAuth implements Action, Describable<MoSecurityQue
     try {
       if (user != null) {
         MoSecurityQuestionConfig securityQuestion =
-                user.getProperty(MoSecurityQuestionConfig.class);
+            user.getProperty(MoSecurityQuestionConfig.class);
         this.securityQuestionArray =
-                new String[] {
-                        securityQuestion.getFirstSecurityQuestion(),
-                        securityQuestion.getSecondSecurityQuestion(),
-                        securityQuestion.getCustomSecurityQuestion()
-                };
+            new String[] {
+              securityQuestion.getFirstSecurityQuestion(),
+              securityQuestion.getSecondSecurityQuestion(),
+              securityQuestion.getCustomSecurityQuestion()
+            };
         this.securityAnswerArray =
-                new String[] {
-                        securityQuestion.getFirstSecurityQuestionAnswer(),
-                        securityQuestion.getSecondSecurityQuestionAnswer(),
-                        securityQuestion.getCustomSecurityQuestionAnswer()
-                };
+            new String[] {
+              securityQuestion.getFirstSecurityQuestionAnswer(),
+              securityQuestion.getSecondSecurityQuestionAnswer(),
+              securityQuestion.getCustomSecurityQuestionAnswer()
+            };
       }
     } catch (Exception e) {
       LOGGER.fine(
-              "Error in getting security questions and answers for user authentication "
-                      + e.getMessage());
+          "Error in getting security questions and answers for user authentication "
+              + e.getMessage());
     }
   }
 
@@ -134,7 +134,7 @@ public class MoSecurityQuestionAuth implements Action, Describable<MoSecurityQue
             .get("userFirstAuthenticationAnswer")
             .toString()
             .equals(getFirstRandomSecurityQuestionAnswer())
-            && formData
+        && formData
             .get("userSecondAuthenticationAnswer")
             .toString()
             .equals(getSecondRandomSecurityQuestionAnswer());
@@ -143,7 +143,7 @@ public class MoSecurityQuestionAuth implements Action, Describable<MoSecurityQue
   @SuppressWarnings("unused")
   @RequirePOST
   public void doSecurityQuestionAuthenticate(
-          StaplerRequest staplerRequest, StaplerResponse staplerResponse) throws Exception {
+      StaplerRequest staplerRequest, StaplerResponse staplerResponse) throws Exception {
     net.sf.json.JSONObject formData = staplerRequest.getSubmittedForm();
     HttpSession session = staplerRequest.getSession(false);
     String redirectUrl = get().getRootUrl();
