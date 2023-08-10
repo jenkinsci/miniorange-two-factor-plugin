@@ -1,0 +1,9 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core">
+    <j:if test="${descriptor.showInUserProfile()}">
+        <a href="${it.getBaseUrl()}/user/admin/tfaConfiguration/">OTP over Email</a>
+    </j:if>
+    <j:if test="${!descriptor.showInUserProfile()}">
+        Two factor authentication is not enabled for you.
+    </j:if>
+</j:jelly>

@@ -7,54 +7,50 @@ It enhances the overall security of your Jenkins environment. Additionally, this
 **Supported Authentication method**
 
 * Security Questions
-* Mobile Authenticator [⭐⭐Coming soon]
-* Yubikey hardware token [⭐⭐Coming soon]
-* Duo Push Notification [⭐⭐Coming soon]
-* OTP over email [⭐⭐Coming soon]
-* OTP over SMS [⭐⭐Coming soon]
-* Backup code [⭐⭐Coming soon]
+* OTP over email
 
 # Installation Instructions
 
 * Login to your Jenkins.
 * Go to the **Manage Jenkins** option from the left panel, and open the **Manage Plugins** tab.
 * Go to the **advanced** tab and upload the hpi file.
-*  **⚠️   Make sure you restart the Jenkins**
 * You can get the hpi file by running ```mvn clean package``` command on this code. Contact info@xecurify.com if you are
   facing any issues.
 
 ![image_1](docs/images/configuration/upload_plugin.png)
 
 ![image_2](docs/images/configuration/installation_success.png)
+*  **⚠️   Make sure you restart the Jenkins**
 
-**Step 2: To activate the plugin**
+# Step 2: Setup Your 2FA
 
 * Open **Manage Jenkins** => **2FA Global Configurations** and check the **Enable 2FA for all users** checkbox.
 
 ![image_3](docs/images/configuration/configure_gobal_section.png)
 
-![image_4](docs/images/configuration/enable_two-factor.png)
-
-# Setup Your 2FA
-
-* After restarting the plugin again go to Manage Jenkins → 2FA Global configuration and check the checkbox **Enable for all users** to enable 2FA  in Jenkins for all users and save the configuration.
+* Check the checkbox **Enable for all users** to enable 2FA  in Jenkins for all users and save the configuration.
  
-![image_4](docs/images/configuration/enable_2fa.png)
+![image_5](docs/images/configuration/enable_2fa.png)
 
-* Whenever a user signs in with Jenkins credentials, a 2FA configuration display will appear in Jenkins.
+* Check the available two-factor authentication methods that users can use for authentication.
 
-![image_4](docs/images/configuration/inline2FA.png)
+![image_6](docs/images/configuration/enable_security_methods.png)
 
-* Setup your security questions for 2FA.
+[//]: # (todo Give link to the setup guide for OTP over email in **this**.&#41;)
+* Follow this guide to set up and configure authentication methods in Jenkins
 
-# Reset Security methods
+* Now, whenever a user signs in with Jenkins credentials, a 2FA configuration display will appear in Jenkins.
+
+![image_7](docs/images/configuration/inline2FA.png)
+
+# Reset/Configure authentication methods
 
 * Go to your user profile and click on the 2FA configuration button in the side panel. 
 
-![image_4](docs/images/configuration/reset_2FA.png)
+![image_8](docs/images/configuration/reset_2FA.png)
 
-* Click on your security method and reconfigure accordingly.
-
+* Choose the "Reset" or "Configuration" option to either reset the currently configured authentication method or set up a new method if it is currently not configured.
+![image_8](docs/images/configuration/reset_configure.png)
 
 # Troubleshooting and Logging
 
@@ -64,8 +60,8 @@ resolve your issue in no time.
 * Sign in to Jenkins as an admin and select Manage Jenkins from the left panel of the dashboard.
 * Scroll down to find the System Log option.
 * Click Add new Log Recorder button and add the log recorder name as 2FaLogs.
-* Add **com.miniorange.twofactor.jenkins** as a Logger and select fine as a log level.
-  ![image_5](docs/images/troubleshooting/logger_record.png)
+* Add **io.jenkins.plugins.twofactor.jenkins** as a Logger and select fine as a log level.
+  ![image_9](docs/images/troubleshooting/logger_record.png)
 * Save the settings. 
 * Perform 2FA on another browser/private window to record logs. 
 * Visit the System Log option again and copy the recorded logs from the 2FaLogs logger. 

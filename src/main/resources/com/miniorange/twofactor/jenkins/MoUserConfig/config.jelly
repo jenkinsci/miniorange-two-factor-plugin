@@ -1,6 +1,0 @@
-<?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core">
-    <j:if test="${descriptor.getDisplayName() != ''}">
-        <a href="${it.getBaseUrl()}/user/admin/tfaConfiguration/">User configuration</a>
-    </j:if>
-</j:jelly>

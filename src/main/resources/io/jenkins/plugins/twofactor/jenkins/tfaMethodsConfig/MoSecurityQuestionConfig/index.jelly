@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:l="/lib/layout">
+
+    <l:layout title="Security Questions" type="${it.isUserAuthenticatedFromTfa() ? 'one-column' : 'full-screen'}">
+
+        <l:breadcrumb title="${% Two factor authentication}" />
+
+        <l:main-panel>
+            <div class="config body" style=" padding: 40px 40px">
+
+                <h2>Configure your security questions for 2FA</h2>
+                <p>Please choose any 3 unique security questions and enter your answer in the corresponding text boxes.
+                    <br/>
+                    At the time of login, you will be asked any two questions to verify your identity.
+                </p>
+
+
+                <f:section title="Security questions :">
+                    <f:form method="post" action="saveSecurityQuestion" name="replace" descriptor="${it.DESCRIPTOR}">
+                        <f:entry>
+                            <f:entry title="Security question 1" field="firstSecurityQuestion">
+                                <f:select default="${it.getFirstSecurityQuestion()}"/>
+                            </f:entry>
+                            <f:entry>
+                                <f:textbox field="firstSecurityQuestionAnswer" placeholder="Enter your answer here"
+                                           default="${it.getFirstSecurityQuestionAnswer()}"/>
+                            </f:entry>
+                        </f:entry>
+
+                        <f:entry>
+                            <f:entry title="Security question 2">
+                                <f:select field="secondSecurityQuestion" default="${it.getSecondSecurityQuestion()}"/>
+                            </f:entry>
+                            <f:entry>
+                                <f:textbox field="secondSecurityQuestionAnswer" placeholder="Enter your answer here"
+                                           default="${it.getSecondSecurityQuestionAnswer()}"/>
+                            </f:entry>
+                        </f:entry>
+
+                        <f:entry>
+                            <f:entry title="Security question 3">
+                                <f:textbox field="customSecurityQuestion" placeholder="Enter your question here"
+                                           default="${it.getCustomSecurityQuestion()}"/>
+                            </f:entry>
+                            <f:entry>
+                                <f:textbox field="customSecurityQuestionAnswer" placeholder="Enter your answer here"
+                                           default="${it.getCustomSecurityQuestionAnswer()}"/>
+                            </f:entry>
+                        </f:entry>
+
+                        <f:bottomButtonBar>
+                            <j:if test="${not(it.isUserAuthenticatedFromTfa())}">
+                                <f:submit value="${%Save}"/>
+                            </j:if>
+                            <j:if test="${it.isUserAuthenticatedFromTfa()}">
+                                <f:apply value="Save"/>
+                            </j:if>
+                        </f:bottomButtonBar>
+
+                    </f:form>
+                </f:section>
+
+            </div>
+
+        </l:main-panel>
+
+    </l:layout>
+
+</j:jelly>
+

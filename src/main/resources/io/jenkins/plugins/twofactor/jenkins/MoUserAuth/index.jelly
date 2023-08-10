@@ -1,0 +1,47 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:st="jelly:stapler">
+
+    <l:layout title="2FA Config" type="full-screen">
+
+        <l:main-panel>
+
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.moUserAuth"/>
+
+            <j:set var="securityQuestionConfigured" value="${it.showSecurityQuestionForConfiguration()}"/>
+            <j:set var="otpOverEmailConfigured" value="${it.showOtpOverEmailForConfiguration()}"/>
+
+
+            <div class="form-header">
+                <img class="form-header-img" src="/plugin/miniorange-two-factor/images/logo.svg" alt="Img not found"/>
+                <h1 class="form-header-title">Validate Two Factor</h1>
+            </div>
+
+            <p class="form-body-para">Please choose 2FA method for validation.</p>
+
+            <j:if test="${securityQuestionConfigured}">
+                <div class="user-security-methods">
+                    <a class="submit jenkins-button custom" href="./securityQuestionAuth/">
+                        Security Questions
+                    </a>
+                </div>
+            </j:if>
+
+            <j:if test="${otpOverEmailConfigured}">
+                <div class="user-security-methods">
+                    <a class="submit jenkins-button custom" href="./otpOverEmailAuth/">
+                        Otp Over Email
+                    </a>
+                </div>
+            </j:if>
+
+            <div class="relative-links">
+                <a href="../user/${it.getUserId()}/tfaConfiguration/" class="logout-link">Configure other methods</a>
+                <a href="/logout" class="logout-link">Cancel</a>
+            </div>
+
+        </l:main-panel>
+
+    </l:layout>
+</j:jelly>
+
+
