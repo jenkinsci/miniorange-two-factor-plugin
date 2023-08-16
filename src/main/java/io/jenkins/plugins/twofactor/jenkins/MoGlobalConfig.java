@@ -89,7 +89,7 @@ public class MoGlobalConfig extends GlobalConfiguration {
     try {
       enableTfa = formData.getBoolean("enableTfa");
       moPluginSettings.put(
-          MoGlobalConfigConstant.AdminConfiguration.ENABLE_2FA.getKey(), enableTfa);
+          MoGlobalConfigConstant.AdminConfiguration.ENABLE_2FA_FOR_ALL_USERS.getKey(), enableTfa);
       enableSecurityQuestionsAuthentication = formData.getBoolean("enableSecurityQuestion");
 
       if (formData.containsKey("enableOtpOverEmail")) {

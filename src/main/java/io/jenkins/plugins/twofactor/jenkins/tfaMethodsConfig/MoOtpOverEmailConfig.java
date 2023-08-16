@@ -66,10 +66,6 @@ public class MoOtpOverEmailConfig extends UserProperty implements Action {
     return "otpOverEmailConfig";
   }
 
-  @SuppressWarnings("unused")
-  public String getBaseUrl() {
-    return get().getRootUrl();
-  }
 
   @SuppressWarnings("unused")
   public void doReset(StaplerRequest req, StaplerResponse rsp)
@@ -117,7 +113,16 @@ public class MoOtpOverEmailConfig extends UserProperty implements Action {
     @SuppressWarnings("unused")
     public Boolean showInUserProfile() {
       return MoFilter.moPluginSettings.getOrDefault(
-          MoGlobalConfigConstant.AdminConfiguration.ENABLE_2FA.getKey(), false) && MoGlobalConfig.get().isEnableOtpOverEmailAuthentication();
+          MoGlobalConfigConstant.AdminConfiguration.ENABLE_2FA_FOR_ALL_USERS.getKey(), false) && MoGlobalConfig.get().isEnableOtpOverEmailAuthentication();
+    }
+
+    @SuppressWarnings("unused")
+    public String getUserId() {
+      User currentUser = User.current();
+      if (currentUser == null) {
+        return "";
+      }
+      return currentUser.getId();
     }
   }
 }

@@ -47,6 +47,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import jenkins.model.Jenkins;
 
+import static io.jenkins.plugins.twofactor.constants.MoGlobalConfigConstant.UtilityGlobalConstants.SESSION_2FA_VERIFICATION;
+
 @Extension
 public class MoFilter implements Filter {
   public static final Map<String, Boolean> userAuthenticationStatus = new ConcurrentHashMap<>();
@@ -57,7 +59,7 @@ public class MoFilter implements Filter {
   public void init(FilterConfig filterConfig) {
     try {
       moPluginSettings.put(
-          MoGlobalConfigConstant.AdminConfiguration.ENABLE_2FA.getKey(),
+          MoGlobalConfigConstant.AdminConfiguration.ENABLE_2FA_FOR_ALL_USERS.getKey(),
           MoGlobalConfig.get().getEnableTfa());
     } catch (Exception e) {
       LOGGER.fine(
@@ -172,13 +174,40 @@ public class MoFilter implements Filter {
     return urlsToAvoidRedirect(url, tfaPluginUrls);
   }
 
-  private boolean guardConditions(User user, String url) {
-    return user == null
-        || !moPluginSettings.getOrDefault(
-            MoGlobalConfigConstant.AdminConfiguration.ENABLE_2FA.getKey(), false)
-        || userAuthenticationStatus.getOrDefault(user.getId(), false)
-        || tfaPluginUrlsToAvoidRedirect(url)
-        || JenkinsUrlsToAvoidRedirect(url);
+  private boolean isTfaVerifiedSession(HttpSession session, User user) {
+    try {
+      String sessionAttributeKey = user.getId() + SESSION_2FA_VERIFICATION.getKey();
+      Object tfaVerificationAttribute = session.getAttribute(sessionAttributeKey);
+
+      if (tfaVerificationAttribute != null) {
+        boolean isTfaVerifiedSession = Boolean.parseBoolean(tfaVerificationAttribute.toString());
+        userAuthenticationStatus.put(user.getId(), isTfaVerifiedSession);
+        return isTfaVerifiedSession;
+      }
+
+      userAuthenticationStatus.put(user.getId(), false);
+      return false;
+    } catch (Exception e) {
+      String errorMessage = "An error occurred while fetching session: " + e.getMessage();
+      LOGGER.fine(errorMessage);
+      return false;
+    }
+  }
+
+  private boolean byPass2FA(User user, String url, HttpSession session) {
+    if (user == null) {
+      return true;
+    }
+
+    if (isTfaVerifiedSession(session, user)) {
+      return true;
+    }
+
+    if (tfaPluginUrlsToAvoidRedirect(url) || JenkinsUrlsToAvoidRedirect(url)) {
+      return true;
+    }
+
+    return false;
   }
 
   @Override
@@ -190,7 +219,7 @@ public class MoFilter implements Filter {
       User user = User.current();
       HttpSession session = req.getSession();
 
-      if (guardConditions(user, req.getPathInfo())) {
+      if (byPass2FA(user, req.getPathInfo(),session)) {
         filterChain.doFilter(servletRequest, servletResponse);
         return;
       }

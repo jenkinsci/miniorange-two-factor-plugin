@@ -21,6 +21,7 @@
  */
 package io.jenkins.plugins.twofactor.jenkins.tfaMethodsConfig;
 
+import static io.jenkins.plugins.twofactor.constants.MoGlobalConfigConstant.UtilityGlobalConstants.SESSION_2FA_VERIFICATION;
 import static io.jenkins.plugins.twofactor.constants.MoSecurityQuestionsConstant.SecurityQuestions;
 import static io.jenkins.plugins.twofactor.constants.MoSecurityQuestionsConstant.SecurityQuestions.SELECT_SECURITY_QUESTION;
 import static io.jenkins.plugins.twofactor.constants.MoSecurityQuestionsConstant.UserSecurityQuestionKey.*;
@@ -144,10 +145,11 @@ public class MoSecurityQuestionConfig extends UserProperty implements Action {
         }
         HttpSession session = req.getSession(false);
         assert user != null;
-        userAuthenticationStatus.put(user.getId(), true);
         if (session != null) {
           redirectUrl = (String) session.getAttribute("tfaRelayState");
           session.removeAttribute("tfaRelayState");
+          session.setAttribute(user.getId() + SESSION_2FA_VERIFICATION.getKey(), "true");
+          userAuthenticationStatus.put(user.getId(), true);
         }
 
         if (redirectUrl != null) {
@@ -289,8 +291,18 @@ public class MoSecurityQuestionConfig extends UserProperty implements Action {
     @SuppressWarnings("unused")
     public Boolean showInUserProfile() {
       return MoFilter.moPluginSettings.getOrDefault(
-              MoGlobalConfigConstant.AdminConfiguration.ENABLE_2FA.getKey(), false)
+              MoGlobalConfigConstant.AdminConfiguration.ENABLE_2FA_FOR_ALL_USERS.getKey(), false)
           && MoGlobalConfig.get().isEnableSecurityQuestionsAuthentication();
+    }
+
+    @SuppressWarnings("unused")
+    public String getUserId() {
+      User currentUser = User.current();
+      if (currentUser == null) {
+        return "";
+      }
+
+      return currentUser.getId();
     }
 
     private ListBoxModel fillSecurityQuestion() {

@@ -21,6 +21,7 @@
  */
 package io.jenkins.plugins.twofactor.jenkins.tfaMethodsAuth;
 
+import static io.jenkins.plugins.twofactor.constants.MoGlobalConfigConstant.UtilityGlobalConstants.SESSION_2FA_VERIFICATION;
 import static io.jenkins.plugins.twofactor.jenkins.MoFilter.userAuthenticationStatus;
 import static jenkins.model.Jenkins.get;
 
@@ -153,10 +154,11 @@ public class MoSecurityQuestionAuth implements Action {
       if (user == null) return;
       if (validateUserAnswers(formData)) {
         LOGGER.fine(user.getId() + " user is authentic");
-        userAuthenticationStatus.put(user.getId(), true);
         if (session != null) {
           redirectUrl = (String) session.getAttribute("tfaRelayState");
           session.removeAttribute("tfaRelayState");
+          session.setAttribute(user.getId() + SESSION_2FA_VERIFICATION.getKey(), "true");
+          userAuthenticationStatus.put(user.getId(), true);
         }
         showWrongCredentialWarning.put(user.getId(), false);
       } else {

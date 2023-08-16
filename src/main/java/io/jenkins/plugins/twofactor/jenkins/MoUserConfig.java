@@ -45,7 +45,7 @@ public class MoUserConfig extends UserProperty implements Action {
       User user = User.current();
       if (user == null
           || !MoFilter.moPluginSettings.getOrDefault(
-              MoGlobalConfigConstant.AdminConfiguration.ENABLE_2FA.getKey(), false)) {
+              MoGlobalConfigConstant.AdminConfiguration.ENABLE_2FA_FOR_ALL_USERS.getKey(), false)) {
         return null;
       }
       StaplerRequest request = Stapler.getCurrentRequest();
@@ -135,7 +135,7 @@ public class MoUserConfig extends UserProperty implements Action {
     @SuppressWarnings("unused")
     public Boolean showInUserProfile() {
       return MoFilter.moPluginSettings.getOrDefault(
-          MoGlobalConfigConstant.AdminConfiguration.ENABLE_2FA.getKey(), false);
+          MoGlobalConfigConstant.AdminConfiguration.ENABLE_2FA_FOR_ALL_USERS.getKey(), false);
     }
   }
 }

@@ -22,6 +22,7 @@
 package io.jenkins.plugins.twofactor.jenkins.tfaMethodsAuth;
 
 import static hudson.tasks.Mailer.stringToAddress;
+import static io.jenkins.plugins.twofactor.constants.MoGlobalConfigConstant.UtilityGlobalConstants.SESSION_2FA_VERIFICATION;
 import static io.jenkins.plugins.twofactor.jenkins.MoFilter.userAuthenticationStatus;
 
 import hudson.Util;
@@ -256,13 +257,14 @@ public class MoOtpOverEmailAuth implements Action {
         if (userInputOtp.equals(sentOtp.get(user.getId()))) {
           LOGGER.fine("Otp is authentic");
           otpOverEmailConfig.setConfigured(true);
-          userAuthenticationStatus.put(user.getId(), true);
-          showWrongCredentialWarning.put(user.getId(), false);
           sentOtp.remove(user.getId());
 
           if (session != null) {
             redirectUrl = (String) session.getAttribute("tfaRelayState");
             session.removeAttribute("tfaRelayState");
+            session.setAttribute(user.getId() + SESSION_2FA_VERIFICATION.getKey(), "true");
+            userAuthenticationStatus.put(user.getId(), true);
+            showWrongCredentialWarning.put(user.getId(), false);
           } else {
             LOGGER.fine("Entered wrong otp for otpOverEmailConfig");
             redirectUrl = "./";
@@ -279,12 +281,13 @@ public class MoOtpOverEmailAuth implements Action {
         LOGGER.fine("Authenticating the OTPOverEmail  OTP to login user");
         if (userInputOtp.equals(sentOtp.get(user.getId()))) {
           LOGGER.fine("User is authentic");
-          userAuthenticationStatus.put(user.getId(), true);
-          showWrongCredentialWarning.put(user.getId(), false);
           sentOtp.remove(user.getId());
           if (session != null) {
             redirectUrl = (String) session.getAttribute("tfaRelayState");
             session.removeAttribute("tfaRelayState");
+            session.setAttribute(user.getId() + SESSION_2FA_VERIFICATION.getKey(), "true");
+            userAuthenticationStatus.put(user.getId(), true);
+            showWrongCredentialWarning.put(user.getId(), false);
           }
 
         } else {
