@@ -134,6 +134,7 @@ public class MoGlobalConfigView extends ManagementLink implements Describable<Mo
 
     @POST
     public FormValidation doCheckSenderEmailAddress(@QueryParameter String senderEmailAddress) {
+      Jenkins.get().checkPermission(Jenkins.ADMINISTER);
       String regex = "^(.+)@(.+)$";
       Pattern pattern = Pattern.compile(regex);
       Matcher matcher = pattern.matcher(senderEmailAddress);

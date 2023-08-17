@@ -146,6 +146,7 @@ public class MoSecurityQuestionAuth implements Action {
   @RequirePOST
   public void doSecurityQuestionAuthenticate(
       StaplerRequest staplerRequest, StaplerResponse staplerResponse) throws Exception {
+    Jenkins.get().checkPermission(Jenkins.READ);
     net.sf.json.JSONObject formData = staplerRequest.getSubmittedForm();
     HttpSession session = staplerRequest.getSession(false);
     String redirectUrl = get().getRootUrl();

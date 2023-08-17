@@ -226,8 +226,10 @@ public class MoOtpOverEmailAuth implements Action {
   }
 
   @SuppressWarnings("unused")
+  @RequirePOST
   public void doResendOtp(StaplerRequest req, StaplerResponse rsp)
       throws ServletException, IOException {
+    Jenkins.get().checkPermission(Jenkins.READ);
     try {
       sendMail();
     } catch (Exception e) {
@@ -240,7 +242,7 @@ public class MoOtpOverEmailAuth implements Action {
   @RequirePOST
   public void doSaveOrValidateOtpOverEmailConfig(StaplerRequest req, StaplerResponse rsp)
       throws Exception {
-
+    Jenkins.get().checkPermission(Jenkins.READ);
     if (sentOtp.get(user.getId()) == null) {
       return;
     }

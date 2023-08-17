@@ -118,6 +118,7 @@ public class MoSecurityQuestionConfig extends UserProperty implements Action {
   @SuppressWarnings("unused")
   @RequirePOST
   public void doSaveSecurityQuestion(StaplerRequest req, StaplerResponse rsp) throws Exception {
+    Jenkins.get().checkPermission(Jenkins.READ);
     LOGGER.fine("Saving user security questions");
     net.sf.json.JSONObject json = req.getSubmittedForm();
     String redirectUrl = req.getContextPath() + "./";
@@ -169,8 +170,10 @@ public class MoSecurityQuestionConfig extends UserProperty implements Action {
   }
 
   @SuppressWarnings("unused")
+  @RequirePOST
   public void doReset(StaplerRequest req, StaplerResponse rsp)
       throws IOException, ServletException {
+    Jenkins.get().checkPermission(Jenkins.READ);
     try {
       MoSecurityQuestionConfig userSecurityQuestion =
           user.getProperty(MoSecurityQuestionConfig.class);
@@ -316,12 +319,14 @@ public class MoSecurityQuestionConfig extends UserProperty implements Action {
     @SuppressWarnings("unused")
     @RequirePOST
     public ListBoxModel doFillFirstSecurityQuestionItems() {
+      Jenkins.get().checkPermission(Jenkins.READ);
       return fillSecurityQuestion();
     }
 
     @SuppressWarnings("unused")
     @RequirePOST
     public ListBoxModel doFillSecondSecurityQuestionItems() {
+      Jenkins.get().checkPermission(Jenkins.READ);
       return fillSecurityQuestion();
     }
 
@@ -337,6 +342,7 @@ public class MoSecurityQuestionConfig extends UserProperty implements Action {
     public FormValidation doCheckFirstSecurityQuestion(
         @QueryParameter String firstSecurityQuestion,
         @QueryParameter String secondSecurityQuestion) {
+      Jenkins.get().checkPermission(Jenkins.READ);
       return validateForm(
           firstSecurityQuestion.equals(SELECT_SECURITY_QUESTION.getQuestion())
               || firstSecurityQuestion.equals(secondSecurityQuestion),
@@ -348,6 +354,7 @@ public class MoSecurityQuestionConfig extends UserProperty implements Action {
     public FormValidation doCheckFirstSecurityQuestionAnswer(
         @QueryParameter String firstSecurityQuestionAnswer,
         @QueryParameter String secondSecurityQuestion) {
+      Jenkins.get().checkPermission(Jenkins.READ);
       return validateForm(
           StringUtils.isBlank(firstSecurityQuestionAnswer), "Please Enter valid answer");
     }
@@ -357,6 +364,7 @@ public class MoSecurityQuestionConfig extends UserProperty implements Action {
     public FormValidation doCheckSecondSecurityQuestion(
         @QueryParameter String secondSecurityQuestion,
         @QueryParameter String firstSecurityQuestion) {
+      Jenkins.get().checkPermission(Jenkins.READ);
       return validateForm(
           secondSecurityQuestion.equals(SELECT_SECURITY_QUESTION.getQuestion())
               || secondSecurityQuestion.equals(firstSecurityQuestion),
@@ -367,6 +375,7 @@ public class MoSecurityQuestionConfig extends UserProperty implements Action {
     @RequirePOST
     public FormValidation doCheckSecondSecurityQuestionAnswer(
         @QueryParameter String secondSecurityQuestionAnswer) {
+      Jenkins.get().checkPermission(Jenkins.READ);
       return validateForm(
           StringUtils.isBlank(secondSecurityQuestionAnswer), "Please Enter valid answer");
     }
@@ -375,6 +384,7 @@ public class MoSecurityQuestionConfig extends UserProperty implements Action {
     @RequirePOST
     public FormValidation doCheckCustomSecurityQuestion(
         @QueryParameter String customSecurityQuestion) {
+      Jenkins.get().checkPermission(Jenkins.READ);
       return validateForm(
           StringUtils.isBlank(customSecurityQuestion), "Please select a valid security question");
     }
@@ -383,6 +393,7 @@ public class MoSecurityQuestionConfig extends UserProperty implements Action {
     @RequirePOST
     public FormValidation doCheckCustomSecurityQuestionAnswer(
         @QueryParameter String customSecurityQuestionAnswer) {
+      Jenkins.get().checkPermission(Jenkins.READ);
       return validateForm(
           StringUtils.isBlank(customSecurityQuestionAnswer), "Please Enter valid answer");
     }

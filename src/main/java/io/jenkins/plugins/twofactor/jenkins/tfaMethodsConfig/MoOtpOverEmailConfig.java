@@ -38,9 +38,11 @@ import java.util.logging.Logger;
 import javax.servlet.ServletException;
 
 import io.jenkins.plugins.twofactor.jenkins.MoGlobalConfig;
+import jenkins.model.Jenkins;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.interceptor.RequirePOST;
 
 public class MoOtpOverEmailConfig extends UserProperty implements Action {
   private static final Logger LOGGER = Logger.getLogger(MoOtpOverEmailConfig.class.getName());
@@ -68,8 +70,10 @@ public class MoOtpOverEmailConfig extends UserProperty implements Action {
 
 
   @SuppressWarnings("unused")
+  @RequirePOST
   public void doReset(StaplerRequest req, StaplerResponse rsp)
       throws IOException, ServletException {
+    Jenkins.get().checkPermission(Jenkins.READ);
     try {
       MoOtpOverEmailConfig otpOverEmailConfig = user.getProperty(MoOtpOverEmailConfig.class);
       otpOverEmailConfig.setConfigured(false);

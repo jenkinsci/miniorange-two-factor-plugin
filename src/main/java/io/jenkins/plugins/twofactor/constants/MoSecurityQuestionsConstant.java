@@ -1,5 +1,7 @@
 package io.jenkins.plugins.twofactor.constants;
 
+import hudson.util.Secret;
+
 public class MoSecurityQuestionsConstant {
 
   public enum SecurityQuestions {
@@ -27,21 +29,21 @@ public class MoSecurityQuestionsConstant {
   }
 
   public enum UserSecurityQuestionKey {
-    USER_FIRST_SECURITY_QUESTION("firstSecurityQuestion"),
-    USER_SECOND_SECURITY_QUESTION("secondSecurityQuestion"),
-    USER_CUSTOM_SECURITY_QUESTION("customSecurityQuestion"),
-    USER_FIRST_SECURITY_QUESTION_ANSWER("firstSecurityQuestionAnswer"),
-    USER_SECOND_SECURITY_QUESTION_ANSWER("secondSecurityQuestionAnswer"),
-    USER_CUSTOM_SECURITY_QUESTION_ANSWER("customSecurityQuestionAnswer");
+    USER_FIRST_SECURITY_QUESTION(Secret.fromString("firstSecurityQuestion")),
+    USER_SECOND_SECURITY_QUESTION(Secret.fromString("secondSecurityQuestion")),
+    USER_CUSTOM_SECURITY_QUESTION(Secret.fromString("customSecurityQuestion")),
+    USER_FIRST_SECURITY_QUESTION_ANSWER(Secret.fromString("firstSecurityQuestionAnswer")),
+    USER_SECOND_SECURITY_QUESTION_ANSWER(Secret.fromString("secondSecurityQuestionAnswer")),
+    USER_CUSTOM_SECURITY_QUESTION_ANSWER(Secret.fromString("customSecurityQuestionAnswer"));
 
-    private final String key;
+    private final Secret key;
 
-    UserSecurityQuestionKey(String key) {
+    UserSecurityQuestionKey(Secret key) {
       this.key = key;
     }
 
     public String getKey() {
-      return key;
+      return key.getPlainText();
     }
   }
 }
