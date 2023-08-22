@@ -23,3 +23,14 @@
 .other-method-redirection-link{
     text-decoration: none;
 }
+
+.resend-otp{
+    font-weight: 600;
+    display: inline-block;
+    text-decoration: none;
+    border: none;
+    background: inherit;
+    cursor: pointer;
+    color: #0062d1;
+    padding: 0;
+}

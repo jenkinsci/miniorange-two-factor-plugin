@@ -42,47 +42,60 @@
                     <p class="alert alert-info">
 
                         <j:if test="${it.isOtpSentToUser()}">
-                            Please click on This <a href="./resendOtp"
-                                                    style="display: inline-block; text-decoration: none">Resend OTP</a>.
+                            Please click on <b>Resend OTP </b>
                             If you haven't received OTP to your registered email address.
                         </j:if>
 
                         <j:if test="${not(it.isOtpSentToUser())}">
-                            Please click to send OTP button to send OTP to your registered email address.
+                            <span>Please click to send OTP button to send OTP to your registered email address.</span>
                         </j:if>
 
                         <j:if test="${not(otpOverEmailConfigured)}">
-                            <b>(${it.getUserEmailAddress()})</b>
+                            <span><b>(${it.getUserEmailAddress()})</b></span>
                         </j:if>
 
-                        Then enter OTP you received on your configured email address to get access of Jenkins.
+                        <span>Then enter OTP you received on your configured email address to get access of Jenkins.</span>
 
                     </p>
 
                     <f:entry title="Enter OTP received on email">
-                        <f:textbox field="emailOtpForVerification" placeholder="Enter OTP"
-                                   default=""/>
+
+                        <div style="display: flex; gap: 10px">
+                            <f:textbox field="emailOtpForVerification" placeholder="Enter OTP"
+                                       default=""/>
+
+                            <j:if test="${it.isOtpSentToUser()}">
+                                <f:submit value="${%validate}"/>
+                            </j:if>
+                        </div>
+
                     </f:entry>
 
+                </f:form>
+
+                <div>
                     <j:if test="${it.isOtpSentToUser()}">
-                        <f:submit value="${%validate}"/>
+                        <form style="display: inline-block" method="post" action="./resendOtp" id="resendOTPForm">
+                            <button class="resend-otp" method="post" action="./resendOtp" id="resendOTPForm" onclick="document.getElementById('resendOTPForm').submit();">Resend OTP</button>
+                        </form>
                     </j:if>
 
                     <j:if test="${not(it.isOtpSentToUser())}">
-                        <a href="./resendOtp"
-                           style="display: inline-block; text-decoration: none">Send OTP
-                        </a>
+                        <form style="display: inline-block" method="post" action="./resendOtp" id="resendOTPForm">
+                            <button class="resend-otp"  method="post" action="./resendOtp" id="resendOTPForm" onclick="document.getElementById('resendOTPForm').submit();">send OTP</button>
+                        </form>
                     </j:if>
 
 
                     <j:if test="${not(userAuthenticatedFromTfa)}">
                         <a href="../" style="display: inline-block; margin-left: 15px;">Validate by other method?</a>
-                        <a href="/user/admin/tfaConfiguration/" style="display: inline-block; margin-left: 15px;">
+                        <a href="/user/${it.getUserId()}/tfaConfiguration/" style="display: inline-block; margin-left: 15px;">
                             Configure other method?
                         </a>
                     </j:if>
+                </div>
 
-                </f:form>
+
 
             </div>
 

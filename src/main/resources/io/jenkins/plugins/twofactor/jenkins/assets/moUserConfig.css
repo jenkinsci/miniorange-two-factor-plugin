@@ -30,3 +30,8 @@
 .logout-link:hover {
     color: #0062d1;
 }
+
+.relative-links{
+    display: flex;
+    justify-content: space-around;
+}

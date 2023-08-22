@@ -137,5 +137,15 @@ public class MoUserConfig extends UserProperty implements Action {
       return MoFilter.moPluginSettings.getOrDefault(
           MoGlobalConfigConstant.AdminConfiguration.ENABLE_2FA_FOR_ALL_USERS.getKey(), false);
     }
+
+    @SuppressWarnings("unused")
+    public String getUserId() {
+      User currentUser = User.current();
+      if (currentUser == null) {
+        return "";
+      }
+
+      return currentUser.getId();
+    }
   }
 }

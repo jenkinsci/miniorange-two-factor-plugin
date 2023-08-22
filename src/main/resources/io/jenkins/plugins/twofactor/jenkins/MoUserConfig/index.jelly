@@ -37,7 +37,10 @@
                     </div>
                 </j:if>
 
-                <a href="/logout" class="logout-link">Cancel</a>
+                <div class="relative-links">
+                    <a href="/logout" class="logout-link">Cancel</a>
+                    <a href="${it.getBaseUrl()}tfaUserAuth/" class="logout-link">Validate by other method?</a>
+                </div>
             </l:main-panel>
         </l:layout>
     </j:if>
@@ -62,10 +65,17 @@
                                      alt="Img not found"/>
                                 <span>User need's to answer the security questions to access the jenkins.</span>
                             </div>
-                            <a class="card-link-btn"
-                               href="${! showSecurityQuestionForConfiguration ? '../securityQuestionConfig/reset' : '../securityQuestionConfig/'}">
-                                ${! showSecurityQuestionForConfiguration ? 'Reset' : 'Configure'}
-                            </a>
+
+                            <j:if test="${showSecurityQuestionForConfiguration}">
+                                <a class="card-link-btn" href="../securityQuestionConfig/">Configure</a>
+                            </j:if>
+
+                            <j:if test="${! showSecurityQuestionForConfiguration}">
+                                <form method="post" action="../securityQuestionConfig/reset">
+                                    <button class="card-link-btn" onclick="this.parentNode.submit();">Reset</button>
+                                </form>
+                            </j:if>
+
                         </div>
                     </j:if>
 
@@ -78,10 +88,17 @@
                                      alt="Img not found"/>
                                 <span>User need's to enter the OTP received on his email.</span>
                             </div>
-                            <a class="card-link-btn"
-                               href="${! showOtpOverEmailForConfiguration ? '../otpOverEmailConfig/reset' : '/tfaUserAuth/otpOverEmailAuth/'}">
-                                ${! showOtpOverEmailForConfiguration ? 'Reset' : 'Configure'}
-                            </a>
+
+                            <j:if test="${showOtpOverEmailForConfiguration}">
+                                <a class="card-link-btn" href="/tfaUserAuth/otpOverEmailAuth/">Configure</a>
+                            </j:if>
+
+                            <j:if test="${! showOtpOverEmailForConfiguration}">
+                                <form method="post" action="../otpOverEmailConfig/reset">
+                                    <button class="card-link-btn" onclick="this.parentNode.submit();">Reset</button>
+                                </form>
+                            </j:if>
+
                         </div>
                     </j:if>
 

@@ -46,7 +46,6 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.interceptor.RequirePOST;
 
-// @Extension
 public class MoOtpOverEmailAuth implements Action {
 
   private static final Logger LOGGER = Logger.getLogger(MoOtpOverEmailAuth.class.getName());
@@ -124,6 +123,7 @@ public class MoOtpOverEmailAuth implements Action {
     final String SMTP_PORT_PROPERTY = "mail.smtp.port";
     final String SMTP_SOCKETFACTORY_PORT_PROPERTY = "mail.smtp.socketFactory.port";
     final String SMTP_SSL_ENABLE_PROPERTY = "mail.smtp.ssl.enable";
+    final String SMTP_SSL_CHECKSERVERIDENTITY = "mail.smtp.ssl.checkserveridentity";
 
     smtpHost = Util.fixEmptyAndTrim(smtpHost);
     smtpPort = Util.fixEmptyAndTrim(smtpPort);
@@ -144,7 +144,7 @@ public class MoOtpOverEmailAuth implements Action {
       }
       if (props.getProperty(SMTP_SSL_ENABLE_PROPERTY) == null) {
         props.put(SMTP_SSL_ENABLE_PROPERTY, "true");
-        props.put("mail.smtp.ssl.checkserveridentity", true);
+        props.put(SMTP_SSL_CHECKSERVERIDENTITY, true);
       }
       props.put("mail.smtp.socketFactory.fallback", "false");
       if (props.getProperty("mail.smtp.ssl.checkserveridentity") == null) {

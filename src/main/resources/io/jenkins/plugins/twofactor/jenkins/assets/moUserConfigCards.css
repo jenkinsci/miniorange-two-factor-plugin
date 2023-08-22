@@ -42,4 +42,10 @@
     padding: 10px;
     border-radius: 10px;
     text-align: center;
+    width: 100%;
+    color: #0062d1;
+    font-size: 0.875rem;
+    cursor: pointer;
+    border: none;
+    font-weight: 600;
 }
