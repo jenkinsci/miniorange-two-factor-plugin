@@ -50,7 +50,6 @@ It enhances the overall security of your Jenkins environment. Additionally, this
 ![image_8](docs/images/configuration/reset_2FA.png)
 
 * Choose the "Reset" or "Configuration" option to either reset the currently configured authentication method or set up a new method if it is currently not configured.
-![image_8](docs/images/configuration/reset_configure.png)
 
 # Troubleshooting and Logging
 
