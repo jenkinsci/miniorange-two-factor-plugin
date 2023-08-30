@@ -147,9 +147,5 @@ public class MoGlobalConfigView extends ManagementLink implements Describable<Mo
       }
     }
 
-    public FormValidation doCheckEnableOtpOverEmail(@QueryParameter boolean enableOtpOverEmail) {
-      if (enableOtpOverEmail) return FormValidation.ok();
-      else return FormValidation.error("Please enable OTP Over Email first");
-    }
   }
 }

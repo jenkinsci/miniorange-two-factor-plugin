@@ -39,7 +39,6 @@
 
                 <div class="relative-links">
                     <a href="/logout" class="logout-link">Cancel</a>
-                    <a href="${it.getBaseUrl()}tfaUserAuth/" class="logout-link">Validate by other method?</a>
                 </div>
             </l:main-panel>
         </l:layout>

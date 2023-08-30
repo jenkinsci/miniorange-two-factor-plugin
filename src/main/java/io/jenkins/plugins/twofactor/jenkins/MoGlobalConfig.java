@@ -21,11 +21,11 @@
  */
 package io.jenkins.plugins.twofactor.jenkins;
 
+import static io.jenkins.plugins.twofactor.constants.MoGlobalConfigConstant.AdminConfiguration.ENABLE_2FA_FOR_ALL_USERS;
 import static io.jenkins.plugins.twofactor.jenkins.MoFilter.moPluginSettings;
 
 import hudson.Extension;
 import hudson.XmlFile;
-import io.jenkins.plugins.twofactor.constants.MoGlobalConfigConstant;
 import io.jenkins.plugins.twofactor.jenkins.dto.MoOtpOverEmailDto;
 import java.io.File;
 import java.util.logging.Logger;
@@ -88,13 +88,17 @@ public class MoGlobalConfig extends GlobalConfiguration {
   public void saveMoGlobalConfigViewForm(JSONObject formData) {
     try {
       enableTfa = formData.getBoolean("enableTfa");
-      moPluginSettings.put(
-          MoGlobalConfigConstant.AdminConfiguration.ENABLE_2FA_FOR_ALL_USERS.getKey(), enableTfa);
+      moPluginSettings.put(ENABLE_2FA_FOR_ALL_USERS.getKey(), enableTfa);
       enableSecurityQuestionsAuthentication = formData.getBoolean("enableSecurityQuestion");
 
       if (formData.containsKey("enableOtpOverEmail")) {
         JSONObject otpOverEmail = formData.getJSONObject("enableOtpOverEmail");
-        otpOverEmailDto = new MoOtpOverEmailDto(true, otpOverEmail.getString("senderEmailAddress"));
+        String senderEmailAddress = otpOverEmail.getString("senderEmailAddress");
+
+        if (senderEmailAddress.isEmpty()) {
+          throw new UnsupportedOperationException("Sender Email address can not be kept as empty");
+        }
+        otpOverEmailDto = new MoOtpOverEmailDto(true, senderEmailAddress);
       } else {
         otpOverEmailDto = null;
       }

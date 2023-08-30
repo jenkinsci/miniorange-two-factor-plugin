@@ -21,6 +21,7 @@
  */
 package io.jenkins.plugins.twofactor.jenkins;
 
+import static io.jenkins.plugins.twofactor.constants.MoPluginUrls.Urls.MO_USER_AUTH;
 import static jenkins.model.Jenkins.get;
 
 import hudson.Extension;
@@ -28,7 +29,6 @@ import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.model.RootAction;
 import hudson.model.User;
-import io.jenkins.plugins.twofactor.constants.MoPluginUrls;
 import io.jenkins.plugins.twofactor.jenkins.tfaMethodsAuth.MoOtpOverEmailAuth;
 import io.jenkins.plugins.twofactor.jenkins.tfaMethodsAuth.MoSecurityQuestionAuth;
 import io.jenkins.plugins.twofactor.jenkins.tfaMethodsConfig.MoOtpOverEmailConfig;
@@ -52,12 +52,12 @@ public class MoUserAuth implements RootAction, Describable<MoUserAuth> {
 
   @Override
   public String getDisplayName() {
-    return MoPluginUrls.Urls.MO_USER_AUTH.getUrl();
+    return MO_USER_AUTH.getUrl();
   }
 
   @Override
   public String getUrlName() {
-    return MoPluginUrls.Urls.MO_USER_AUTH.getUrl();
+    return MO_USER_AUTH.getUrl();
   }
 
   @SuppressWarnings("unused")

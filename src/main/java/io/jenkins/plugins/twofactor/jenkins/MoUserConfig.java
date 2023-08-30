@@ -21,12 +21,14 @@
  */
 package io.jenkins.plugins.twofactor.jenkins;
 
+import static io.jenkins.plugins.twofactor.constants.MoGlobalConfigConstant.AdminConfiguration.ENABLE_2FA_FOR_ALL_USERS;
+import static io.jenkins.plugins.twofactor.constants.MoPluginUrls.Urls.MO_USER_CONFIG;
+import static io.jenkins.plugins.twofactor.jenkins.MoFilter.moPluginSettings;
+import static io.jenkins.plugins.twofactor.jenkins.MoFilter.userAuthenticationStatus;
 import static jenkins.model.Jenkins.get;
 
 import hudson.Extension;
 import hudson.model.*;
-import io.jenkins.plugins.twofactor.constants.MoGlobalConfigConstant;
-import io.jenkins.plugins.twofactor.constants.MoPluginUrls;
 import io.jenkins.plugins.twofactor.jenkins.tfaMethodsConfig.MoOtpOverEmailConfig;
 import io.jenkins.plugins.twofactor.jenkins.tfaMethodsConfig.MoSecurityQuestionConfig;
 import java.util.logging.Logger;
@@ -44,8 +46,7 @@ public class MoUserConfig extends UserProperty implements Action {
     try {
       User user = User.current();
       if (user == null
-          || !MoFilter.moPluginSettings.getOrDefault(
-              MoGlobalConfigConstant.AdminConfiguration.ENABLE_2FA_FOR_ALL_USERS.getKey(), false)) {
+          || !moPluginSettings.getOrDefault(ENABLE_2FA_FOR_ALL_USERS.getKey(), false)) {
         return null;
       }
       StaplerRequest request = Stapler.getCurrentRequest();
@@ -67,7 +68,7 @@ public class MoUserConfig extends UserProperty implements Action {
 
   @Override
   public String getUrlName() {
-    return MoPluginUrls.Urls.MO_USER_CONFIG.getUrl();
+    return MO_USER_CONFIG.getUrl();
   }
 
   public boolean isSecurityQuestionConfigurationIsEnabled() {
@@ -97,7 +98,7 @@ public class MoUserConfig extends UserProperty implements Action {
   public boolean isUserAuthenticatedFromTfa() {
     User user = User.current();
     assert user != null;
-    return MoFilter.userAuthenticationStatus.getOrDefault(user.getId(), false);
+    return userAuthenticationStatus.getOrDefault(user.getId(), false);
   }
 
   @SuppressWarnings("unused")
@@ -134,8 +135,8 @@ public class MoUserConfig extends UserProperty implements Action {
 
     @SuppressWarnings("unused")
     public Boolean showInUserProfile() {
-      return MoFilter.moPluginSettings.getOrDefault(
-          MoGlobalConfigConstant.AdminConfiguration.ENABLE_2FA_FOR_ALL_USERS.getKey(), false);
+      return moPluginSettings.getOrDefault(
+          ENABLE_2FA_FOR_ALL_USERS.getKey(), false);
     }
 
     @SuppressWarnings("unused")

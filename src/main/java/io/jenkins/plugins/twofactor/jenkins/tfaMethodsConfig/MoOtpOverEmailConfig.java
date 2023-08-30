@@ -21,7 +21,9 @@
  */
 package io.jenkins.plugins.twofactor.jenkins.tfaMethodsConfig;
 
-import static jenkins.model.Jenkins.get;
+import static io.jenkins.plugins.twofactor.constants.MoGlobalConfigConstant.AdminConfiguration.ENABLE_2FA_FOR_ALL_USERS;
+import static io.jenkins.plugins.twofactor.constants.MoPluginUrls.Urls.MO_USER_CONFIG;
+import static io.jenkins.plugins.twofactor.jenkins.MoFilter.moPluginSettings;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
@@ -30,9 +32,6 @@ import hudson.model.User;
 import hudson.model.UserProperty;
 import hudson.model.UserPropertyDescriptor;
 import hudson.util.FormApply;
-import io.jenkins.plugins.twofactor.constants.MoGlobalConfigConstant;
-import io.jenkins.plugins.twofactor.constants.MoPluginUrls;
-import io.jenkins.plugins.twofactor.jenkins.MoFilter;
 import java.io.IOException;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -84,7 +83,7 @@ public class MoOtpOverEmailConfig extends UserProperty implements Action {
     }
 
     FormApply.success(
-            req.getContextPath() + "../" + MoPluginUrls.Urls.MO_USER_CONFIG.getUrl() + "/")
+            req.getContextPath() + "../" + MO_USER_CONFIG.getUrl() + "/")
         .generateResponse(req, rsp, null);
   }
 
@@ -116,8 +115,7 @@ public class MoOtpOverEmailConfig extends UserProperty implements Action {
 
     @SuppressWarnings("unused")
     public Boolean showInUserProfile() {
-      return MoFilter.moPluginSettings.getOrDefault(
-          MoGlobalConfigConstant.AdminConfiguration.ENABLE_2FA_FOR_ALL_USERS.getKey(), false) && MoGlobalConfig.get().isEnableOtpOverEmailAuthentication();
+      return moPluginSettings.getOrDefault(ENABLE_2FA_FOR_ALL_USERS.getKey(), false) && MoGlobalConfig.get().isEnableOtpOverEmailAuthentication();
     }
 
     @SuppressWarnings("unused")

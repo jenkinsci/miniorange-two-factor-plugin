@@ -26,7 +26,6 @@ import hudson.init.Initializer;
 import hudson.model.User;
 import hudson.model.UserProperty;
 import hudson.util.PluginServletFilter;
-import io.jenkins.plugins.twofactor.constants.MoGlobalConfigConstant;
 import io.jenkins.plugins.twofactor.constants.MoPluginUrls;
 import io.jenkins.plugins.twofactor.jenkins.tfaMethodsConfig.MoOtpOverEmailConfig;
 import io.jenkins.plugins.twofactor.jenkins.tfaMethodsConfig.MoSecurityQuestionConfig;
@@ -47,7 +46,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import jenkins.model.Jenkins;
 
+import static io.jenkins.plugins.twofactor.constants.MoGlobalConfigConstant.AdminConfiguration.ENABLE_2FA_FOR_ALL_USERS;
 import static io.jenkins.plugins.twofactor.constants.MoGlobalConfigConstant.UtilityGlobalConstants.SESSION_2FA_VERIFICATION;
+import static io.jenkins.plugins.twofactor.constants.MoPluginUrls.Urls.*;
 
 @Extension
 public class MoFilter implements Filter {
@@ -58,8 +59,7 @@ public class MoFilter implements Filter {
   @Override
   public void init(FilterConfig filterConfig) {
     try {
-      moPluginSettings.put(
-          MoGlobalConfigConstant.AdminConfiguration.ENABLE_2FA_FOR_ALL_USERS.getKey(),
+      moPluginSettings.put(ENABLE_2FA_FOR_ALL_USERS.getKey(),
           MoGlobalConfig.get().getEnableTfa());
     } catch (Exception e) {
       LOGGER.fine(
@@ -88,7 +88,7 @@ public class MoFilter implements Filter {
             totalEnabledMethods++;
             if (((MoSecurityQuestionConfig) property).isConfigured()) {
               redirectUrl =
-                  MoPluginUrls.Urls.MO_USER_AUTH.getUrl()
+                  MO_USER_AUTH.getUrl()
                       + "/"
                       + MoPluginUrls.Urls.MO_SECURITY_QUESTION_AUTH.getUrl()
                       + "/";
@@ -101,7 +101,7 @@ public class MoFilter implements Filter {
             totalEnabledMethods++;
             if (((MoOtpOverEmailConfig) property).isConfigured()) {
               redirectUrl =
-                  MoPluginUrls.Urls.MO_USER_AUTH.getUrl()
+                  MO_USER_AUTH.getUrl()
                       + "/"
                       + MoPluginUrls.Urls.MO_OTP_OVER_EMAIL_AUTH.getUrl()
                       + "/";
@@ -118,11 +118,11 @@ public class MoFilter implements Filter {
     if ((totalEnabledMethods != 0) && (totalConfiguredMethods == 0)) {
       LOGGER.fine(
           "User has not configured any authentication method, redirecting to user configuration");
-      redirectUrl = "user/" + user.getId() + "/" + MoPluginUrls.Urls.MO_USER_CONFIG.getUrl() + "/";
+      redirectUrl = "user/" + user.getId() + "/" + MO_USER_CONFIG.getUrl() + "/";
     } else if ((totalEnabledMethods != 0) && totalConfiguredMethods > 1) {
       LOGGER.fine(
           "User has configured multiple authentication methods, redirecting to user authentication");
-      redirectUrl = MoPluginUrls.Urls.MO_USER_AUTH.getUrl() + "/";
+      redirectUrl = MO_USER_AUTH.getUrl() + "/";
     } else if (totalEnabledMethods == 0) {
       LOGGER.fine("Admin has not enabled any authentication methods, terminating 2FA");
       redirectUrl = "SKIP_FILTER";
@@ -166,12 +166,23 @@ public class MoFilter implements Filter {
   private boolean tfaPluginUrlsToAvoidRedirect(String url) {
     List<String> tfaPluginUrls =
         Arrays.asList(
-            MoPluginUrls.Urls.MO_USER_CONFIG.getUrl() + "/",
-            MoPluginUrls.Urls.MO_SECURITY_QUESTION_CONFIG.getUrl(),
+            MO_USER_CONFIG.getUrl() + "/",
+            MO_SECURITY_QUESTION_CONFIG.getUrl(),
             "/miniorange-two-factor",
             MoPluginUrls.Urls.MO_OTP_OVER_EMAIL_CONFIG.getUrl(),
-            MoPluginUrls.Urls.MO_USER_AUTH.getUrl() + "/");
+            MO_USER_AUTH.getUrl() + "/");
     return urlsToAvoidRedirect(url, tfaPluginUrls);
+  }
+
+  private static boolean enableTfaForAllUsers() {
+    return moPluginSettings.getOrDefault(ENABLE_2FA_FOR_ALL_USERS.getKey(), false);
+  }
+
+  static boolean isTfaEnabled() {
+
+    boolean enableForAllUsers = enableTfaForAllUsers();
+    return !enableForAllUsers;
+
   }
 
   private boolean isTfaVerifiedSession(HttpSession session, User user) {
@@ -200,6 +211,10 @@ public class MoFilter implements Filter {
     }
 
     if (isTfaVerifiedSession(session, user)) {
+      return true;
+    }
+
+    if (isTfaEnabled()) {
       return true;
     }
 

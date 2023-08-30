@@ -89,9 +89,6 @@
 
                     <j:if test="${not(userAuthenticatedFromTfa)}">
                         <a href="../" style="display: inline-block; margin-left: 15px;">Validate by other method?</a>
-                        <a href="/user/${it.getUserId()}/tfaConfiguration/" style="display: inline-block; margin-left: 15px;">
-                            Configure other method?
-                        </a>
                     </j:if>
                 </div>
 

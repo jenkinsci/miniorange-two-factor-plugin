@@ -21,10 +21,14 @@
  */
 package io.jenkins.plugins.twofactor.jenkins.tfaMethodsConfig;
 
+import static io.jenkins.plugins.twofactor.constants.MoGlobalConfigConstant.AdminConfiguration.ENABLE_2FA_FOR_ALL_USERS;
 import static io.jenkins.plugins.twofactor.constants.MoGlobalConfigConstant.UtilityGlobalConstants.SESSION_2FA_VERIFICATION;
+import static io.jenkins.plugins.twofactor.constants.MoPluginUrls.Urls.MO_SECURITY_QUESTION_CONFIG;
+import static io.jenkins.plugins.twofactor.constants.MoPluginUrls.Urls.MO_USER_CONFIG;
 import static io.jenkins.plugins.twofactor.constants.MoSecurityQuestionsConstant.SecurityQuestions;
 import static io.jenkins.plugins.twofactor.constants.MoSecurityQuestionsConstant.SecurityQuestions.SELECT_SECURITY_QUESTION;
 import static io.jenkins.plugins.twofactor.constants.MoSecurityQuestionsConstant.UserSecurityQuestionKey.*;
+import static io.jenkins.plugins.twofactor.jenkins.MoFilter.moPluginSettings;
 import static io.jenkins.plugins.twofactor.jenkins.MoFilter.userAuthenticationStatus;
 import static jenkins.model.Jenkins.get;
 
@@ -34,9 +38,6 @@ import hudson.util.FormApply;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import hudson.util.Secret;
-import io.jenkins.plugins.twofactor.constants.MoGlobalConfigConstant;
-import io.jenkins.plugins.twofactor.constants.MoPluginUrls;
-import io.jenkins.plugins.twofactor.jenkins.MoFilter;
 import java.io.IOException;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -89,7 +90,7 @@ public class MoSecurityQuestionConfig extends UserProperty implements Action {
 
   @Override
   public String getUrlName() {
-    return MoPluginUrls.Urls.MO_SECURITY_QUESTION_CONFIG.getUrl();
+    return MO_SECURITY_QUESTION_CONFIG.getUrl();
   }
 
   @SuppressWarnings("unused")
@@ -191,7 +192,7 @@ public class MoSecurityQuestionConfig extends UserProperty implements Action {
     }
 
     FormApply.success(
-            req.getContextPath() + "../" + MoPluginUrls.Urls.MO_USER_CONFIG.getUrl() + "/")
+            req.getContextPath() + "../" + MO_USER_CONFIG.getUrl() + "/")
         .generateResponse(req, rsp, null);
   }
 
@@ -293,8 +294,7 @@ public class MoSecurityQuestionConfig extends UserProperty implements Action {
 
     @SuppressWarnings("unused")
     public Boolean showInUserProfile() {
-      return MoFilter.moPluginSettings.getOrDefault(
-              MoGlobalConfigConstant.AdminConfiguration.ENABLE_2FA_FOR_ALL_USERS.getKey(), false)
+      return moPluginSettings.getOrDefault(ENABLE_2FA_FOR_ALL_USERS.getKey(), false)
           && MoGlobalConfig.get().isEnableSecurityQuestionsAuthentication();
     }
 

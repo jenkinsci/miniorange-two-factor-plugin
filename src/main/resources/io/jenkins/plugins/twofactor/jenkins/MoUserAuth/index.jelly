@@ -35,7 +35,6 @@
             </j:if>
 
             <div class="relative-links">
-                <a href="../user/${it.getUserId()}/tfaConfiguration/" class="logout-link">Configure other methods</a>
                 <a href="/logout" class="logout-link">Cancel</a>
             </div>
 

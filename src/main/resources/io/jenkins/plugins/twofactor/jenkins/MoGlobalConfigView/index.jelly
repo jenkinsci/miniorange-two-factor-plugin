@@ -1,16 +1,15 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:f="/lib/form">
-
+<j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:f="/lib/form" xmlns:st="jelly:stapler">
     <l:layout title="TWO FACTOR CONFIG" type="one-column" >
 
         <l:breadcrumb title="${% Two factor authentication}" />
 
         <l:main-panel>
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.moGlobalConfigView"/>
 
             <div class="global-config-view">
                 <f:form method="post" action="saveGlobalTfaSettings" name="replace"
-                        descriptor="${it.descriptor}">
-
+                        descriptor="${it.getDescriptor()}">
                     <f:section title="Two Factor-Authentication Global configurations">
                         <f:entry title="Enable 2FA for all users" field="enableTfa">
                             <f:checkbox checked="${it.getEnableTfa()}"/>
