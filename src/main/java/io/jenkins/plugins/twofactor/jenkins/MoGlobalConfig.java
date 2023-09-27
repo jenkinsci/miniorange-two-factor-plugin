@@ -122,7 +122,7 @@ public class MoGlobalConfig extends GlobalConfiguration {
 
   @Override
   protected XmlFile getConfigFile() {
-    File pluginDir = new File(Jenkins.get().getRootDir(), "/plugins/miniorange-two-factor");
+    File pluginDir = new File(Jenkins.get().getRootDir(), "/plugins/moTfaGlobalConfig");
     return new XmlFile(new File(pluginDir, this.getId() + ".xml"));
   }
 

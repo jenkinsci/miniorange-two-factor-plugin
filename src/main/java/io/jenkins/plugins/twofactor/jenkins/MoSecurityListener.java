@@ -37,8 +37,6 @@ public class MoSecurityListener extends SecurityListener {
   @Override
   public void loggedOut(@NonNull String username) {
     userAuthenticationStatus.put(username, false);
-    MoUserAuth moUserAuth = ExtensionList.lookupSingleton(MoUserAuth.class);
-    moUserAuth.cleanUserAuthResource(username);
     LOGGER.fine("Executing logged out event for username " + username);
   }
 }

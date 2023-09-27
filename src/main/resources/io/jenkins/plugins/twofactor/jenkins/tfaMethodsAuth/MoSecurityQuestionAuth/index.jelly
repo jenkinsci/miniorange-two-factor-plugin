@@ -1,5 +1,4 @@
 <?jelly escape-by-default='true'?>
-<?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:l="/lib/layout" xmlns:st="jelly:stapler">
     <l:layout title="Security Questions" type="full-screen">
         <l:main-panel>
@@ -23,6 +22,7 @@
                 <p class="alert alert-info">
                     <b>Please enter valid answers of the questions given below to get the access of Jenkins.</b>
                 </p>
+                ${it.doInitializeRandomTwoIndex()}
                 <p class="jenkins-section__title">${it.getFirstRandomSecurityQuestion()}</p>
                 <f:entry field="userFirstAuthenticationAnswer">
                     <f:textbox placeholder="Please enter your answer here"/>

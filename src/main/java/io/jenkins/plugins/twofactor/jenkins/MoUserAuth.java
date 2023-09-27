@@ -21,10 +21,13 @@
  */
 package io.jenkins.plugins.twofactor.jenkins;
 
+import static io.jenkins.plugins.twofactor.constants.MoGlobalConfigConstant.UtilityGlobalConstants.SESSION_2FA_VERIFICATION;
 import static io.jenkins.plugins.twofactor.constants.MoPluginUrls.Urls.MO_USER_AUTH;
+import static io.jenkins.plugins.twofactor.jenkins.MoFilter.userAuthenticationStatus;
 import static jenkins.model.Jenkins.get;
 
 import hudson.Extension;
+import hudson.ExtensionList;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.model.RootAction;
@@ -37,6 +40,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 import jenkins.model.Jenkins;
+
+import javax.servlet.http.HttpSession;
 
 @SuppressWarnings("unused")
 @Extension
@@ -112,6 +117,23 @@ public class MoUserAuth implements RootAction, Describable<MoUserAuth> {
     boolean isConfigured = otpOverEmailConfig != null && otpOverEmailConfig.isConfigured();
     boolean isEnabled = MoGlobalConfig.get().isEnableOtpOverEmailAuthentication();
     return isConfigured && isEnabled;
+  }
+
+  public static String allow2FaAccessAndRedirect(HttpSession session, User user, Map<String, Boolean> showWrongCredentialWarning){
+    String redirectUrl;
+    if (session != null) {
+      redirectUrl = (String) session.getAttribute("tfaRelayState");
+      session.removeAttribute("tfaRelayState");
+      session.setAttribute(user.getId() + SESSION_2FA_VERIFICATION.getKey(), "true");
+      userAuthenticationStatus.put(user.getId(), true);
+      MoUserAuth moUserAuth = ExtensionList.lookupSingleton(MoUserAuth.class);
+      moUserAuth.cleanUserAuthResource(user.getId());
+      showWrongCredentialWarning.put(user.getId(), false);
+    } else {
+      LOGGER.fine("Session is null, hence not authenticating the user");
+      redirectUrl = "./";
+    }
+    return redirectUrl;
   }
 
   @SuppressWarnings("unchecked")

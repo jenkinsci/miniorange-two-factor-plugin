@@ -42,7 +42,7 @@ resolve your issue in no time.
 * Sign in to Jenkins as an admin and select Manage Jenkins from the left panel of the dashboard.
 * Scroll down to find the System Log option.
 * Click Add new Log Recorder button and add the log recorder name as 2FaLogs.
-* Add **com.miniorange.twofactor.jenkins** as a Logger and select fine as a log level.
+* Add **io.jenkins.plugins.twofactor** as a Logger and select fine as a log level.
   ![image_3](docs/images/troubleshooting/logger_record.png)
 * Save the settings.
 * Perform 2FA on another browser/private window to record logs.

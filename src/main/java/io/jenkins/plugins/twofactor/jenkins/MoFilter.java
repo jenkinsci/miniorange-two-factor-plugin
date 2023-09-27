@@ -154,11 +154,15 @@ public class MoFilter implements Filter {
             "/login",
             "/adjuncts",
             "/static",
+            ".css",
+            ".js",
             "PopupContent",
             "/ajaxBuildQueue",
             "/ajaxExecutors",
             "/descriptorByName",
             "/checkPluginUrl",
+            "/theme-dark",
+            "/resourceBundle",
             "/log");
     return urlsToAvoidRedirect(url, jenkinsUrls);
   }
@@ -172,6 +176,22 @@ public class MoFilter implements Filter {
             MoPluginUrls.Urls.MO_OTP_OVER_EMAIL_CONFIG.getUrl(),
             MO_USER_AUTH.getUrl() + "/");
     return urlsToAvoidRedirect(url, tfaPluginUrls);
+  }
+
+  private boolean RestUrlsToAvoid(String url){
+    List<String> restUrls =
+            Arrays.asList(
+                    "/createItem",
+                    "/createView",
+                    "/queue",
+                    "/overallLoad",
+                    "/quietDown",
+                    "/cancelQuietDown",
+                    "/restart",
+                    "/safeRestart",
+                    "/api/json"
+                    );
+    return urlsToAvoidRedirect(url,restUrls);
   }
 
   private static boolean enableTfaForAllUsers() {
@@ -218,7 +238,7 @@ public class MoFilter implements Filter {
       return true;
     }
 
-    if (tfaPluginUrlsToAvoidRedirect(url) || JenkinsUrlsToAvoidRedirect(url)) {
+    if (tfaPluginUrlsToAvoidRedirect(url) || JenkinsUrlsToAvoidRedirect(url) || RestUrlsToAvoid(url)){
       return true;
     }
 
@@ -240,6 +260,8 @@ public class MoFilter implements Filter {
       }
 
       String redirectUrl = getRedirectUrlForTfaAuthentication(user);
+
+      LOGGER.fine("Authentication method url " + redirectUrl);
 
       if (redirectUrl.equals("SKIP_FILTER")) {
         filterChain.doFilter(servletRequest, servletResponse);

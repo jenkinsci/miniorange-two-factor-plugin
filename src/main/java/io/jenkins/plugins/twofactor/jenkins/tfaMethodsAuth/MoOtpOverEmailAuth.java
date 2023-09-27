@@ -22,8 +22,8 @@
 package io.jenkins.plugins.twofactor.jenkins.tfaMethodsAuth;
 
 import static hudson.tasks.Mailer.stringToAddress;
-import static io.jenkins.plugins.twofactor.constants.MoGlobalConfigConstant.UtilityGlobalConstants.SESSION_2FA_VERIFICATION;
 import static io.jenkins.plugins.twofactor.jenkins.MoFilter.userAuthenticationStatus;
+import static io.jenkins.plugins.twofactor.jenkins.MoUserAuth.allow2FaAccessAndRedirect;
 
 import hudson.Util;
 import hudson.model.Action;
@@ -253,53 +253,32 @@ public class MoOtpOverEmailAuth implements Action {
     try {
       String userInputOtp = json.getString("emailOtpForVerification");
       HttpSession session = req.getSession(false);
+      String LoggingAction = "Authenticating the OTPOverEmail  OTP to login user";
+
       if (!isOtpOverEmailConfigured) {
-        LOGGER.fine("Authenticating the OTP to set OTPOverEmailConfig for user");
-        MoOtpOverEmailConfig otpOverEmailConfig = user.getProperty(MoOtpOverEmailConfig.class);
-        if (userInputOtp.equals(sentOtp.get(user.getId()))) {
-          LOGGER.fine("Otp is authentic");
-          otpOverEmailConfig.setConfigured(true);
-          sentOtp.remove(user.getId());
-
-          if (session != null) {
-            redirectUrl = (String) session.getAttribute("tfaRelayState");
-            session.removeAttribute("tfaRelayState");
-            session.setAttribute(user.getId() + SESSION_2FA_VERIFICATION.getKey(), "true");
-            userAuthenticationStatus.put(user.getId(), true);
-            showWrongCredentialWarning.put(user.getId(), false);
-          } else {
-            LOGGER.fine("Entered wrong otp for otpOverEmailConfig");
-            redirectUrl = "./";
-            showWrongCredentialWarning.put(user.getId(), true);
-          }
-        } else {
-          LOGGER.fine("Entered wrong otp for otpOverEmailConfig");
-          redirectUrl = "./";
-          showWrongCredentialWarning.put(user.getId(), true);
-        }
-
-        user.save();
-      } else {
-        LOGGER.fine("Authenticating the OTPOverEmail  OTP to login user");
-        if (userInputOtp.equals(sentOtp.get(user.getId()))) {
-          LOGGER.fine("User is authentic");
-          sentOtp.remove(user.getId());
-          if (session != null) {
-            redirectUrl = (String) session.getAttribute("tfaRelayState");
-            session.removeAttribute("tfaRelayState");
-            session.setAttribute(user.getId() + SESSION_2FA_VERIFICATION.getKey(), "true");
-            userAuthenticationStatus.put(user.getId(), true);
-            showWrongCredentialWarning.put(user.getId(), false);
-          }
-
-        } else {
-          LOGGER.fine("User is not authentic");
-          redirectUrl = "./";
-          showWrongCredentialWarning.put(user.getId(), true);
-        }
+        LoggingAction = "Authenticating the OTP to set OTPOverEmailConfig for user";
       }
+
+      LOGGER.fine(LoggingAction);
+
+      MoOtpOverEmailConfig otpOverEmailConfig = user.getProperty(MoOtpOverEmailConfig.class);
+
+      if (userInputOtp.equals(sentOtp.get(user.getId()))) {
+        LOGGER.fine("Otp is authentic");
+        otpOverEmailConfig.setConfigured(true);
+        sentOtp.remove(user.getId());
+        redirectUrl = allow2FaAccessAndRedirect(session, user, showWrongCredentialWarning);
+      } else {
+        LOGGER.fine("Entered wrong otp for otpOverEmailConfig");
+        redirectUrl = "./";
+        showWrongCredentialWarning.put(user.getId(), true);
+      }
+      if (!isOtpOverEmailConfigured) {
+        user.save();
+      }
+
       if (redirectUrl == null) redirectUrl = Jenkins.get().getRootUrl();
-      LOGGER.fine("Redirecting user from otpOverEmailAuth to " + redirectUrl);
+      LOGGER.fine("Redirecting" + user.getId() + " from otpOverEmailAuth to " + redirectUrl);
       FormApply.success(redirectUrl).generateResponse(req, rsp, null);
 
     } catch (RuntimeException e) {
