@@ -1,18 +1,61 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:f="/lib/form" xmlns:st="jelly:stapler">
-    <l:layout title="TWO FACTOR CONFIG" type="one-column" >
+    <l:layout permission="${app.SYSTEM_READ}" title="TWO FACTOR CONFIG" >
 
         <l:breadcrumb title="${% Two factor authentication}" />
 
+        <l:side-panel>
+            <l:tasks>
+                <l:task title="back" href="../" icon="symbol-arrow-up"/>
+                <l:task title="Advanced settings" href="./advancedSettings" icon="symbol-settings"/>
+            </l:tasks>
+
+            <div class="mo-contact-us-container">
+                <h4 >Contact us:</h4>
+                <div class="content">
+                    <div class="mo-contact-method">
+                        <div class="mo-contact-icon">✉️</div>
+                        <div class="mo-contact-details">
+                            <a href="mailto:support-atlassian@miniorange.atlassian.net">support-atlassian@miniorange.atlassian.net</a>
+                        </div>
+                    </div>
+                    <div class="mo-contact-method">
+                        <div class="mo-contact-icon">📹</div>
+                        <div class="mo-contact-details">
+                            <a href="https://calendly.com/support-miniorange/jenkins-2fa" target="_blank">Free setup assistance</a>
+                        </div>
+                    </div>
+                    <div class="mo-contact-method">
+                        <div class="mo-contact-icon">📞</div>
+                        <div class="mo-contact-details">
+                            <a href="tel:+19786589387">+1 978 658 9387</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </l:side-panel>
+
         <l:main-panel>
-            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.moGlobalConfigView"/>
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.moGlobalConfigView"/>
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.mo-contact-us"/>
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.modal"/>
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.MoGlobalConfigView.freeTrialModal"/>
+
 
             <div class="global-config-view">
                 <f:form method="post" action="saveGlobalTfaSettings" name="replace"
                         descriptor="${it.getDescriptor()}">
+                    <input type="hidden" name="formPage" value="basicConfig"/>
+
                     <f:section title="Two Factor-Authentication Global configurations">
                         <f:entry title="Enable 2FA for all users" field="enableTfa">
                             <f:checkbox checked="${it.getEnableTfa()}"/>
+                        </f:entry>
+
+                        <h4>OR</h4>
+
+                        <f:entry title="${%Enter groups names to enable 2FA}" field="enableTfaForGroups">
+                            <f:textbox placeholder="Available in premium version" disabled="true"/>
                         </f:entry>
                     </f:section>
 
@@ -32,6 +75,11 @@
                                 </f:optionalBlock>
                             </table>
                         </f:block>
+
+                        <f:entry title="${%Duo push notification}"
+                                 field="enableDuoPush">
+                            <f:checkbox onclick="return false" checked="false"/>
+                        </f:entry>
                     </f:section>
 
                     <f:bottomButtonBar>
@@ -39,6 +87,9 @@
                     </f:bottomButtonBar>
                 </f:form>
             </div>
+
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.JS.modal"/>
+
 
         </l:main-panel>
     </l:layout>

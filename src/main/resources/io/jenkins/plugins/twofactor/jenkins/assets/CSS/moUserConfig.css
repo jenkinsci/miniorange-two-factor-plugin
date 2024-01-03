@@ -1,0 +1,37 @@
+#main-panel {
+    display: inline-block;
+    padding: 30px !important;
+    width: auto;
+    margin: auto;
+    text-align: center;
+}
+
+.form-header-img {
+    height: 130px;
+}
+
+.custom {
+    display: block;
+    margin-bottom: 14px;
+    background: #063f61;
+    color: #fff !important;
+}
+
+.form-body-para {
+    font-weight: 500;
+    margin-bottom: 25px;
+}
+
+.logout-link {
+    display: block;
+    color: #063f61 !important;
+}
+
+.logout-link:hover {
+    color: #0062d1;
+}
+
+.relative-links{
+    display: flex;
+    justify-content: space-around;
+}

@@ -1,0 +1,51 @@
+.user-security-methods {
+    display: flex;
+    gap: 30px;
+}
+
+.user-security-methods a {
+    text-decoration: none;
+}
+
+.card {
+    box-shadow: 0 6px 11px 0 rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+    background-color: #efefef;
+    width: 360px;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.card-heading {
+    margin-bottom: 20px;
+}
+
+.card img {
+    height: 85px;
+    margin: auto;
+}
+
+.card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+}
+
+.card-data {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.card-link-btn {
+    background: gainsboro;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+    width: 100%;
+    color: #0062d1;
+    font-size: 0.875rem;
+    cursor: pointer;
+    border: none;
+    font-weight: 600;
+}

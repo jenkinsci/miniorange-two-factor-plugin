@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:l="/lib/layout">
+
+    <l:layout title="advanced-settings-manager">
+
+        <l:side-panel>
+            <l:tasks>
+                <l:task title="back" href="../" icon="symbol-arrow-up"/>
+            </l:tasks>
+        </l:side-panel>
+
+        <l:main-panel>
+
+            <f:form method="post" action="saveAdvancedSettingsConfiguration" name="replace" descriptor="${it.descriptor}">
+                <input type="hidden" name="formPage" value="advanceSettingsConfig"/>
+                <f:section title="Enter groups to skip TFA">
+                    <f:entry title="Skip TFA for groups" field="skipTfaForGroups">
+                        <f:textbox placeholder="Available in premium version" disabled="true"/>
+                    </f:entry>
+                </f:section>
+                <f:section title="Custom Email Template">
+                    <f:entry title="Email subject" field="customOTPEmailSubject">
+                        <f:textbox placeholder="Enter subject for OTP email" default="${it.getCustomOTPEmailSubject()}"/>
+                    </f:entry>
+
+                    <f:entry title="Custom email template " field="customOTPEmailTemplate">
+                        <f:textarea size="4" placeholder="Enter custom email template"
+                                    default="${it.getCustomOTPEmailTemplate()}"/>
+                    </f:entry>
+                </f:section>
+
+                <f:bottomButtonBar>
+                    <f:submit value="${%Save}"/>
+                </f:bottomButtonBar>
+            </f:form>
+
+        </l:main-panel>
+
+    </l:layout>
+
+</j:jelly>
+
+

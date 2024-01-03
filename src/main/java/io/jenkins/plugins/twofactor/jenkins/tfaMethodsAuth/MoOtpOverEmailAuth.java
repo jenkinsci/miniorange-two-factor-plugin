@@ -22,8 +22,11 @@
 package io.jenkins.plugins.twofactor.jenkins.tfaMethodsAuth;
 
 import static hudson.tasks.Mailer.stringToAddress;
+import static io.jenkins.plugins.twofactor.constants.MoGlobalConfigConstant.AdvanceSettingsConstants.DEFAULT_OTP_EMAIL_SUBJECT;
+import static io.jenkins.plugins.twofactor.constants.MoGlobalConfigConstant.AdvanceSettingsConstants.DEFAULT_OTP_EMAIL_TEMPLATE;
 import static io.jenkins.plugins.twofactor.jenkins.MoFilter.userAuthenticationStatus;
 import static io.jenkins.plugins.twofactor.jenkins.MoUserAuth.allow2FaAccessAndRedirect;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 import hudson.Util;
 import hudson.model.Action;
@@ -202,14 +205,35 @@ public class MoOtpOverEmailAuth implements Action {
           new jakarta.mail.internet.MimeMessage(
               createSession(smtpHost, smtpPort, useSsl, useTls, username, password));
 
-      msg.setSubject("Jenkins 2FA Verification Code");
       String otpToSend = createOtp(5);
       sentOtp.put(user.getId(), otpToSend);
-      msg.setContent(
-          "<html><body><h1>Jenkins Account Verification Code</h1><p>Your verification code is: "
-              + sentOtp.get(user.getId())
-              + "</p></body></html>",
-          "text/html");
+
+      String subject = MoGlobalConfig.get().getAdvancedSettings().getCustomOTPEmailSubject();
+      if(isBlank(subject))
+        subject = DEFAULT_OTP_EMAIL_SUBJECT.getValue();
+
+      String template = MoGlobalConfig.get().getAdvancedSettings().getCustomOTPEmailTemplate();
+
+      if(isBlank(template))
+        template = DEFAULT_OTP_EMAIL_TEMPLATE.getValue();
+
+      if (subject.contains("$username")) {
+        subject = subject.replace("$username", user.getId());
+      }
+
+      if (subject.contains("$otp")) {
+        subject = subject.replace("$otp", sentOtp.get(user.getId()));
+      }
+
+      if (template.contains("$username")) {
+        template = template.replace("$username", user.getId());
+      }
+
+      if (template.contains("$otp")) {
+        template = template.replace("$otp", sentOtp.get(user.getId()));
+      }
+      msg.setSubject(subject);
+      msg.setContent(template, "text/html");
       msg.setFrom(stringToAddress(senderEmailAddress, charset));
       if (StringUtils.isNotBlank(sendTestMailTo)) {
         msg.setReplyTo(new jakarta.mail.Address[] {stringToAddress(sendTestMailTo, charset)});

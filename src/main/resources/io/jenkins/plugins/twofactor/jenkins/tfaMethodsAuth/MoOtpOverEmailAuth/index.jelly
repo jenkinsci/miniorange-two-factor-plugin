@@ -9,7 +9,7 @@
         <l:breadcrumb title="${% Two factor authentication}" />
 
         <l:main-panel>
-            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.moSecurityQuestionAuth"/>
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.moSecurityQuestionAuth"/>
 
             <div class="config body">
                 <f:form method="post" action="saveOrValidateOtpOverEmailConfig" name="replace"

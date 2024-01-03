@@ -3,7 +3,7 @@
     <l:layout title="Security Questions" type="full-screen">
         <l:main-panel>
 
-            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.moSecurityQuestionAuth"/>
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.moSecurityQuestionAuth"/>
 
             <f:form method="post" action="securityQuestionAuthenticate" name="replace" descriptor="${it.DESCRIPTOR}">
                 <div class="form-header">

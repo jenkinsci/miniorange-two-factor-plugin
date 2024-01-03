@@ -8,7 +8,9 @@ public class MoPluginUrls {
     MO_SECURITY_QUESTION_AUTH("securityQuestionAuth"),
     MO_OTP_OVER_EMAIL_CONFIG("otpOverEmail"),
     MO_OTP_OVER_EMAIL_AUTH("otpOverEmailAuth"),
-    MO_TFA_GLOBAL_CONFIG("tfaGlobalConfig");
+    MO_TFA_GLOBAL_CONFIG("tfaGlobalConfig"),
+    MO_TFA_GLOBAL_ADVANCED_SETTINGS("advancedSettings");
+
 
     private final String url;
 

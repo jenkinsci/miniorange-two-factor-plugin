@@ -8,7 +8,7 @@
         <l:layout title="2FA Config" type="full-screen">
             <l:main-panel>
 
-                <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.moUserConfig"/>
+                <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.moUserConfig"/>
 
                 <div class="form-header">
                     <img class="form-header-img" src="/plugin/miniorange-two-factor/images/logo.svg"
@@ -51,7 +51,7 @@
 
             <l:main-panel>
 
-                <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.moUserConfigCards"/>
+                <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.moUserConfigCards"/>
 
                 <h1 class="user-security-methods-heading">Configure your 2FA settings for enhanced security</h1>
                 <div class="user-security-methods">

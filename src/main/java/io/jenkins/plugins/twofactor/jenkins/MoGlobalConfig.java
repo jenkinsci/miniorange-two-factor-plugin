@@ -22,12 +22,17 @@
 package io.jenkins.plugins.twofactor.jenkins;
 
 import static io.jenkins.plugins.twofactor.constants.MoGlobalConfigConstant.AdminConfiguration.ENABLE_2FA_FOR_ALL_USERS;
+import static io.jenkins.plugins.twofactor.constants.MoGlobalConfigConstant.AdvanceSettingsConstants.DEFAULT_OTP_EMAIL_SUBJECT;
+import static io.jenkins.plugins.twofactor.constants.MoGlobalConfigConstant.AdvanceSettingsConstants.DEFAULT_OTP_EMAIL_TEMPLATE;
 import static io.jenkins.plugins.twofactor.jenkins.MoFilter.moPluginSettings;
 
 import hudson.Extension;
 import hudson.XmlFile;
+import io.jenkins.plugins.twofactor.jenkins.dto.MoAdvanceSettingsDTO;
 import io.jenkins.plugins.twofactor.jenkins.dto.MoOtpOverEmailDto;
 import java.io.File;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Logger;
 import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
@@ -42,6 +47,8 @@ public class MoGlobalConfig extends GlobalConfiguration {
   private Boolean enableTfa;
   private Boolean enableSecurityQuestionsAuthentication;
   private MoOtpOverEmailDto otpOverEmailDto;
+  private MoAdvanceSettingsDTO moAdvancedSettingsDTO;
+
 
   public MoGlobalConfig() {
     load();
@@ -49,6 +56,9 @@ public class MoGlobalConfig extends GlobalConfiguration {
 
   public Boolean getEnableTfa() {
     return enableTfa != null ? enableTfa : false;
+  }
+  public MoGlobalAdvancedSettings getAdvancedSettings() {
+    return new MoGlobalAdvancedSettings(MoGlobalConfig.get().getAdvancedSettingsDTO());
   }
 
   @SuppressWarnings("unused")
@@ -84,6 +94,9 @@ public class MoGlobalConfig extends GlobalConfiguration {
   public MoOtpOverEmailDto getOtpOverEmailDto() {
     return otpOverEmailDto;
   }
+  public MoAdvanceSettingsDTO getAdvancedSettingsDTO() {
+    return moAdvancedSettingsDTO;
+  }
 
   public void saveMoGlobalConfigViewForm(JSONObject formData) {
     try {
@@ -103,6 +116,10 @@ public class MoGlobalConfig extends GlobalConfiguration {
         otpOverEmailDto = null;
       }
 
+      if (moAdvancedSettingsDTO == null) {
+        moAdvancedSettingsDTO = new MoAdvanceSettingsDTO(DEFAULT_OTP_EMAIL_SUBJECT.getValue(),DEFAULT_OTP_EMAIL_TEMPLATE.getValue() );
+      }
+
       this.save();
       LOGGER.fine("Saving global configuration ");
     } catch (Exception e) {
@@ -110,9 +127,32 @@ public class MoGlobalConfig extends GlobalConfiguration {
     }
   }
 
+  public void saveGlobalAdvancedSettingsForm(JSONObject formData) {
+    try {
+      LOGGER.fine("Saving advanced setting details");
+      String customOTPEmailSubject = formData.getString("customOTPEmailSubject");
+      String customOTPEmailTemplate = formData.getString("customOTPEmailTemplate");
+      moAdvancedSettingsDTO = new MoAdvanceSettingsDTO(customOTPEmailSubject, customOTPEmailTemplate);
+      this.save();
+    } catch (Exception e) {
+      LOGGER.fine("Error in saving 2FA global advance settings");
+    }
+  }
+
   @Override
   public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
-
+    String formPage = formData.getString("formPage");
+    switch (formPage) {
+      case "basicConfig":
+        saveMoGlobalConfigViewForm(formData);
+        break;
+      case "advanceSettingsConfig":
+        saveGlobalAdvancedSettingsForm(formData);
+        break;
+      default:
+        LOGGER.fine("Error in saving 2FA global settings for " + formPage);
+        break;
+    }
     if (formData.has("enableTfa")) {
       saveMoGlobalConfigViewForm(formData);
     }

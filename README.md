@@ -1,5 +1,7 @@
 # Two-Factor Authentication for Jenkins
 
+![image_1](/docs/images/jenkins_2fa.png)
+
 **Two-Factor Authentication for Jenkins** Plugin adds a layer of security to Jenkins authentication by requiring users
 to provide a second factor of authentication along with their username and password.
 It enhances the overall security of your Jenkins environment. Additionally, this plugin does not require you to extend the security realm, making it easier to implement and use.

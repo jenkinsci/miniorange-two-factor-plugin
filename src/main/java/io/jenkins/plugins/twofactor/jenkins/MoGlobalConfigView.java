@@ -89,6 +89,9 @@ public class MoGlobalConfigView extends ManagementLink implements Describable<Mo
   public String getSenderEmailAddress() {
     return MoGlobalConfig.get().getSenderEmailAddress();
   }
+  public MoGlobalAdvancedSettings getAdvancedSettings() {
+    return new MoGlobalAdvancedSettings(MoGlobalConfig.get().getAdvancedSettingsDTO());
+  }
 
   @RequirePOST
   public void doSaveGlobalTfaSettings(StaplerRequest req, StaplerResponse rsp)
@@ -145,6 +148,13 @@ public class MoGlobalConfigView extends ManagementLink implements Describable<Mo
       } else {
         return FormValidation.ok();
       }
+    }
+
+    @POST
+    @SuppressWarnings("unused")
+    public FormValidation doCheckEnableDuoPush(@QueryParameter Boolean enableDuoPush) {
+      Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+      return FormValidation.warning("Available in premium version");
     }
 
   }

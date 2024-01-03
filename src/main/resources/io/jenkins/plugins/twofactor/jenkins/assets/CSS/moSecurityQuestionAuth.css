@@ -1,0 +1,36 @@
+#main-panel {
+    display: inline-block !important;
+    padding: 30px !important;
+    width: 500px !important;
+    margin: auto;
+}
+
+.form-header {
+    display: flex;
+    gap: 10px;
+}
+
+.form-header-title {
+    font-size: 22px;
+    font-weight: 500;
+    padding-top: 5px;
+}
+
+.form-header-img {
+    height: 40px;
+}
+
+.other-method-redirection-link{
+    text-decoration: none;
+}
+
+.resend-otp{
+    font-weight: 600;
+    display: inline-block;
+    text-decoration: none;
+    border: none;
+    background: inherit;
+    cursor: pointer;
+    color: #0062d1;
+    padding: 0;
+}
