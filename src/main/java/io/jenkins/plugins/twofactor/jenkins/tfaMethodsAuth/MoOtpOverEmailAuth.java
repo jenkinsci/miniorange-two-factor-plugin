@@ -244,7 +244,12 @@ public class MoOtpOverEmailAuth implements Action {
           jakarta.mail.Message.RecipientType.TO, stringToAddress(sendTestMailTo, charset));
 
       jakarta.mail.Transport.send(msg);
-    } catch (Exception e) {
+    }
+    catch (RuntimeException e) {
+      LOGGER.fine("Run time exception occur" + e.getMessage());
+      throw e;
+    }
+    catch (Exception e) {
       LOGGER.fine("Failed in sending mail, error is " + e.getMessage());
     }
   }
