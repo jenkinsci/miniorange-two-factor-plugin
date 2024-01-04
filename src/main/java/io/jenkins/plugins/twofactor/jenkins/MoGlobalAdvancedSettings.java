@@ -64,7 +64,7 @@ public class MoGlobalAdvancedSettings implements Action, Describable<MoGlobalAdv
       Jenkins.get().checkPermission(Jenkins.ADMINISTER);
       JSONObject json = request.getSubmittedForm();
       MoGlobalConfig moGlobalConfig = MoGlobalConfig.get();
-      moGlobalConfig.configure(request, json);
+      boolean isDataSaved = moGlobalConfig.configure(request, json);
     } catch (Exception e) {
       LOGGER.fine("Error while submitting global configurations, error: " + e.getMessage());
     }
