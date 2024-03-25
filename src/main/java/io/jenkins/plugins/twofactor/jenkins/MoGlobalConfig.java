@@ -141,6 +141,10 @@ public class MoGlobalConfig extends GlobalConfiguration {
 
   @Override
   public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
+    if (!formData.has("formPage")) {
+      return super.configure(req, formData);
+    }
+
     String formPage = formData.getString("formPage");
     switch (formPage) {
       case "basicConfig":
