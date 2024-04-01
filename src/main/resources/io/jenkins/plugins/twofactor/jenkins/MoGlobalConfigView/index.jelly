@@ -80,6 +80,17 @@
                                  field="enableDuoPush">
                             <f:checkbox onclick="return false" checked="false"/>
                         </f:entry>
+
+                        <f:entry title="${%Google authenticator}"
+                                 field="enableMobileAuthenticator">
+                            <f:checkbox onclick="return false" checked="false"/>
+                        </f:entry>
+
+                        <f:entry title="${%OTP over SMS}"
+                                 field="enableOtpOverSms">
+                            <f:checkbox onclick="return false" checked="false"/>
+                        </f:entry>
+
                     </f:section>
 
                     <f:bottomButtonBar>

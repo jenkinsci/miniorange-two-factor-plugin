@@ -5,14 +5,17 @@ import hudson.model.Action;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.util.FormApply;
+import hudson.util.FormValidation;
 import io.jenkins.plugins.twofactor.jenkins.dto.MoAdvanceSettingsDTO;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.interceptor.RequirePOST;
+import org.kohsuke.stapler.verb.POST;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
@@ -95,5 +98,22 @@ public class MoGlobalAdvancedSettings implements Action, Describable<MoGlobalAdv
 
   @SuppressWarnings("unused")
   @Extension
-  public static final class DescriptorImpl extends Descriptor<MoGlobalAdvancedSettings> {}
+  public static final class DescriptorImpl extends Descriptor<MoGlobalAdvancedSettings> {
+    public DescriptorImpl() {}
+
+    @POST
+    @SuppressWarnings("unused")
+    public FormValidation doCheckSkipTfaForApi(@QueryParameter Boolean skipTfaForApi) {
+      Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+      return FormValidation.warning("Available in premium version");
+    }
+
+    @POST
+    @SuppressWarnings("unused")
+    public FormValidation doCheckEnableTfaOnBuild(@QueryParameter Boolean enableTfaOnBuild) {
+      Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+      return FormValidation.warning("Available in premium version");
+    }
+
+  }
 }

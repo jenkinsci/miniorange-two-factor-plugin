@@ -18,6 +18,14 @@
                     <f:entry title="Skip TFA for groups" field="skipTfaForGroups">
                         <f:textbox placeholder="Available in premium version" disabled="true"/>
                     </f:entry>
+                    <f:entry title="${%Skip 2FA for API's}"
+                             field="skipTfaForApi">
+                        <f:checkbox onclick="return false" checked="false"/>
+                    </f:entry>
+                    <f:entry title="${%Enable 2FA on builds}"
+                             field="enableTfaOnBuild">
+                        <f:checkbox onclick="return false" checked="false"/>
+                    </f:entry>
                 </f:section>
                 <f:section title="Custom Email Template">
                     <f:entry title="Email subject" field="customOTPEmailSubject">

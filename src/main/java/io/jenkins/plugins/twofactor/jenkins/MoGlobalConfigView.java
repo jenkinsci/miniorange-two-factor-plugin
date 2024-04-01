@@ -157,5 +157,19 @@ public class MoGlobalConfigView extends ManagementLink implements Describable<Mo
       return FormValidation.warning("Available in premium version");
     }
 
+    @POST
+    @SuppressWarnings("unused")
+    public FormValidation doCheckEnableMobileAuthenticator(@QueryParameter Boolean enableMobileAuthenticator) {
+      Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+      return FormValidation.warning("Available in premium version");
+    }
+
+    @POST
+    @SuppressWarnings("unused")
+    public FormValidation doCheckEnableOtpOverSms(@QueryParameter Boolean enableOtpOverSms) {
+      Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+      return FormValidation.warning("Available in premium version");
+    }
+
   }
 }

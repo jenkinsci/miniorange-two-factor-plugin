@@ -134,7 +134,6 @@ public class MoFilter implements Filter {
 
   private String sanitizeRequestURI(String requestURI) {
     requestURI = requestURI.trim();
-    requestURI = requestURI.substring(0, Math.min(requestURI.length(), 60));
     return requestURI;
   }
 
@@ -149,21 +148,23 @@ public class MoFilter implements Filter {
 
   private boolean JenkinsUrlsToAvoidRedirect(String url) {
     List<String> jenkinsUrls =
-        Arrays.asList(
-            "/logout",
-            "/login",
-            "/adjuncts",
-            "/static",
-            ".css",
-            ".js",
-            "PopupContent",
-            "/ajaxBuildQueue",
-            "/ajaxExecutors",
-            "/descriptorByName",
-            "/checkPluginUrl",
-            "/theme-dark",
-            "/resourceBundle",
-            "/log");
+            Arrays.asList(
+                    "/logout",
+                    "/login",
+                    "/adjuncts",
+                    "/static",
+                    ".css",
+                    ".js",
+                    "PopupContent",
+                    "/ajaxBuildQueue",
+                    "/ajaxExecutors",
+                    "/descriptorByName",
+                    "/checkPluginUrl",
+                    "/log",
+                    "/theme-dark",
+                    "/resourceBundle",
+                    "/favicon.ico"
+            );
     return urlsToAvoidRedirect(url, jenkinsUrls);
   }
 
@@ -190,7 +191,7 @@ public class MoFilter implements Filter {
                     "/restart",
                     "/safeRestart",
                     "/api/json"
-                    );
+            );
     return urlsToAvoidRedirect(url,restUrls);
   }
 

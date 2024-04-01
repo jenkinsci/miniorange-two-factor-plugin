@@ -141,23 +141,29 @@ public class MoGlobalConfig extends GlobalConfiguration {
 
   @Override
   public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
-    String formPage = formData.getString("formPage");
-    switch (formPage) {
-      case "basicConfig":
-        saveMoGlobalConfigViewForm(formData);
-        break;
-      case "advanceSettingsConfig":
-        saveGlobalAdvancedSettingsForm(formData);
-        break;
-      default:
-        LOGGER.fine("Error in saving 2FA global settings for " + formPage);
-        break;
-    }
-    if (formData.has("enableTfa")) {
-      saveMoGlobalConfigViewForm(formData);
-    }
 
-    return super.configure(req, formData);
+    try{
+
+      String formPage = formData.getString("formPage");
+      switch (formPage) {
+        case "basicConfig":
+          saveMoGlobalConfigViewForm(formData);
+          break;
+        case "advanceSettingsConfig":
+          saveGlobalAdvancedSettingsForm(formData);
+          break;
+        default:
+          LOGGER.fine("Error in saving 2FA global settings for " + formPage);
+          break;
+      }
+      if (formData.has("enableTfa")) {
+        saveMoGlobalConfigViewForm(formData);
+      }
+    } catch (Exception e){
+      LOGGER.fine("Not saved 2FA global settings for our plugin");
+      return false;
+    }
+    return true;
   }
 
   @Override
