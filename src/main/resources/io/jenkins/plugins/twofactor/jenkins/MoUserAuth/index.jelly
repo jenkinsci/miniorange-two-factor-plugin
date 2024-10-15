@@ -12,7 +12,7 @@
 
 
             <div class="form-header">
-                <img class="form-header-img" src="/plugin/miniorange-two-factor/images/logo.svg" alt="Img not found"/>
+                <img class="form-header-img" src="${it.getContextPath()}/plugin/miniorange-two-factor/images/logo.svg" alt="Img not found"/>
                 <h1 class="form-header-title">Validate Two Factor</h1>
             </div>
 
@@ -35,7 +35,7 @@
             </j:if>
 
             <div class="relative-links">
-                <a href="/logout" class="logout-link">Cancel</a>
+                <a href="${it.getContextPath()}/logout" class="logout-link">Cancel</a>
             </div>
 
         </l:main-panel>

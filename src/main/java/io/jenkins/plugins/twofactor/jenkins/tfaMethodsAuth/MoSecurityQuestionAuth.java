@@ -28,6 +28,8 @@ import hudson.Extension;
 import hudson.model.*;
 import hudson.util.FormApply;
 import io.jenkins.plugins.twofactor.constants.MoPluginUrls;
+import io.jenkins.plugins.twofactor.jenkins.MoUserAuth;
+import io.jenkins.plugins.twofactor.jenkins.MoUserConfig;
 import io.jenkins.plugins.twofactor.jenkins.tfaMethodsConfig.MoSecurityQuestionConfig;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +37,7 @@ import java.util.Random;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpSession;
 import jenkins.model.Jenkins;
+import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.interceptor.RequirePOST;
@@ -94,7 +97,12 @@ public class MoSecurityQuestionAuth implements Action {
     return MoPluginUrls.Urls.MO_SECURITY_QUESTION_AUTH.getUrl();
   }
 
-  @SuppressWarnings("unused")
+
+   public String getContextPath(){
+     return MoUserAuth.getContextPath();
+   }
+
+   @SuppressWarnings("unused")
   public String getUserId() {
     return user != null ? user.getId() : "";
   }

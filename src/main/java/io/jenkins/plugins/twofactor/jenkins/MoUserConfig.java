@@ -32,6 +32,9 @@ import hudson.model.*;
 import io.jenkins.plugins.twofactor.jenkins.tfaMethodsConfig.MoOtpOverEmailConfig;
 import io.jenkins.plugins.twofactor.jenkins.tfaMethodsConfig.MoSecurityQuestionConfig;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.springframework.lang.NonNull;
@@ -50,8 +53,9 @@ public class MoUserConfig extends UserProperty implements Action {
         return null;
       }
       StaplerRequest request = Stapler.getCurrentRequest();
-      String username = request.getRequestURI().split("/")[2];
-      if (user.getId().equals(username)) {
+      String regex = ".*/user/([^/]+).*";
+      Matcher matcher = Pattern.compile(regex).matcher(request.getRequestURI());
+      if (matcher.matches() && user.getId().equals(matcher.group(1))) {
         return "/plugin/miniorange-two-factor/images/tfaIcon.png";
       }
 
@@ -74,7 +78,9 @@ public class MoUserConfig extends UserProperty implements Action {
   public boolean isSecurityQuestionConfigurationIsEnabled() {
     return MoGlobalConfig.get().isEnableSecurityQuestionsAuthentication();
   }
-
+  public static String getContextPath(){
+    return MoUserAuth.getContextPath();
+  }
   public boolean showSecurityQuestionForConfiguration() {
     MoSecurityQuestionConfig securityQuestionConfig =
         user.getProperty(MoSecurityQuestionConfig.class);
@@ -138,7 +144,9 @@ public class MoUserConfig extends UserProperty implements Action {
       return moPluginSettings.getOrDefault(
           ENABLE_2FA_FOR_ALL_USERS.getKey(), false);
     }
-
+    public String getContextPath() {
+      return MoUserAuth.getContextPath();
+    }
     @SuppressWarnings("unused")
     public String getUserId() {
       User currentUser = User.current();

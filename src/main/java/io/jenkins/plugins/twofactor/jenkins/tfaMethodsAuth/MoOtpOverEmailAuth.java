@@ -37,6 +37,8 @@ import hudson.util.FormApply;
 import hudson.util.Secret;
 import io.jenkins.plugins.twofactor.constants.MoPluginUrls;
 import io.jenkins.plugins.twofactor.jenkins.MoGlobalConfig;
+import io.jenkins.plugins.twofactor.jenkins.MoUserAuth;
+import io.jenkins.plugins.twofactor.jenkins.MoUserConfig;
 import io.jenkins.plugins.twofactor.jenkins.tfaMethodsConfig.MoOtpOverEmailConfig;
 import java.io.IOException;
 import java.util.*;
@@ -45,6 +47,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
+import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.interceptor.RequirePOST;
@@ -77,6 +80,9 @@ public class MoOtpOverEmailAuth implements Action {
     return MoPluginUrls.Urls.MO_OTP_OVER_EMAIL_AUTH.getUrl();
   }
 
+  public String getContextPath(){
+    return MoUserAuth.getContextPath();
+  }
   @SuppressWarnings("unused")
   public boolean isOtpSentToUser() {
     return !sentOtp.getOrDefault(user.getId(), "").equals("");

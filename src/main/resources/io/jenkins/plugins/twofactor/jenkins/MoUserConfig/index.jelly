@@ -3,6 +3,7 @@
 
     <j:set var="showSecurityQuestionForConfiguration" value="${it.showSecurityQuestionForConfiguration()}"/>
     <j:set var="showOtpOverEmailForConfiguration" value="${it.showOtpOverEmailForConfiguration()}"/>
+    <j:set var="contextPath" value="${it.getContextPath()}"/>
 
     <j:if test="${!it.isUserAuthenticatedFromTfa()}">
         <l:layout title="2FA Config" type="full-screen">
@@ -11,7 +12,7 @@
                 <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.moUserConfig"/>
 
                 <div class="form-header">
-                    <img class="form-header-img" src="/plugin/miniorange-two-factor/images/logo.svg"
+                    <img class="form-header-img" src="${contextPath}/plugin/miniorange-two-factor/images/logo.svg"
                          alt="Img not found"/>
                     <h1 class="form-header-title">Configure Two Factor</h1>
                 </div>
@@ -38,7 +39,7 @@
                 </j:if>
 
                 <div class="relative-links">
-                    <a href="/logout" class="logout-link">Cancel</a>
+                    <a href="${it.getContextPath()}/logout" class="logout-link">Cancel</a>
                 </div>
             </l:main-panel>
         </l:layout>
@@ -60,7 +61,7 @@
                         <div class="card">
                             <h3 class="card-heading">Security Question</h3>
                             <div class="card-data">
-                                <img src="/plugin/miniorange-two-factor/images/MoSecurityQuestionIcon.png"
+                                <img src="${contextPath}/plugin/miniorange-two-factor/images/MoSecurityQuestionIcon.png"
                                      alt="Img not found"/>
                                 <span>User need's to answer the security questions to access the jenkins.</span>
                             </div>
@@ -83,13 +84,13 @@
                         <div class="card">
                             <h3 class="card-heading">OTP over email</h3>
                             <div class="card-data">
-                                <img src="/plugin/miniorange-two-factor/images/MoOtpOverEmailLogo.png"
+                                <img src="${contextPath}/plugin/miniorange-two-factor/images/MoOtpOverEmailLogo.png"
                                      alt="Img not found"/>
                                 <span>User need's to enter the OTP received on his email.</span>
                             </div>
 
                             <j:if test="${showOtpOverEmailForConfiguration}">
-                                <a class="card-link-btn" href="/tfaUserAuth/otpOverEmailAuth/">Configure</a>
+                                <a class="card-link-btn" href="${contextPath}/tfaUserAuth/otpOverEmailAuth/">Configure</a>
                             </j:if>
 
                             <j:if test="${! showOtpOverEmailForConfiguration}">

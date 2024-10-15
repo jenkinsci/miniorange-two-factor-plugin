@@ -37,8 +37,10 @@ import java.util.logging.Logger;
 import javax.servlet.ServletException;
 
 import io.jenkins.plugins.twofactor.jenkins.MoGlobalConfig;
+import io.jenkins.plugins.twofactor.jenkins.MoUserAuth;
 import jenkins.model.Jenkins;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.interceptor.RequirePOST;
@@ -81,10 +83,8 @@ public class MoOtpOverEmailConfig extends UserProperty implements Action {
     } catch (Exception e) {
       LOGGER.fine("Error in resetting the OTP over email config");
     }
-
-    FormApply.success(
-            req.getContextPath() + "../" + MO_USER_CONFIG.getUrl() + "/")
-        .generateResponse(req, rsp, null);
+    FormApply.success(req.getReferer())
+            .generateResponse(req, rsp, null);
   }
 
   public Boolean isConfigured() {
@@ -125,6 +125,10 @@ public class MoOtpOverEmailConfig extends UserProperty implements Action {
         return "";
       }
       return currentUser.getId();
+    }
+
+    public String getContextPath() {
+      return MoUserAuth.getContextPath();
     }
   }
 }

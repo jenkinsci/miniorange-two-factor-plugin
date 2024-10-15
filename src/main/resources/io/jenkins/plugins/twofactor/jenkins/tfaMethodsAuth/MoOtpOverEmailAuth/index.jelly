@@ -16,7 +16,7 @@
                         descriptor="${it.DESCRIPTOR}">
 
                     <div class="form-header">
-                        <img class="form-header-img" src="/plugin/miniorange-two-factor/images/logo.svg"
+                        <img class="form-header-img" src="${it.getContextPath()}/plugin/miniorange-two-factor/images/logo.svg"
                              alt="Img not found"/>
                         <span class="form-header-title">
                             <j:if test="${otpOverEmailConfigured}">

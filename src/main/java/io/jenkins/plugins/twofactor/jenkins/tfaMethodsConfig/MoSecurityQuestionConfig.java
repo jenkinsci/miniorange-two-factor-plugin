@@ -44,6 +44,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 
 import io.jenkins.plugins.twofactor.jenkins.MoGlobalConfig;
+import io.jenkins.plugins.twofactor.jenkins.MoUserAuth;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.*;
@@ -190,10 +191,8 @@ public class MoSecurityQuestionConfig extends UserProperty implements Action {
     } catch (Exception e) {
       LOGGER.fine("Error in resetting the configuration " + e.getMessage());
     }
-
-    FormApply.success(
-            req.getContextPath() + "../" + MO_USER_CONFIG.getUrl() + "/")
-        .generateResponse(req, rsp, null);
+    FormApply.success(req.getReferer())
+            .generateResponse(req, rsp, null);
   }
 
   public String getFirstSecurityQuestion(User user) {
@@ -273,7 +272,9 @@ public class MoSecurityQuestionConfig extends UserProperty implements Action {
     public DescriptorImpl() {
       super(MoSecurityQuestionConfig.class);
     }
-
+    public String getContextPath() {
+      return MoUserAuth.getContextPath();
+    }
     @Override
     public UserProperty newInstance(User user) {
       return new MoSecurityQuestionConfig(

@@ -40,6 +40,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 import jenkins.model.Jenkins;
+import org.kohsuke.stapler.Stapler;
+import org.kohsuke.stapler.StaplerRequest;
 
 import javax.servlet.http.HttpSession;
 
@@ -63,6 +65,10 @@ public class MoUserAuth implements RootAction, Describable<MoUserAuth> {
   @Override
   public String getUrlName() {
     return MO_USER_AUTH.getUrl();
+  }
+  public static String getContextPath(){
+    StaplerRequest req = Stapler.getCurrentRequest();
+    return req.getContextPath();
   }
 
   @SuppressWarnings("unused")
