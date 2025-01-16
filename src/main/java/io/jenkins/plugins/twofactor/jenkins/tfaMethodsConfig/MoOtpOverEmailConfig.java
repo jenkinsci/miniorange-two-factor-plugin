@@ -26,6 +26,7 @@ import static io.jenkins.plugins.twofactor.constants.MoPluginUrls.Urls.MO_USER_C
 import static io.jenkins.plugins.twofactor.jenkins.MoFilter.moPluginSettings;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.Extension;
 import hudson.model.Action;
 import hudson.model.User;
@@ -107,6 +108,7 @@ public class MoOtpOverEmailConfig extends UserProperty implements Action {
       return new MoOtpOverEmailConfig(false);
     }
 
+    @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
     @Override
     public String getDisplayName() {
       return null;

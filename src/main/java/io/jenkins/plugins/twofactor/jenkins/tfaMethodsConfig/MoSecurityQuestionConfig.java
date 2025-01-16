@@ -32,6 +32,7 @@ import static io.jenkins.plugins.twofactor.jenkins.MoFilter.moPluginSettings;
 import static io.jenkins.plugins.twofactor.jenkins.MoFilter.userAuthenticationStatus;
 import static jenkins.model.Jenkins.get;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.Extension;
 import hudson.model.*;
 import hudson.util.FormApply;
@@ -287,6 +288,7 @@ public class MoSecurityQuestionConfig extends UserProperty implements Action {
           false);
     }
 
+    @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
     @Override
     public String getDisplayName() {
       return null;
