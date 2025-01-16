@@ -179,6 +179,7 @@ public class MoFilter implements Filter {
     return urlsToAvoidRedirect(url, tfaPluginUrls);
   }
 
+  // TODO: 18-07-2024 add this in premium 
   private boolean RestUrlsToAvoid(String url){
     List<String> restUrls =
             Arrays.asList(

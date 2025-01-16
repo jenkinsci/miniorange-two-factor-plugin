@@ -72,7 +72,7 @@
 
                             <j:if test="${! showSecurityQuestionForConfiguration}">
                                 <form method="post" action="../securityQuestionConfig/reset">
-                                    <button class="card-link-btn" onclick="this.parentNode.submit();">Reset</button>
+                                    <button class="card-link-btn reset-button">Reset</button>
                                 </form>
                             </j:if>
 
@@ -95,7 +95,7 @@
 
                             <j:if test="${! showOtpOverEmailForConfiguration}">
                                 <form method="post" action="../otpOverEmailConfig/reset">
-                                    <button class="card-link-btn" onclick="this.parentNode.submit();">Reset</button>
+                                    <button class="card-link-btn reset-button">Reset</button>
                                 </form>
                             </j:if>
 

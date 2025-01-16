@@ -287,10 +287,9 @@ public class MoSecurityQuestionConfig extends UserProperty implements Action {
           false);
     }
 
-    @NonNull
     @Override
     public String getDisplayName() {
-      return "Security Question";
+      return null;
     }
 
     @SuppressWarnings("unused")

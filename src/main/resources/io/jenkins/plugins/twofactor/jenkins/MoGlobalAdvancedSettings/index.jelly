@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:l="/lib/layout">
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:l="/lib/layout" xmlns:st="jelly:stapler">
 
     <l:layout title="advanced-settings-manager">
-
+        <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.JS.moGlobalAdvancedSettings"/>
         <l:side-panel>
             <l:tasks>
                 <l:task title="back" href="../" icon="symbol-arrow-up"/>
@@ -20,11 +20,11 @@
                     </f:entry>
                     <f:entry title="${%Skip 2FA for API's}"
                              field="skipTfaForApi">
-                        <f:checkbox onclick="return false" checked="false"/>
+                        <f:checkbox class="checkboxToSkip" checked="false"/>
                     </f:entry>
                     <f:entry title="${%Enable 2FA on builds}"
                              field="enableTfaOnBuild">
-                        <f:checkbox onclick="return false" checked="false"/>
+                        <f:checkbox class="checkboxToSkip" checked="false"/>
                     </f:entry>
                 </f:section>
                 <f:section title="Custom Email Template">
@@ -46,7 +46,6 @@
         </l:main-panel>
 
     </l:layout>
-
 </j:jelly>
 
 

@@ -10,7 +10,7 @@
 
         <l:main-panel>
             <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.moSecurityQuestionAuth"/>
-
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.JS.moOtpOverEmailAuth"/>
             <div class="config body">
                 <f:form method="post" action="saveOrValidateOtpOverEmailConfig" name="replace"
                         descriptor="${it.DESCRIPTOR}">
@@ -76,13 +76,13 @@
                 <div>
                     <j:if test="${it.isOtpSentToUser()}">
                         <form style="display: inline-block" method="post" action="./resendOtp" id="resendOTPForm">
-                            <button class="resend-otp" method="post" action="./resendOtp" id="resendOTPForm" onclick="document.getElementById('resendOTPForm').submit();">Resend OTP</button>
+                            <button class="resend-otp" method="post" action="./resendOtp" id="resendOTPForm" >Resend OTP</button>
                         </form>
                     </j:if>
 
                     <j:if test="${not(it.isOtpSentToUser())}">
                         <form style="display: inline-block" method="post" action="./resendOtp" id="resendOTPForm">
-                            <button class="resend-otp"  method="post" action="./resendOtp" id="resendOTPForm" onclick="document.getElementById('resendOTPForm').submit();">send OTP</button>
+                            <button class="resend-otp"  method="post" action="./resendOtp" id="resendOTPForm" >send OTP</button>
                         </form>
                     </j:if>
 

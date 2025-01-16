@@ -3,7 +3,7 @@
     <l:layout permission="${app.SYSTEM_READ}" title="TWO FACTOR CONFIG" >
 
         <l:breadcrumb title="${% Two factor authentication}" />
-
+        <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.JS.moGlobalConfigView"/>
         <l:side-panel>
             <l:tasks>
                 <l:task title="back" href="../" icon="symbol-arrow-up"/>
@@ -78,19 +78,18 @@
 
                         <f:entry title="${%Duo push notification}"
                                  field="enableDuoPush">
-                            <f:checkbox onclick="return false" checked="false"/>
+                            <f:checkbox class="checkboxToSkip" checked="false"/>
                         </f:entry>
 
                         <f:entry title="${%Google authenticator}"
                                  field="enableMobileAuthenticator">
-                            <f:checkbox onclick="return false" checked="false"/>
+                            <f:checkbox class="checkboxToSkip" checked="false"/>
                         </f:entry>
 
                         <f:entry title="${%OTP over SMS}"
                                  field="enableOtpOverSms">
-                            <f:checkbox onclick="return false" checked="false"/>
+                            <f:checkbox class="checkboxToSkip" checked="false"/>
                         </f:entry>
-
                     </f:section>
 
                     <f:bottomButtonBar>

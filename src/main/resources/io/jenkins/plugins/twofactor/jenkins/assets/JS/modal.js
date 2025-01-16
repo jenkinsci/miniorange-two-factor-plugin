@@ -1,6 +1,12 @@
 var modal = document.getElementById("modal-dialog");
 var uploadJson = document.getElementById("upload-saml-json-config");
 
+var closeButton = document.getElementById('close-btn');
+closeButton.addEventListener("click",handleCloseBtn);
+
+var showModalButton = document.getElementById('show-modal');
+showModalButton.addEventListener("click",handleModal);
+
 function handleModal() {
     modal.style.display = "block";
 }

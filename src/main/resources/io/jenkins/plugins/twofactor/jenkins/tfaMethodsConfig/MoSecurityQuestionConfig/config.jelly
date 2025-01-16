@@ -1,9 +1,4 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core">
-    <j:if test="${descriptor.showInUserProfile()}">
-        <a href="${descriptor.getContextPath()}/user/${descriptor.getUserId()}/tfaConfiguration/">Security question</a>
-    </j:if>
-    <j:if test="${!descriptor.showInUserProfile()}">
-        Two factor authentication is not enabled for you.
-    </j:if>
+
 </j:jelly>

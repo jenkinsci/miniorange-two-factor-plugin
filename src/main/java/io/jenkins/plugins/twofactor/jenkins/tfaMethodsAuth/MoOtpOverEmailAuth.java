@@ -27,7 +27,6 @@ import static io.jenkins.plugins.twofactor.constants.MoGlobalConfigConstant.Adva
 import static io.jenkins.plugins.twofactor.jenkins.MoFilter.userAuthenticationStatus;
 import static io.jenkins.plugins.twofactor.jenkins.MoUserAuth.allow2FaAccessAndRedirect;
 import static org.apache.commons.lang.StringUtils.isBlank;
-
 import hudson.Util;
 import hudson.model.Action;
 import hudson.model.User;
@@ -38,7 +37,6 @@ import hudson.util.Secret;
 import io.jenkins.plugins.twofactor.constants.MoPluginUrls;
 import io.jenkins.plugins.twofactor.jenkins.MoGlobalConfig;
 import io.jenkins.plugins.twofactor.jenkins.MoUserAuth;
-import io.jenkins.plugins.twofactor.jenkins.MoUserConfig;
 import io.jenkins.plugins.twofactor.jenkins.tfaMethodsConfig.MoOtpOverEmailConfig;
 import java.io.IOException;
 import java.util.*;
@@ -85,7 +83,7 @@ public class MoOtpOverEmailAuth implements Action {
   }
   @SuppressWarnings("unused")
   public boolean isOtpSentToUser() {
-    return !sentOtp.getOrDefault(user.getId(), "").equals("");
+    return !sentOtp.getOrDefault(user.getId(), "").isEmpty();
   }
 
   public String getUserEmailAddress() {

@@ -107,10 +107,9 @@ public class MoOtpOverEmailConfig extends UserProperty implements Action {
       return new MoOtpOverEmailConfig(false);
     }
 
-    @NonNull
     @Override
     public String getDisplayName() {
-      return "OTP over email";
+      return null;
     }
 
     @SuppressWarnings("unused")

@@ -3,7 +3,7 @@
 
     <div id="modal-dialog" class="modal">
     <div class="modal-content trial-modal-top-margin">
-        <span id="close-btn" onclick="handleCloseBtn()">X</span>
+        <span id="close-btn">X</span>
         <div class="modal-header">
             <span>Start your free Premium trial now</span>
         </div>
@@ -91,7 +91,7 @@
 
 <div class="mo-modal">
 <span class="mo-modal-heading">Unlock your premium trial!</span>
-<button class="jenkins-button jenkins-button--primary " onclick="handleModal()">Click here</button>
+<button id="show-modal" class="jenkins-button jenkins-button--primary ">Click here</button>
 </div>
 
 </j:jelly>
