@@ -92,6 +92,9 @@ public class MoGlobalConfigView extends ManagementLink implements Describable<Mo
   public MoGlobalAdvancedSettings getAdvancedSettings() {
     return new MoGlobalAdvancedSettings(MoGlobalConfig.get().getAdvancedSettingsDTO());
   }
+  public MoUserManagement getUserManagement(){
+    return new MoUserManagement();
+  }
 
   @RequirePOST
   public void doSaveGlobalTfaSettings(StaplerRequest req, StaplerResponse rsp)

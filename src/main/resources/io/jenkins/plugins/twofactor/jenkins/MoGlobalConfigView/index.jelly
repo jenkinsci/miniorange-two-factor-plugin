@@ -8,6 +8,7 @@
             <l:tasks>
                 <l:task title="back" href="../" icon="symbol-arrow-up"/>
                 <l:task title="Advanced settings" href="./advancedSettings" icon="symbol-settings"/>
+                <l:task title="User Management" href="./userManagement" icon="symbol-people"/>
             </l:tasks>
 
             <div class="mo-contact-us-container">

@@ -45,6 +45,7 @@ public class MoGlobalConfig extends GlobalConfiguration {
 
   private static final Logger LOGGER = Logger.getLogger(MoGlobalConfig.class.getName());
   private Boolean enableTfa;
+  private Boolean enableTfaForAllUsers;
   private Boolean enableSecurityQuestionsAuthentication;
   private MoOtpOverEmailDto otpOverEmailDto;
   private MoAdvanceSettingsDTO moAdvancedSettingsDTO;
@@ -65,6 +66,7 @@ public class MoGlobalConfig extends GlobalConfiguration {
   @DataBoundSetter
   public void setEnableTfa(boolean unableTfa) {
     enableTfa = unableTfa;
+    enableTfaForAllUsers = enableTfa;
   }
 
   @SuppressWarnings("unused")
@@ -101,6 +103,7 @@ public class MoGlobalConfig extends GlobalConfiguration {
   public void saveMoGlobalConfigViewForm(JSONObject formData) {
     try {
       enableTfa = formData.getBoolean("enableTfa");
+      enableTfaForAllUsers = enableTfa;
       moPluginSettings.put(ENABLE_2FA_FOR_ALL_USERS.getKey(), enableTfa);
       enableSecurityQuestionsAuthentication = formData.getBoolean("enableSecurityQuestion");
 

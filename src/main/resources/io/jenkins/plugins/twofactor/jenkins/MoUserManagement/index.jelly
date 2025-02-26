@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:l="/lib/layout" xmlns:st="jelly:stapler">
+
+    <l:layout title="User Management">
+
+        <l:side-panel>
+            <l:tasks>
+                <l:task title="Back" href="../" icon="symbol-arrow-up"/>
+                <l:task title="Users" href="${href}" icon="symbol-person"/>
+            </l:tasks>
+        </l:side-panel>
+
+        <l:main-panel>
+            <h2>User List</h2>
+
+            <div class="jenkins-alert jenkins-alert-info">
+                <div class="info-div1">
+                    <p>✨With the Premium version, you can:</p>
+                    <p>1. Click on the Enable 2FA/Disable 2FA/Reset 2FA link for individual users to manage their 2FA
+                        settings effortlessly.
+                    </p>
+                    <p>2. Select checkboxes for single, multiple or all users and apply bulk actions to Enable, Disable,
+                        or Reset 2FA settings with a single click.
+                    </p>
+                </div>
+                <div class="info-div2">
+                    <p>🚀 Unlock these features now! <a
+                            href="https://www.miniorange.com/atlassian/jenkins-two-factor-authentication-2fa-mfa/#free-plugin"
+                            target="_blank">Take a free trial of Premium Plugin
+                    </a> and experience seamless 2FA management.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Actions Form -->
+            <form id="Form" method="post" action="">
+                <div class="action-bar">
+                    <div class="button-container">
+                        <f:entry name="action" title="Choose an bulk action:" field="action">
+                            <select name="action" id="action">
+                                <f:option value="enable">Enable 2FA</f:option>
+                                <f:option value="disable">Disable 2FA</f:option>
+                                <f:option value="reset">Reset 2FA</f:option>
+                            </select>
+                        </f:entry>
+                    </div>
+                    <div id="warning-container">
+                        <button class="jenkins-button jenkins-!-margin-bottom-1">Apply Action</button>
+                        <div class="warning">
+                            Available in Premium version.
+                        </div>
+                    </div>
+                </div>
+                <!-- Search Bar -->
+                <div class="search-bar">
+                    <label for="userSearch">Search User:</label>
+                    <input type="text" id="userSearch" onkeyup="filterTable()"
+                           placeholder="Type to search by name or ID..."/>
+                </div>
+
+                <table class="jenkins-table jenkins-!-margin-bottom-0">
+                    <thead>
+                        <tr>
+                            <th class="checkbox-column">
+                                <input type="checkbox" id="selectAllCheckbox" name="selectAllCheckbox" />
+                                <label for="selectAllCheckbox">Select All</label>
+                            </th>
+                            <th>User ID</th>
+                            <th>Name</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <j:forEach var="user" items="${it.getAllUsers()}">
+                            <tr class="user-row">
+                                <td class="checkbox-column">
+                                    <input type="checkbox" name="selectedUsers" value="${user.id}"/>
+                                </td>
+                                <td class="user-id">
+                                    <a href="${rootURL}/user/${user.id}" class="jenkins-table__link">
+                                        ${user.id}
+                                    </a>
+                                </td>
+                                <td class="user-name">
+                                    ${user.displayName}
+                                </td>
+                                <td>
+                                    <j:if test="${it.getStatus(user.id)}">
+                                        <span style="color:#006fe6" class="actionLink jenkins-table__link">Disable
+                                            2FA</span> <span class="backslash">/</span>
+                                        <span style="color:#006fe6" class="actionLink jenkins-table__link">Reset 2FA
+                                        </span>
+                                    </j:if>
+                                    <j:if test="${!(it.getStatus(user.id))}">
+                                        <span style="color:#006fe6" class="actionLink jenkins-table__link">Enable 2FA
+                                        </span>
+                                    </j:if>
+                                </td>
+                            </tr>
+                        </j:forEach>
+                    </tbody>
+                </table>
+            </form>
+        </l:main-panel>
+    </l:layout>
+    <div id="premiumBanner" class="jenkins-alert jenkins-alert-warning" style="display: none;">
+        ⚠️ Available in Premium version
+    </div>
+    <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.moUserManagement"/>
+    <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.JS.moUserManagement"/>
+</j:jelly>

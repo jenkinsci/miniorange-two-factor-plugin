@@ -1,0 +1,134 @@
+    /* Style for info banner */
+     .jenkins-alert {
+        background-color: #f0f8ff;
+        border: 1px solid #d1e7fd;
+        padding: 10px;
+        margin: 10px 0;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        color: #333;
+      }
+
+      .jenkins-alert-info p {
+        margin: 5px 0;
+      }
+
+      .info-div1, .info-div2 {
+        margin-bottom: 10px;
+      }
+
+      .info-div1 p:first-child, .info-div2 a{
+        font-weight: bold;
+        color: #0056b3;
+      }
+
+     [data-theme=dark]{
+       .jenkins-alert-info p {
+          color:black;
+       }
+        .info-div1 p:first-child {
+            color: #0056b3;
+        }
+
+        #action {
+            background-color: #2b2b2b;
+            color: #ffffff;
+        }
+
+        #action option {
+            background-color: #2b2b2b;
+            color: #ffffff;
+        }
+     }
+
+    /*style for action bar and buttons*/
+
+    .backslash{
+        margin-left:3px;
+        margin-right:3px;
+    }
+    #warning-container {
+         margin-top:0.7%;
+         display:flex;
+         align-items: baseline;
+         gap:10px;
+    }
+    .action-bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .action-bar label {
+        font-weight: bold;
+    }
+
+    .action-bar select,
+    .action-bar button {
+        padding: 5px 15px;
+        font-size: 14px;
+        height: 36px;
+        border-radius: 4px;
+    }
+
+    .action-bar select {
+        background-color: transparent;
+        border: 1px solid #ccc;
+    }
+
+    .action-bar button {
+        border: none;
+        cursor: pointer;
+    }
+    /* Styles for the search bar container */
+    .search-bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        padding: 10px;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+        box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-bar label {
+    font-weight: bold;
+    font-size: 14px;
+    color: #333;
+    }
+
+    .search-bar input[type="text"] {
+    flex: 1;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.2s ease;
+    }
+
+    .search-bar input[type="text"]:focus {
+    border-color: #007bff;
+    box-shadow: 0px 0px 4px rgba(0, 123, 255, 0.25);
+    }
+
+/*   bottom alert banner  */
+    .jenkins-alert-warning {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        background-color: #fdeedc;
+        color: #d97a2d;
+        padding: 10px 20px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 500;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        max-width: 300px;
+        text-align: left;
+    }
+
+
