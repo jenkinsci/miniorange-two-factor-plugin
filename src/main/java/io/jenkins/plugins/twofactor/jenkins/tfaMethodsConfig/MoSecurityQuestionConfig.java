@@ -288,7 +288,7 @@ public class MoSecurityQuestionConfig extends UserProperty implements Action {
           false);
     }
 
-    @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
+    @SuppressFBWarnings(value = "NP_NONNULL_RETURN_VIOLATION", justification = "Intentionally returning null to hide from UI")
     @Override
     public String getDisplayName() {
       return null;
