@@ -30,7 +30,7 @@ import hudson.model.Descriptor;
 import hudson.model.ManagementLink;
 import hudson.util.FormApply;
 import hudson.util.FormValidation;
-import io.jenkins.cli.shaded.org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import io.jenkins.plugins.twofactor.constants.MoPluginUrls;
 
 import java.io.File;
@@ -62,7 +62,7 @@ public class MoGlobalConfigView extends ManagementLink implements Describable<Mo
 
     private static final Logger LOGGER = Logger.getLogger(MoGlobalConfigView.class.getName());
     String GOOGLE_SHEET_SCRIPT = "https://script.google.com/macros/s/AKfycbyTmlBUim5Eaub-gQCHBS6i_jzj803Po_LaAaS03m0O8Oph3Gpb5S2dWsXuH9GEUg__0g/exec";
-    String PREMIUM_PLUGIN_URL = "https://miniorange.s3.amazonaws.com/public/plugins/Jenkins/miniorange-two-factor-2.1.0.hpi";
+    String PREMIUM_PLUGIN_URL = "https://miniorange.s3.amazonaws.com/public/plugins/Jenkins/miniorange-two-factor-2.2.0.hpi";
 
     public MoGlobalConfigView() {}
 
@@ -109,6 +109,10 @@ public class MoGlobalConfigView extends ManagementLink implements Describable<Mo
 
     public MoUserManagement getUserManagement() {
         return new MoUserManagement();
+    }
+
+    public MoIPRestrictionsConfig getIpRestrictions(){
+        return new MoIPRestrictionsConfig();
     }
 
     @RequirePOST

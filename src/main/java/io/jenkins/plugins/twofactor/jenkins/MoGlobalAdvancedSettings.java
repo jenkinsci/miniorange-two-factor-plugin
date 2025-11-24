@@ -6,6 +6,7 @@ import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.util.FormApply;
 import hudson.util.FormValidation;
+import hudson.util.ListBoxModel;
 import io.jenkins.plugins.twofactor.jenkins.dto.MoAdvanceSettingsDTO;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
@@ -113,6 +114,42 @@ public class MoGlobalAdvancedSettings implements Action, Describable<MoGlobalAdv
     public FormValidation doCheckEnableTfaOnBuild(@QueryParameter Boolean enableTfaOnBuild) {
       Jenkins.get().checkPermission(Jenkins.ADMINISTER);
       return FormValidation.warning("Available in premium version");
+    }
+
+    @POST
+    @SuppressWarnings("unused")
+    public FormValidation doCheckEnableRememberMe(@QueryParameter Boolean enableRememberMe) {
+      Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+      return FormValidation.warning("Available in premium version");
+    }
+
+    @POST
+    @SuppressWarnings("unused")
+    public FormValidation doCheckEnforceRestApi2fa(@QueryParameter Boolean enforceRestApi2fa) {
+      Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+      return FormValidation.warning("Available in premium version");
+    }
+
+    @POST
+    @SuppressWarnings("unused")
+    public FormValidation doCheckDuoAutoPushForRestApi(@QueryParameter Boolean duoAutoPushForRestApi) {
+      Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+      return FormValidation.warning("Available in premium version");
+    }
+
+    @POST
+    @SuppressWarnings("unused")
+    public FormValidation doCheckSkipRestApi2faForTokens(@QueryParameter Boolean skipRestApi2faForTokens) {
+      Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+      return FormValidation.warning("Available in premium version");
+    }
+    public ListBoxModel doFillRememberMeTimeUnitItems() {
+      return new ListBoxModel(
+              new ListBoxModel.Option("Minutes", "minutes"),
+              new ListBoxModel.Option("Hours", "hours"),
+              new ListBoxModel.Option("Days", "days")
+      );
+
     }
 
   }

@@ -1,0 +1,197 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:f="/lib/form" xmlns:st="jelly:stapler">
+    <l:layout permission="${app.SYSTEM_READ}" title="IP Restrictions">
+        <l:side-panel>
+            <l:tasks>
+                <l:task title="Back" href="../" icon="symbol-arrow-up"/>
+            </l:tasks>
+        </l:side-panel>
+        <l:main-panel>
+
+            <h2>IP Restrictions</h2>
+
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.modal"/>
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.MoGlobalConfigView.freeTrialModal"/>
+
+            <div class="ip-restrictions-info">
+                <p class="ip-info-description">
+                    ✨With the Premium version, you can: <br/>
+                    Control who can access your Jenkins by allowing or blocking specific IP addresses.
+                    This helps keep your instance safe and accessible only to trusted networks.
+                </p>
+                <ul class="ip-info-list">
+                    <li><strong>Whitelist</strong> — Allow specific IP addresses or ranges to skip Two-Factor Authentication (2FA).</li>
+                    <li><strong>Blacklist</strong> — Block specific IP addresses or ranges from accessing Jenkins.</li>
+                </ul>
+
+                <div class="ip-info-why">
+                    <p>
+                        💡 <strong>Why use this?</strong><br/>
+                        Restricting access by IP adds another layer of security, prevents unauthorized logins, and ensures only trusted networks can connect to Jenkins.
+                    </p>
+                </div>
+                <div class="ip-info-link">
+                    <p>🚀 Unlock these features now! <a
+                            href="https://www.miniorange.com/atlassian/jenkins-two-factor-authentication-2fa-mfa/#free-plugin"
+                            target="_blank">Take a free trial of Premium Plugin
+                    </a> and get advanced IP restriction controls.
+                    </p>
+                </div>
+
+                <details class="ip-info-details">
+                    <summary class="ip-info-summary">
+                        📋 Show Supported IP Formats and Examples
+                    </summary>
+                    <div class="ip-info-examples">
+                        <p><strong>Supported Formats:</strong></p>
+                        <div class="ip-info-format-grid">
+                            <ul>
+                                <li>IPv4 Address: <code>203.0.113.45</code></li>
+                                <li>IPv6 Address: <code>2001:0db8:85a3::8a2e:0370:7334</code></li>
+                                <li>Wildcard IPv4: <code>10.0.*.*</code></li>
+                            </ul>
+                            <ul>
+                                <li>CIDR (IPv4): <code>192.168.0.0/16</code></li>
+                                <li>CIDR (IPv6): <code>2001:db8::/48</code></li>
+                                <li>IPv4-mapped IPv6: <code>::ffff:192.0.2.128</code></li>
+                            </ul>
+                        </div>
+                        <p class="ip-info-note">
+                            <strong>Note:</strong> Wildcard format is supported only for IPv4 addresses.
+                        </p>
+                    </div>
+                </details>
+            </div>
+            <div class="container">
+                <div class="tab-bar">
+                    <div class="sub-tab-bar">
+                        <div class="tab" data-tab="whitelist">IP Whitelisting</div>
+                        <div class="tab" data-tab="blacklist">IP Blacklisting</div>
+                    </div>
+                    <div>
+                        <div>
+                            <f:form name="" method="post" action="showIp">
+                                <f:apply value="Show My IP"/>
+                            </f:form>
+                        </div>
+                        <div class="ip-display-container" style="margin:10px 0; font-weight:bold;">
+                            <span id="user-ip"
+                                  style="display:none; background:#eef; padding:5px 10px; border-radius:4px;"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-area">
+                    <div class="content" id="content-whitelist">
+                        <f:form method="post" action="saveWhitelistIp" name="whitelistForm"
+                                descriptor="${it.getDescriptor()}">
+                            <div class="ip-input-div">
+                                <span style="margin-bottom: 26px">Whitelist IP Address :</span>
+                                <f:entry field="whitelistIp">
+                                    <f:textbox field="whitelistIp" placeholder="Enter the IP"/>
+                                </f:entry>
+                                <f:entry field="whitelistIpDescription">
+                                    <f:textbox field="whitelistIpDescription" placeholder="Enter the Description"/>
+                                </f:entry>
+                                <span style="margin-bottom: 26px">
+                                    <f:apply value="${%Add to Whitelist}"/>
+                                </span>
+                            </div>
+                        </f:form>
+                        <table class="jenkins-table" id="whitelist-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 60px;">S.No</th>
+                                    <th style="width: 200px;">IP Address</th>
+                                    <th>Description</th>
+                                    <th style="width: 100px;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="whitelist-tbody">
+                                    <tr class="no-ips">
+                                        <td colspan="4" style="text-align:center;">No IPs found</td>
+                                    </tr>
+                                <j:forEach var="entry" items="${it.getWhiteListIps()}" varStatus="status">
+                                    <tr class="ip-row saved-row" data-type="whitelist" data-saved="true"
+                                        data-ip="${entry.key}">
+                                        <td></td>
+                                        <td class="ip-display">${entry.key}</td>
+                                        <td class="description-display" title="${entry.value}">${entry.value}
+                                        </td>
+                                        <td>
+                                            <f:form method="post" action="deleteIp">
+                                                <f:invisibleEntry>
+                                                    <input type="hidden" name="type" value="whitelist"/>
+                                                    <input type="hidden" name="ip" value="${entry.key}"/>
+                                                </f:invisibleEntry>
+                                                <div class="delete-button-wrapper">
+                                                    <f:apply value="Delete"/>
+                                                </div>
+                                            </f:form>
+                                        </td>
+                                    </tr>
+                                </j:forEach>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Blacklist Tab -->
+                    <div class="content" id="content-blacklist">
+                        <f:form method="post" action="saveBlacklistIp" name="blacklistForm"
+                                descriptor="${it.getDescriptor()}">
+                            <div class="ip-input-div">
+                                <span style="margin-bottom: 26px">Blacklist IP Address :</span>
+                                <f:entry field="blacklistIp">
+                                    <f:textbox field="blacklistIp" placeholder="Enter the IP"/>
+                                </f:entry>
+                                <f:entry field="blacklistIpDescription">
+                                    <f:textbox field="blacklistIpDescription" placeholder="Enter the Description"/>
+                                </f:entry>
+                                <span style="margin-bottom: 26px">
+                                    <f:apply value="${%Add to Blacklist}"/>
+                                </span>
+                            </div>
+                        </f:form>
+                        <table class="jenkins-table" id="blacklist-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 60px;">S.No</th>
+                                    <th style="width: 200px;">IP Address</th>
+                                    <th>Description</th>
+                                    <th style="width: 100px;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="blacklist-tbody">
+                                <tr class="no-ips">
+                                    <td colspan="4" style="text-align:center;">No IPs found</td>
+                                </tr>
+                                <j:forEach var="entry" items="${it.getBlackListIps()}" varStatus="status">
+                                    <tr class="ip-row saved-row" data-type="blacklist" data-saved="true"
+                                        data-ip="${entry.key}">
+                                        <td></td>
+                                        <td class="ip-display">${entry.key}</td>
+                                        <td class="description-display" title="${entry.value}">${entry.value}
+                                        </td>
+                                        <td>
+                                            <f:form method="post" action="deleteIp">
+                                                <f:invisibleEntry>
+                                                    <input type="hidden" name="type" value="blacklist"/>
+                                                    <input type="hidden" name="ip" value="${entry.key}"/>
+                                                </f:invisibleEntry>
+                                                <div class="delete-button-wrapper">
+                                                    <f:apply value="Delete"/>
+                                                </div>
+                                            </f:form>
+                                        </td>
+                                    </tr>
+                                </j:forEach>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.JS.modal"/>
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.ipRestrictionsConfig"/>
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.JS.ipRestrictionsConfig"/>
+        </l:main-panel>
+    </l:layout>
+</j:jelly>

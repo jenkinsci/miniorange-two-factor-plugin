@@ -312,7 +312,6 @@ public class MoOtpOverEmailAuth implements Action {
 
       if (redirectUrl == null) redirectUrl = Jenkins.get().getRootUrl();
       LOGGER.fine("Redirecting" + user.getId() + " from otpOverEmailAuth to " + redirectUrl);
-      FormApply.success(redirectUrl).generateResponse(req, rsp, null);
 
     } catch (RuntimeException e) {
       throw e;

@@ -1,0 +1,209 @@
+.ip-row input {
+    border: 1px solid #ccc;
+    padding: 4px 8px;
+    border-radius: 8px;
+}
+.ip-row input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+.error-text {
+    color: red;
+    font-size: 12px;
+}
+.description-display {
+    max-width: 200px !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+    cursor: pointer;
+}
+.description-display.expanded {
+    white-space: normal !important;
+    overflow: visible !important;
+    max-width: none !important;
+}
+
+.ip-restrictions-info {
+    padding: 18px;
+    border-radius: 8px;
+    background-color: #f0f8ff;
+    border: 1px solid #cce5ff;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.ip-info-description {
+    margin: 0 0 10px 0;
+}
+
+
+.ip-info-list {
+    margin: 0 0 12px 20px;
+    padding: 0;
+}
+
+.ip-info-why {
+    margin-top: 12px;
+    padding: 10px;
+    background-color: #e8f4fb;
+    border-left: 4px solid #2196F3;
+    border-radius: 4px;
+}
+
+.ip-info-why p {
+    margin: 0;
+}
+
+.ip-info-details {
+    margin-top: 15px;
+}
+
+.ip-info-summary {
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    color: #0056b3;
+}
+
+.ip-info-link a{
+    font-weight: bold;
+    color: #0056b3;
+}
+
+.ip-info-examples {
+    margin-top: 10px;
+}
+
+.ip-info-examples p {
+    margin-bottom: 6px;
+}
+
+.ip-info-format-grid {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.ip-info-format-grid ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.ip-info-note {
+    margin-top: 8px;
+    font-size: 12px;
+}
+
+[data-theme=dark],[data-theme=dark-system]{
+    .ip-info-list,
+    .ip-restrictions-info,
+    .ip-info-why p,
+    .ip-info-description,
+    .ip-info-link p {
+        color: black !important;
+    }
+    .container {
+        box-shadow: 0 8px 30px rgb(89 82 82 / 12%);
+    }
+}
+
+
+.container {
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+    padding: 12px
+}
+
+.tab-bar {
+    display: flex;
+    border-bottom: 1px solid #e9ecef;
+    justify-content: space-between;
+    align-items: center
+}
+.sub-tab-bar{
+    display: flex;
+    width: 50%;
+}
+.delete-button-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.delete-button-wrapper .jenkins-button {
+    --color: oklch(62% 0.25 25);
+    color: var(--color) !important;
+    --button-background: oklch(from var(--color) l c h / 0.1);
+    --button-background--hover: oklch(from var(--color) l c h / 0.15);
+    --button-background--active: oklch(from var(--color) l c h / 0.25);
+    --button-box-shadow--focus: oklch(from var(--color) l c h / 0.125);
+}
+
+.tab {
+    flex: 1;
+    padding: 16px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 18px;
+    color: #6c757d;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-bottom: 3px solid transparent;
+}
+
+.tab:hover {
+    background: #e9ecef;
+    color: #495057;
+}
+
+.tab.active {
+    color: #4361ee;
+    border-bottom: 3px solid #4361ee;
+    background: rgba(67, 97, 238, 0.05);
+}
+
+.content-area {
+    padding: 40px 40px;
+}
+
+.content {
+    display: none;
+    animation: fadeIn 0.5s ease;
+}
+
+.content.active {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+@keyframes fadeIn {
+    from { opacity: 11111110; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.ip-input-div {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: 30px;
+    justify-content: center;
+}
+
+/*Table Numbering(S.No)*/
+#whitelist-tbody, #blacklist-tbody {
+    counter-reset: row-num; /* reset numbering at start of tbody */
+}
+
+#whitelist-tbody tr.ip-row,
+#blacklist-tbody tr.ip-row {
+    counter-increment: row-num; /* increment for each row */
+}
+
+#whitelist-tbody tr.ip-row td:first-child::before,
+#blacklist-tbody tr.ip-row td:first-child::before {
+    content: counter(row-num); /* display number */
+}

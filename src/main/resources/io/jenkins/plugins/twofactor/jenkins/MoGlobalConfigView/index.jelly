@@ -9,6 +9,7 @@
                 <l:task title="back" href="../" icon="symbol-arrow-up"/>
                 <l:task title="Advanced settings" href="./advancedSettings" icon="symbol-settings"/>
                 <l:task title="User Management" href="./userManagement" icon="symbol-people"/>
+                <l:task title="IP Restrictions" href="./ipRestrictions" icon="symbol-lock-closed"/>
             </l:tasks>
 
             <div class="mo-contact-us-container">
@@ -90,6 +91,9 @@
                         <f:entry title="${%OTP over SMS}"
                                  field="enableOtpOverSms">
                             <f:checkbox class="checkboxToSkip" checked="false"/>
+                            <div class="sms-block">
+                                 <b>SMS Gateway Integration:</b> Easily connect with <span class="gateway-color"><b>miniOrange</b></span> or <span class="gateway-color"><b>Twilio</b></span> to deliver OTP via SMS.<br/>
+                            </div>
                         </f:entry>
                     </f:section>
 

@@ -12,19 +12,14 @@
 
         <l:main-panel>
 
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.modal"/>
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.MoGlobalConfigView.freeTrialModal"/>
+
             <f:form method="post" action="saveAdvancedSettingsConfiguration" name="replace" descriptor="${it.descriptor}">
                 <input type="hidden" name="formPage" value="advanceSettingsConfig"/>
                 <f:section title="Enter groups to skip TFA">
                     <f:entry title="Skip TFA for groups" field="skipTfaForGroups">
                         <f:textbox placeholder="Available in premium version" disabled="true"/>
-                    </f:entry>
-                    <f:entry title="${%Skip 2FA for API's}"
-                             field="skipTfaForApi">
-                        <f:checkbox class="checkboxToSkip" checked="false"/>
-                    </f:entry>
-                    <f:entry title="${%Enable 2FA on builds}"
-                             field="enableTfaOnBuild">
-                        <f:checkbox class="checkboxToSkip" checked="false"/>
                     </f:entry>
                 </f:section>
                 <f:section title="Custom Email Template">
@@ -38,10 +33,57 @@
                     </f:entry>
                 </f:section>
 
+                <f:section title="Remember Me Configuration">
+                    <j:if test="true">
+                        <j:set var="readOnlyMode" value="true"/>
+                    </j:if>
+                    <f:optionalBlock title="${%Enable Remember Me}" field="enableRememberMe" negative="true" checked="false">
+                        <div style="display: flex; gap: 20px; margin-top: 19px">
+                            <div style="margin-top: 10px">
+                                Duration:
+                            </div>
+                            <div style="width: 400px !important">
+                                <f:entry field="rememberMeDuration">
+                                    <div style="width: 100px;">
+                                        <f:number min="1" default="1" value="${it.getRememberMeDuration()}"/>
+                                    </div>
+                                </f:entry>
+                            </div>
+                            <div style="width: 100px !important; margin-left: -300px">
+                                <f:entry >
+                                    <f:select field="rememberMeTimeUnit" default="${it.getRememberMeTimeUnit()}"/>
+                                </f:entry>
+                            </div>
+                        </div>
+                    </f:optionalBlock>
+                </f:section>
+
+                <f:section title="2FA Enforcement for REST APIS">
+                    <j:if test="true">
+                        <j:set var="readOnlyMode" value="true"/>
+                    </j:if>
+                    <f:optionalBlock title="Enforce 2FA for all REST API requests" field="enforceRestApi2fa"
+                                     checked="false" negative="true">
+                        <br/>
+                        <div style="margin-bottom: 20px;">
+                            <f:entry title="Validate using token for REST API" field="skipRestApi2faForTokens">
+                                <f:checkbox field="skipRestApi2faForTokens" checked="${it.getSkipRestApi2faForTokens()}"/>
+                            </f:entry>
+                        </div>
+                        <f:entry title="Validate using auto Duo Push Notification for REST API"
+                                 field="duoAutoPushForRestApi">
+                            <f:checkbox field="duoAutoPushForRestApi" checked="${it.getDuoAutoPushForRestApi()}"/>
+                        </f:entry>
+                        <br/>
+                    </f:optionalBlock>
+                </f:section>
+
                 <f:bottomButtonBar>
                     <f:submit value="${%Save}"/>
                 </f:bottomButtonBar>
             </f:form>
+
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.JS.modal"/>
 
         </l:main-panel>
 

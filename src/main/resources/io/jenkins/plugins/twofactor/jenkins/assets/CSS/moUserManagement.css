@@ -22,7 +22,7 @@
         color: #0056b3;
       }
 
-     [data-theme=dark]{
+    [data-theme=dark],[data-theme=dark-system]{
        .jenkins-alert-info p {
           color:black;
        }

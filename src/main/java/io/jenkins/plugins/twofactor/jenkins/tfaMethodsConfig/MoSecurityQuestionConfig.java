@@ -156,10 +156,6 @@ public class MoSecurityQuestionConfig extends UserProperty implements Action {
           userAuthenticationStatus.put(user.getId(), true);
         }
 
-        if (redirectUrl != null) {
-          LOGGER.fine("Saved security questions, redirecting user to " + redirectUrl);
-          FormApply.success(redirectUrl).generateResponse(req, rsp, null);
-        }
       }
     } catch (Exception e) {
       LOGGER.fine("Error in saving security questions, Form is not filled correctly ");

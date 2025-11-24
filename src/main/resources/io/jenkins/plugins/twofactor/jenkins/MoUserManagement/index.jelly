@@ -14,6 +14,9 @@
         <l:main-panel>
             <h2>User List</h2>
 
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.modal"/>
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.MoGlobalConfigView.freeTrialModal"/>
+
             <div class="jenkins-alert jenkins-alert-info">
                 <div class="info-div1">
                     <p>✨With the Premium version, you can:</p>
@@ -102,11 +105,9 @@
                     </tbody>
                 </table>
             </form>
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.JS.modal"/>
         </l:main-panel>
     </l:layout>
-    <div id="premiumBanner" class="jenkins-alert jenkins-alert-warning" style="display: none;">
-        ⚠️ Available in Premium version
-    </div>
     <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.moUserManagement"/>
     <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.JS.moUserManagement"/>
 </j:jelly>

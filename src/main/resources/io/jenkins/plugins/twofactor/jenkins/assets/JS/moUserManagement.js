@@ -47,13 +47,9 @@ document.addEventListener("DOMContentLoaded", function () {
     var allSpans = document.querySelectorAll('.actionLink');
     var allAlertTriggers = Array.from(allSpans);
     allAlertTriggers.push(document.querySelector('.jenkins-button'));
-    var banner = document.getElementById('premiumBanner');
-     allAlertTriggers.forEach(function (span) {
-             span.addEventListener('click', function () {
-                 banner.style.display = 'block';
-                 setTimeout(function () {
-                    banner.style.display = 'none';
-                 }, 3000);
-            });
-     });
+    allAlertTriggers.forEach(function (span) {
+        span.addEventListener('click', function () {
+            notificationBar.show("Available in Premium version!", notificationBar.WARNING);
+        });
+    });
 })
