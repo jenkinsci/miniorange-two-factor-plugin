@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:l="/lib/layout" xmlns:st="jelly:stapler">
+
+    <l:layout title="User Management">
+
+        <l:side-panel>
+            <l:tasks>
+                <l:task title="Back" href="../" icon="symbol-arrow-up"/>
+                <l:task title="Users" href="./users" icon="symbol-person"/>
+                <l:task title="Groups" href="${href}" icon="symbol-people"/>
+            </l:tasks>
+        </l:side-panel>
+
+        <l:main-panel>
+            <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+
+            </j:jelly>
+            <h2>Groups List</h2>
+                <j:set var="allUsers" value="${it.getAllUsers()}"/>
+                <div class="jenkins-alert jenkins-alert-info">
+                    <p>✨With the Premium version, you can:</p>
+                    <div class="info-div1">
+                        <p>ℹ️ You can perform 2FA actions like Enabling/Disabling/Resetting 2FA for all users in a group using
+                            below given steps:
+                        </p>
+                        <p>1. Search groups by name for which you want to perform Enable/Disable/Reset 2FA.</p>
+                        <p>2. Click on Enable 2FA/Disable 2FA/Reset 2FA link of the respective group.</p>
+                    </div>
+                    <div class="info-div2">
+                        <p>ℹ️ To perform 2FA actions in Bulk, use below given steps:</p>
+                        <p>1. Select the checkboxes for the groups on which you want to perform the bulk action. you can
+                            select some or all groups.
+                        </p>
+                        <p>2. Select the Bulk Action you want and click Apply Action button.</p>
+                    </div>
+                </div>
+
+            <div class="jenkins-alert" style="margin-bottom: 20px;">
+                <h3 style="display: flex; align-items: center; justify-content: space-between;">
+                    Groups to Skip 2FA
+                </h3>
+                <p>Enter group names separated by semicolons (;) to bypass two-factor authentication for users in those groups.</p>
+
+                <form method="post" action="#" style="margin-top: 10px;" onsubmit="return false;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <f:entry title="Groups to Skip 2FA:">
+                            <f:textbox  style="width: 400px;" name="groupsToAvoidTfa"
+                                       placeholder="e.g., admins;developers"
+                            />
+                        </f:entry>
+                        <f:submit value="Save Groups to Skip 2FA"/>
+                    </div>
+                </form>
+
+                <div class="warning">
+                    This feature is available in the Premium version only.
+                    <a href="https://www.miniorange.com/atlassian/jenkins-two-factor-authentication-2fa-mfa/#free-plugin">
+                        Upgrade to Premium
+                    </a>
+                </div>
+            </div>
+
+
+
+
+                <!-- Group Actions Form -->
+                    <form id="GroupForm" method="post" action="performGroupAction">
+                        <div class="action-bar">
+                            <div class="button-container">
+                                <f:entry name="action" title="Choose a bulk action:" field="action">
+                                    <select name="action" id="groupAction">
+                                        <f:option value="enable">Enable 2FA</f:option>
+                                        <f:option value="disable">Disable 2FA</f:option>
+                                        <f:option value="reset">Reset 2FA</f:option>
+                                    </select>
+                                </f:entry>
+                                <div id="warning-container" style="display: flex; flex-direction: column; gap: 4px;">
+                                    <button class="jenkins-button jenkins-!-margin-bottom-1" disabled="true">Apply Action</button>
+                                    <div class="warning" style="font-weight: bold;">
+                                         Available in Premium version.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="button" id="createGroupBtn" class="jenkins-button jenkins-button--primary">
+                                Create New Group
+                            </button>
+                        </div>
+
+                    <!-- Inline Group Creation Form (initially hidden) -->
+                    <div id="groupCreationForm" class="group-creation-form" style="display: none;">
+                        <div class="form-inline">
+                            <f:entry title="Group Name">
+                                <f:textbox id="newGroupName" name="newGroupName" placeholder="Enter new group name"/>
+                            </f:entry>
+                            <button type="button" id="saveGroupBtn" class="jenkins-button jenkins-button--primary">
+                                Save Group
+                            </button>
+                            <button type="button" id="cancelGroupBtn" class="jenkins-button" style="color: white !important;">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Search Bar -->
+                    <div class="search-bar">
+                        <label for="groupSearch">Search Group:</label>
+                        <input type="text" id="groupSearch" onkeyup="filterGroupTable()"
+                               placeholder="Type to search by group name..."/>
+                    </div>
+
+                    <table class="jenkins-table jenkins-!-margin-bottom-0">
+                        <thead>
+                            <tr>
+                                <th class="checkbox-column" style="display: flex; justify-content: center">
+                                    <input type="checkbox" id="selectAllGroupsCheckbox" name="selectAllGroupsCheckbox"/>
+                                </th>
+                                <th>Group Name</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <j:set var="allGroups" value="${it.getAllGroups()}"/>
+                            <j:choose>
+                                <j:when test="${not empty allGroups}">
+                                    <j:forEach var="group" items="${allGroups}">
+                                        <j:set var="groupName" value="${group.getName()}"/>
+                                        <j:set var="allUsersOfGroup" value="${group.getUsernames()}"/>
+                                        <tr class="group-row">
+                                            <td class="checkbox-column">
+                                                <input type="checkbox" name="selectedGroups" value="${groupName}"/>
+                                            </td>
+                                            <td class="group-name">
+                                                <a href="manageGroup?groupName=${groupName}" class="jenkins-table__link">
+                                                    ${groupName}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <j:if test="${it.getGroup2faStatus(groupName)}">
+                                                    <span style="color:#006fe6" class="actionLink jenkins-table__link">Disable 2FA</span>
+                                                </j:if>
+                                                <j:if test="${!it.getGroup2faStatus(groupName)}">
+                                                    <span style="color:#006fe6" class="actionLink jenkins-table__link">Enable 2FA</span>
+                                                </j:if>
+                                                <j:if test="${it.groupNeedsReset(groupName)}">
+                                                    /
+                                                    <span style="color:#006fe6" class="actionLink jenkins-table__link">Reset 2FA</span>
+                                                </j:if>
+                                            </td>
+                                        </tr>
+                                    </j:forEach>
+                                </j:when>
+                                <j:otherwise>
+                                    <tr>
+                                        <td colspan="5" style="text-align: center; padding: 20px; color: #666;">
+                                            No Groups found.
+                                        </td>
+                                    </tr>
+                                </j:otherwise>
+                            </j:choose>
+
+                        </tbody>
+                        <input type="hidden" id="selectedGroupNames" name="selectedGroupNames" value=""/>
+                    </table>
+                </form>
+
+
+        </l:main-panel>
+    </l:layout>
+
+    <j:if test="${it.hasGroupCreationSuccess()}">
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                notificationBar.show("Group created successfully!", notificationBar.SUCCESS);
+            });
+        </script>
+        ${it.doClearGroupFlags()}
+    </j:if>
+
+    <j:if test="${it.hasGroupCreationError()}">
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                notificationBar.show("Failed to create group!", notificationBar.ERROR);
+            });
+        </script>
+        ${it.doClearGroupFlags()}
+    </j:if>
+
+    <j:if test="${it.hasGroupDeletionSuccess()}">
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                notificationBar.show("Group deleted successfully!", notificationBar.SUCCESS);
+            });
+        </script>
+        ${it.doClearGroupFlags()}
+    </j:if>
+
+    <j:if test="${it.hasGroupDeletionError()}">
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                notificationBar.show("Failed to delete group!", notificationBar.ERROR);
+            });
+        </script>
+        ${it.doClearGroupFlags()}
+    </j:if>
+
+    <!--        this will include both css and JS for the file because both have same name-->
+    <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.JS.moUserManagement"/>
+    <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.moUserManagement"/>
+</j:jelly>

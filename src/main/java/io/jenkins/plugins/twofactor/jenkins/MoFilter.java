@@ -271,16 +271,24 @@ public class MoFilter implements Filter {
       }
 
       HttpServletResponse rsp = (HttpServletResponse) servletResponse;
-      String relayState = req.getRequestURI();
+      String fullUrl = req.getRequestURL().toString();
+      LOGGER.fine("Request URL : " + fullUrl);
 
-      if (session.getAttribute("tfaRelayState") == null) {
-        session.setAttribute("tfaRelayState", sanitizeRequestURI(relayState));
+      if (req.getQueryString() != null) {
+        LOGGER.fine("querystring: " + req.getQueryString());
+        fullUrl += "?" + req.getQueryString();
       }
 
-      LOGGER.fine(
-          req.getRequestURI()
-              + " is being redirecting for 2FA, saved relay state is "
-              + relayState);
+      LOGGER.fine("Original full URL captured for redirecting after 2FA : " + fullUrl);
+
+      if (session.getAttribute("tfaRelayState") == null) {
+        session.setAttribute("tfaRelayState", sanitizeRequestURI(fullUrl));
+        LOGGER.fine("tfaRelayState attribute stored in session  " + session.getAttribute("tfaRelayState"));
+      }
+
+      LOGGER.fine("User " + user.getId()
+              + " is being redirected to 2FA. Saved relay state: "
+              + fullUrl + ", redirect target: " + redirectUrl);
 
       rsp.sendRedirect(Jenkins.get().getRootUrl() + redirectUrl);
     } catch (Exception e) {

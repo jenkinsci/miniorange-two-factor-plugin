@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+         xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+
+    <l:layout title="Manage Group - ${groupName}">
+        <l:breadcrumb title="Manage Group - ${groupName}"/>
+        <l:side-panel>
+            <l:tasks>
+                <l:task title="Back to Groups" href="groups" icon="symbol-arrow-left"/>
+                <l:task title="Back to User Management" href="users" icon="symbol-people"/>
+            </l:tasks>
+        </l:side-panel>
+
+        <l:main-panel>
+            <div class="config body" style="padding: 40px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                    <h1>Manage Group: ${groupName}</h1>
+                    <button type="button" id="deleteGroupBtn" class="jenkins-button" style="background-color: #e74c3c; color: white !important;" data-group-name="${groupName}">
+                        Delete Group
+                    </button>
+                </div>
+                
+                <j:set var="currentGroup" value="${it.getGroupByName(groupName)}"/>
+                <j:set var="groupUsers" value="${it.getGroupUsers(groupName)}"/>
+                <j:set var="availableUsers" value="${it.getAvailableUsersForGroup(groupName)}"/>
+                <j:set var="allUsers" value="${it.getAllUsers()}"/>
+                
+                <div class="section">
+                    <div class="group-info">
+                        <p><strong>Total Users:</strong> ${groupUsers.size()}</p>
+                        <p><strong>2FA Status:</strong> 
+                            <j:if test="${it.getGroup2faStatus(groupName)}">
+                                <span style="color: green;">✓ Enabled</span>
+                            </j:if>
+                            <j:if test="${!it.getGroup2faStatus(groupName)}">
+                                <span style="color: orange;">✗ Disabled</span>
+                            </j:if>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2>Group Users</h2>
+                        <div style="display: flex; flex-direction: column; align-items: flex-end;">
+                            <button class="jenkins-button jenkins-button--primary"
+                                    style="opacity: 0.6; cursor: not-allowed;">
+                                Add User
+                            </button>
+                            <div class="warning">
+                                Available in Premium version.
+                            </div>
+                       </div>
+                    </div>
+                    
+                    <table class="jenkins-table jenkins-!-margin-bottom-0">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <j:choose>
+                                <j:when test="${!groupUsers.isEmpty()}">
+                                    <j:forEach var="userId" items="${groupUsers}">
+                                        <tr>
+                                            <td>${userId}</td>
+                                            <td>
+                                                <form method="post" action="modifyGroupUsers" style="display: inline;">
+                                                    <input type="hidden" name="groupName" value="${groupName}"/>
+                                                    <input type="hidden" name="removeUser" value="${userId}"/>
+                                                    <button type="submit" class="jenkins-button remove-user-btn">
+                                                        <l:icon src="symbol-status-aborted" tooltip="Remove user from group" />
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    </j:forEach>
+                                </j:when>
+                                <j:otherwise>
+                                    <tr>
+                                        <td colspan="2" style="text-align: center; padding: 20px; color: #666;">
+                                            No users in this group yet.
+                                        </td>
+                                    </tr>
+                                </j:otherwise>
+                            </j:choose>
+                        </tbody>
+                    </table>
+                </div>
+
+
+            </div>
+        </l:main-panel>
+    </l:layout>
+    
+    <!-- Delete Group Confirmation Modal -->
+    <div id="deleteGroupModal" class="jenkins-modal" style="display: none;">
+        <div class="jenkins-modal-backdrop"></div>
+        <div class="jenkins-modal-dialog">
+            <div class="jenkins-modal-content">
+                <div class="jenkins-modal-header">
+                    <h3>Delete Group</h3>
+                    <button type="button" class="jenkins-modal-close" id="modalCloseBtn">×</button>
+                </div>
+                <div class="jenkins-modal-body">
+                    <div class="jenkins-alert jenkins-alert-warning">
+                        <p><strong>Are you sure you want to delete the group "<span id="groupNameToDelete"></span>"?</strong></p>
+                        <p>This action cannot be undone. All users will be removed from this group.</p>
+                    </div>
+                </div>
+                <div class="jenkins-modal-footer">
+                    <button type="button" class="jenkins-button" id="cancelDeleteBtn">Cancel</button>
+                    <button type="button" class="jenkins-button jenkins-button--danger" id="confirmDeleteBtn">Delete Group</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    
+    <!-- Include external CSS and JS files -->
+    <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.moManageGroup"/>
+    <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.JS.moManageGroup"/>
+</j:jelly>
