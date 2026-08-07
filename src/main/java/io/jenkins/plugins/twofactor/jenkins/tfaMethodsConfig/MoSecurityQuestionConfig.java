@@ -47,10 +47,10 @@ import javax.servlet.http.HttpSession;
 import io.jenkins.plugins.twofactor.jenkins.MoGlobalConfig;
 import io.jenkins.plugins.twofactor.jenkins.MoUserAuth;
 import jenkins.model.Jenkins;
-import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.*;
 import org.kohsuke.stapler.interceptor.RequirePOST;
 import org.springframework.lang.NonNull;
+import hudson.Util;
 
 public class MoSecurityQuestionConfig extends UserProperty implements Action {
   private static final Logger LOGGER = Logger.getLogger(MoSecurityQuestionConfig.class.getName());
@@ -112,10 +112,10 @@ public class MoSecurityQuestionConfig extends UserProperty implements Action {
             .equals(SELECT_SECURITY_QUESTION.getQuestion())
         && !json.getString(USER_SECOND_SECURITY_QUESTION.getKey())
             .equals(SELECT_SECURITY_QUESTION.getQuestion())
-        && StringUtils.isNotBlank(json.getString(USER_CUSTOM_SECURITY_QUESTION.getKey()))
-        && StringUtils.isNotBlank(json.getString(USER_FIRST_SECURITY_QUESTION_ANSWER.getKey()))
-        && StringUtils.isNotBlank(json.getString(USER_SECOND_SECURITY_QUESTION_ANSWER.getKey()))
-        && StringUtils.isNotBlank(json.getString(USER_CUSTOM_SECURITY_QUESTION_ANSWER.getKey()));
+        && Util.fixEmptyAndTrim(json.getString(USER_CUSTOM_SECURITY_QUESTION.getKey())) != null
+        && Util.fixEmptyAndTrim(json.getString(USER_FIRST_SECURITY_QUESTION_ANSWER.getKey())) != null
+        && Util.fixEmptyAndTrim(json.getString(USER_SECOND_SECURITY_QUESTION_ANSWER.getKey())) != null
+        && Util.fixEmptyAndTrim(json.getString(USER_CUSTOM_SECURITY_QUESTION_ANSWER.getKey())) != null;
   }
 
   @SuppressWarnings("unused")
@@ -354,7 +354,7 @@ public class MoSecurityQuestionConfig extends UserProperty implements Action {
         @QueryParameter String secondSecurityQuestion) {
       Jenkins.get().checkPermission(Jenkins.READ);
       return validateForm(
-          StringUtils.isBlank(firstSecurityQuestionAnswer), "Please Enter valid answer");
+          Util.fixEmptyAndTrim(firstSecurityQuestionAnswer) == null, "Please Enter valid answer");
     }
 
     @SuppressWarnings("unused")
@@ -375,7 +375,7 @@ public class MoSecurityQuestionConfig extends UserProperty implements Action {
         @QueryParameter String secondSecurityQuestionAnswer) {
       Jenkins.get().checkPermission(Jenkins.READ);
       return validateForm(
-          StringUtils.isBlank(secondSecurityQuestionAnswer), "Please Enter valid answer");
+          Util.fixEmptyAndTrim(secondSecurityQuestionAnswer) == null, "Please Enter valid answer");
     }
 
     @SuppressWarnings("unused")
@@ -384,7 +384,7 @@ public class MoSecurityQuestionConfig extends UserProperty implements Action {
         @QueryParameter String customSecurityQuestion) {
       Jenkins.get().checkPermission(Jenkins.READ);
       return validateForm(
-          StringUtils.isBlank(customSecurityQuestion), "Please select a valid security question");
+          Util.fixEmptyAndTrim(customSecurityQuestion) == null, "Please select a valid security question");
     }
 
     @SuppressWarnings("unused")
@@ -393,7 +393,7 @@ public class MoSecurityQuestionConfig extends UserProperty implements Action {
         @QueryParameter String customSecurityQuestionAnswer) {
       Jenkins.get().checkPermission(Jenkins.READ);
       return validateForm(
-          StringUtils.isBlank(customSecurityQuestionAnswer), "Please Enter valid answer");
+          Util.fixEmptyAndTrim(customSecurityQuestionAnswer) == null, "Please Enter valid answer");
     }
   }
 }

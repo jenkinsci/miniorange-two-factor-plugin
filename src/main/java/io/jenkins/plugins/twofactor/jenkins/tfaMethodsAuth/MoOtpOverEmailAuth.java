@@ -26,7 +26,6 @@ import static io.jenkins.plugins.twofactor.constants.MoGlobalConfigConstant.Adva
 import static io.jenkins.plugins.twofactor.constants.MoGlobalConfigConstant.AdvanceSettingsConstants.DEFAULT_OTP_EMAIL_TEMPLATE;
 import static io.jenkins.plugins.twofactor.jenkins.MoFilter.userAuthenticationStatus;
 import static io.jenkins.plugins.twofactor.jenkins.MoUserAuth.allow2FaAccessAndRedirect;
-import static org.apache.commons.lang.StringUtils.isBlank;
 import hudson.Util;
 import hudson.model.Action;
 import hudson.model.User;
@@ -44,7 +43,6 @@ import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 import jenkins.model.Jenkins;
-import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -213,12 +211,12 @@ public class MoOtpOverEmailAuth implements Action {
       sentOtp.put(user.getId(), otpToSend);
 
       String subject = MoGlobalConfig.get().getAdvancedSettings().getCustomOTPEmailSubject();
-      if(isBlank(subject))
+      if(Util.fixEmptyAndTrim(subject) == null)
         subject = DEFAULT_OTP_EMAIL_SUBJECT.getValue();
 
       String template = MoGlobalConfig.get().getAdvancedSettings().getCustomOTPEmailTemplate();
 
-      if(isBlank(template))
+      if(Util.fixEmptyAndTrim(template) == null)
         template = DEFAULT_OTP_EMAIL_TEMPLATE.getValue();
 
       if (subject.contains("$username")) {
@@ -239,7 +237,7 @@ public class MoOtpOverEmailAuth implements Action {
       msg.setSubject(subject);
       msg.setContent(template, "text/html");
       msg.setFrom(stringToAddress(senderEmailAddress, charset));
-      if (StringUtils.isNotBlank(sendTestMailTo)) {
+      if (Util.fixEmptyAndTrim(sendTestMailTo) != null) {
         msg.setReplyTo(new jakarta.mail.Address[] {stringToAddress(sendTestMailTo, charset)});
       }
 

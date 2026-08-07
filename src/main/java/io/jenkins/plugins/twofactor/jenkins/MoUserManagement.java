@@ -10,7 +10,6 @@ import io.jenkins.plugins.twofactor.jenkins.tfaMethodsConfig.MoSecurityQuestionC
 import jenkins.model.Jenkins;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.*;
 import org.kohsuke.stapler.interceptor.RequirePOST;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

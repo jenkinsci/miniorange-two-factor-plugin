@@ -1,5 +1,6 @@
 package io.jenkins.plugins.twofactor.jenkins;
 
+import hudson.Util;
 import hudson.Extension;
 import hudson.model.Action;
 import hudson.model.Describable;
@@ -25,7 +26,6 @@ import java.util.logging.Logger;
 import static io.jenkins.plugins.twofactor.constants.MoGlobalConfigConstant.AdvanceSettingsConstants.DEFAULT_OTP_EMAIL_SUBJECT;
 import static io.jenkins.plugins.twofactor.constants.MoGlobalConfigConstant.AdvanceSettingsConstants.DEFAULT_OTP_EMAIL_TEMPLATE;
 import static io.jenkins.plugins.twofactor.constants.MoPluginUrls.Urls.MO_TFA_GLOBAL_ADVANCED_SETTINGS;
-import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class MoGlobalAdvancedSettings implements Action, Describable<MoGlobalAdvancedSettings> {
   private static final Logger LOGGER = Logger.getLogger(MoGlobalAdvancedSettings.class.getName());
@@ -81,7 +81,7 @@ public class MoGlobalAdvancedSettings implements Action, Describable<MoGlobalAdv
     if(moAdvanceSettingsDto != null) {
       subject = moAdvanceSettingsDto.getCustomOTPEmailSubject();
     }
-    if(isBlank(subject)){
+    if(Util.fixEmptyAndTrim(subject) == null){
       subject = DEFAULT_OTP_EMAIL_SUBJECT.getValue();
     }
     return subject;
@@ -91,7 +91,7 @@ public class MoGlobalAdvancedSettings implements Action, Describable<MoGlobalAdv
     if(moAdvanceSettingsDto != null) {
       template = moAdvanceSettingsDto.getCustomOTPEmailTemplate();
     }
-    if(isBlank(template)){
+    if(Util.fixEmptyAndTrim(template) == null){
       template = DEFAULT_OTP_EMAIL_TEMPLATE.getValue();
     }
     return template;
