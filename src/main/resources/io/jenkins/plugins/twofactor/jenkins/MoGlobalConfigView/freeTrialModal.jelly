@@ -1,127 +1,29 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
 
-<div id="modal-dialog" class="modal">
-    <div class="modal-content trial-modal-top-margin">
-        <span id="close-btn">X</span>
-        <div class="modal-header">
-            <span>Start your free Premium trial now</span>
+    <!-- Primary discovery: top enterprise banner (config pages only) -->
+    <div id="mo-upsell-banner" class="mo-upsell-banner" role="region" aria-label="Premium Edition capabilities">
+        <div class="mo-upsell-banner__accent" aria-hidden="true"/>
+        <div class="mo-upsell-banner__icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L4 6v6c0 5.25 3.4 10.15 8 11.35C16.6 22.15 20 17.25 20 12V6l-8-4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
         </div>
-        <div class="card-container">
-            <div class="card prpl-brdr">
-                <h1 class="product">Free</h1>
-                <ul class="difference-list">
-                    <li>Unlimited Authentications</li>
-                    <li>Support all security realm</li>
-                    <li>Troubleshooting</li>
-                    <li>Enable/ Disable 2FA for all users</li>
-                    <li>Limited Authentication methods</li>
-                    <li class="pricing-list-oauth">
-                        <br/>
-                    </li>
-                    <li class="pricing-list-oauth">
-                        <br/>
-                    </li>
-                    <li class="pricing-list-oauth">
-                        <br/>
-                    </li>
-                    <li class="pricing-list-oauth">
-                        <br/>
-                    </li>
-                    <li class="pricing-list-oauth">
-                        <br/>
-                    </li>
-                    <li>
-                        <p>
-                            <b>Support</b>
-                        </p>
-                        <p>Basic Email Support Plans On Demand</p>
-                        <p class="contactus-margin">
-                            <a href="https://miniorange.atlassian.net/servicedesk/customer/portal/2"
-                               target="_blank" class="contact-us-link">Contact Us
-                            </a>
-                        </p>
-                    </li>
-
-                </ul>
-
-
-                <div class="redirection-box">
-                    <form method="post" action="./installPlugin" id="installPluginForm">
-                        <button id="GetYourPremiumTrialBtn" class="buy-now-link" type="button">
-                            Get Your Premium Trial
-                        </button>
-                    </form>
-                </div>
-
-            </div>
-
-
-            <div class="card bl-brdr">
-                <h1 class="product">Premium</h1>
-                <ul class="difference-list">
-                    <li>Unlimited Authentications</li>
-                    <li>Support all security realm</li>
-                    <li>Priority Troubleshooting</li>
-                    <li>Enable/Disable 2FA for all users</li>
-                    <li>Enable/Disable 2FA for groups in users</li>
-                    <li>Support multiple Authentication methods</li>
-                    <li>Back-up Methods</li>
-                    <li>Remember device</li>
-                    <li>IP Blocking &amp; White-Listing</li>
-                    <li>Brute Force Protection</li>
-                    <li>
-                        <span><b>24*7 Support</b></span>
-                        <p><span>Go to Meeting Support Plans On Demand</span></p>
-                        <p>
-                            <a href="https://miniorange.atlassian.net/servicedesk/customer/portal/2"
-                               target="_blank" class="contact-us-link">Contact Us
-                            </a>
-                        </p>
-                    </li>
-                </ul>
-                <div class="redirection-box">
-                    <a class="buy-now-link"
-                       href="https://login.xecurify.com/moas/login?redirectUrl=https://login.xecurify.com/moas/initializepayment&amp;requestOrigin=jenkins_2fa_premium_plan"
-                       target="_blank">Buy Premium plugin
-                    </a>
-                </div>
-            </div>
+        <div class="mo-upsell-banner__body">
+            <span class="mo-upsell-badge">Premium Edition</span>
+            <h2 class="mo-upsell-banner__title">Harden Jenkins 2FA for production teams</h2>
+            <p class="mo-upsell-banner__subtitle">
+                Protect REST API access, enforce 2FA by group, and add TOTP, Duo, and SMS authentication methods.
+                <strong>Try all Premium features for 30 days</strong> — evaluate in this controller.
+            </p>
+        </div>
+        <div class="mo-upsell-banner__actions">
+            <button type="button" class="mo-btn mo-btn--primary" id="modal-open-button">View Premium capabilities</button>
+            <button type="button" class="mo-btn mo-btn--secondary mo-banner-compare-btn">Compare editions</button>
         </div>
     </div>
-</div>
 
-    <div id="overlay" style="display:none"></div>
-
-    <!-- Confirmation Popup -->
-    <div id="confirmationPopup" >
-        <span class="close-btn">X</span>
-        <h2>Confirm Plugin Installation</h2>
-        <p>The premium trial will work for 30 days. After installation, <strong>Jenkins must be restarted</strong> for the changes to take effect.</p>
-        <br/>
-
-        <f:form method="post" action="confirmationFormSubmit" name="confirmationForm">
-            <f:entry  title="Name: " field="name">
-                <f:textbox id="name" name="name" placeholder="What is your name?"/>
-            </f:entry>
-            <f:entry title="Email: " field="email">
-                <f:textbox id="email" name="email"  placeholder="What is your email address?"/>
-            </f:entry>
-            <f:entry title="Organisation Name: " field="orgName">
-                <f:textbox id="orgName" name="orgName" placeholder="What is your organisation name?"/>
-            </f:entry>
-        </f:form>
-
-        <button id="confirm-button" class="jenkins-button jenkins-button--positive">Confirm and Install</button>
-        <button id="cancel-button" class="jenkins-button jenkins-button--negative">Cancel</button>
-    </div>
-
-    <div class="mo-modal jenkins-alert jenkins-alert-info">
-        <strong class="mo-modal-heading">Experience Premium Plugin Now!</strong>
-        <div class="alert-button-container">
-            <button class="ShowDifferenceBtn" id="modal-open-button">Why Premium?</button>
-            <button class="jenkins-button jenkins-button--primary " id="GetYourPremiumTrialBtn2">Upgrade to Premium</button>
-        </div>
-    </div>
+    <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.MoGlobalConfigView.premiumDiscoveryModals"/>
 
 </j:jelly>

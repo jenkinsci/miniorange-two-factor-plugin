@@ -3,7 +3,6 @@
     <l:layout permission="${app.SYSTEM_READ}" title="TWO FACTOR CONFIG" >
 
         <l:breadcrumb title="${% Two factor authentication}" />
-        <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.JS.moGlobalConfigView"/>
         <l:side-panel>
             <l:tasks>
                 <l:task title="back" href="../" icon="symbol-arrow-up"/>
@@ -39,8 +38,8 @@
 
         <l:main-panel>
             <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.moGlobalConfigView"/>
-            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.mo-contact-us"/>
             <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.modal"/>
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.mo-contact-us"/>
             <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.MoGlobalConfigView.freeTrialModal"/>
 
 
@@ -57,7 +56,7 @@
                         <h4>OR</h4>
 
                         <f:entry title="${%Enter groups names to enable 2FA}" field="enableTfaForGroups">
-                            <f:textbox placeholder="Available in premium version" disabled="true"/>
+                            <f:textbox placeholder="Included in Premium Edition" disabled="true"/>
                         </f:entry>
                     </f:section>
 
@@ -80,17 +79,17 @@
 
                         <f:entry title="${%Duo push notification}"
                                  field="enableDuoPush">
-                            <f:checkbox class="checkboxToSkip" checked="false"/>
+                            <f:checkbox class="disable_" checked="false"/>
                         </f:entry>
 
                         <f:entry title="${%Google authenticator}"
                                  field="enableMobileAuthenticator">
-                            <f:checkbox class="checkboxToSkip" checked="false"/>
+                            <f:checkbox class="disable_" checked="false"/>
                         </f:entry>
 
                         <f:entry title="${%OTP over SMS}"
                                  field="enableOtpOverSms">
-                            <f:checkbox class="checkboxToSkip" checked="false"/>
+                            <f:checkbox class="disable_" checked="false"/>
                             <div class="sms-block">
                                  <b>SMS Gateway Integration:</b> Easily connect with <span class="gateway-color"><b>miniOrange</b></span> or <span class="gateway-color"><b>Twilio</b></span> to deliver OTP via SMS.<br/>
                             </div>
@@ -100,11 +99,12 @@
                     <f:bottomButtonBar>
                         <f:submit value="${%Save}"/>
                     </f:bottomButtonBar>
+
+                <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.JS.modal"/>
+                <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.JS.evaluation-scheduler"/>
+
                 </f:form>
             </div>
-
-            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.JS.modal"/>
-
 
         </l:main-panel>
     </l:layout>

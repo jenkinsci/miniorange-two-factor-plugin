@@ -21,18 +21,29 @@ if (mainCheckbox) {
     });
 }
 
-//bottom alert banner
+function openPremiumDiscoveryModal(event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    if (window.MoEvaluationModal && window.MoEvaluationModal.open) {
+        window.MoEvaluationModal.open();
+    } else if (typeof notificationBar !== 'undefined') {
+        notificationBar.show("Available in Premium version !", notificationBar.WARNING);
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function () {
-    // Select all spans with the class 'actionLink'
-    var allSpans = document.querySelectorAll('.actionLink');
-    var allAlertTriggers = Array.from(allSpans);
-    allAlertTriggers.push(document.querySelector('.jenkins-button'));
-    allAlertTriggers.forEach(function (span) {
-        span.addEventListener('click', function () {
-            notificationBar.show("Available in Premium version !", notificationBar.WARNING);
-        });
+    document.querySelectorAll('.mo-premium-gated-action').forEach(function (el) {
+        el.addEventListener('click', openPremiumDiscoveryModal);
     });
-})
+
+    if (currentPath.includes("userManagement")) {
+        document.querySelectorAll('.actionLink').forEach(function (el) {
+            el.addEventListener('click', openPremiumDiscoveryModal);
+        });
+    }
+});
 
 //Function to select all group boxes in filtered/original table
 var mainGroupCheckbox = document.getElementById("selectAllGroupsCheckbox");

@@ -13,28 +13,10 @@
         </l:side-panel>
 
         <l:main-panel>
-            <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
-
-            </j:jelly>
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.modal"/>
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.MoGlobalConfigView.freeTrialModal"/>
             <h2>Groups List</h2>
                 <j:set var="allUsers" value="${it.getAllUsers()}"/>
-                <div class="jenkins-alert jenkins-alert-info">
-                    <p>✨With the Premium version, you can:</p>
-                    <div class="info-div1">
-                        <p>ℹ️ You can perform 2FA actions like Enabling/Disabling/Resetting 2FA for all users in a group using
-                            below given steps:
-                        </p>
-                        <p>1. Search groups by name for which you want to perform Enable/Disable/Reset 2FA.</p>
-                        <p>2. Click on Enable 2FA/Disable 2FA/Reset 2FA link of the respective group.</p>
-                    </div>
-                    <div class="info-div2">
-                        <p>ℹ️ To perform 2FA actions in Bulk, use below given steps:</p>
-                        <p>1. Select the checkboxes for the groups on which you want to perform the bulk action. you can
-                            select some or all groups.
-                        </p>
-                        <p>2. Select the Bulk Action you want and click Apply Action button.</p>
-                    </div>
-                </div>
 
             <div class="jenkins-alert" style="margin-bottom: 20px;">
                 <h3 style="display: flex; align-items: center; justify-content: space-between;">
@@ -49,16 +31,11 @@
                                        placeholder="e.g., admins;developers"
                             />
                         </f:entry>
-                        <f:submit value="Save Groups to Skip 2FA"/>
+                        <button type="button" class="jenkins-button mo-premium-gated-action">Save Groups to Skip 2FA</button>
                     </div>
                 </form>
 
-                <div class="warning">
-                    This feature is available in the Premium version only.
-                    <a href="https://www.miniorange.com/atlassian/jenkins-two-factor-authentication-2fa-mfa/#free-plugin">
-                        Upgrade to Premium
-                    </a>
-                </div>
+                <div class="warning mo-premium-gated-action" style="cursor: pointer;">This feature is available in the Premium version only.</div>
             </div>
 
 
@@ -76,8 +53,8 @@
                                     </select>
                                 </f:entry>
                                 <div id="warning-container" style="display: flex; flex-direction: column; gap: 4px;">
-                                    <button class="jenkins-button jenkins-!-margin-bottom-1" disabled="true">Apply Action</button>
-                                    <div class="warning" style="font-weight: bold;">
+                                    <button type="button" class="jenkins-button jenkins-!-margin-bottom-1 mo-premium-gated-action">Apply Action</button>
+                                    <div class="warning mo-premium-gated-action" style="font-weight: bold; cursor: pointer;">
                                          Available in Premium version.
                                     </div>
                                 </div>
@@ -165,6 +142,9 @@
                     </table>
                 </form>
 
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.JS.modal"/>
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.JS.moUserManagement"/>
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.moUserManagement"/>
 
         </l:main-panel>
     </l:layout>
@@ -204,8 +184,4 @@
         </script>
         ${it.doClearGroupFlags()}
     </j:if>
-
-    <!--        this will include both css and JS for the file because both have same name-->
-    <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.JS.moUserManagement"/>
-    <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.moUserManagement"/>
 </j:jelly>

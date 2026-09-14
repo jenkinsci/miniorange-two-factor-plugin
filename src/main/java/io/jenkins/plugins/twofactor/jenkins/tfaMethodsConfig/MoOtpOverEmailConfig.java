@@ -48,7 +48,7 @@ import org.kohsuke.stapler.interceptor.RequirePOST;
 
 public class MoOtpOverEmailConfig extends UserProperty implements Action {
   private static final Logger LOGGER = Logger.getLogger(MoOtpOverEmailConfig.class.getName());
-  public Boolean isConfigured;
+  private Boolean isConfigured;
 
   @DataBoundConstructor
   public MoOtpOverEmailConfig(Boolean isConfigured) {

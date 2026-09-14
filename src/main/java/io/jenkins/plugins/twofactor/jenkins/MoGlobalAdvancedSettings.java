@@ -29,6 +29,7 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class MoGlobalAdvancedSettings implements Action, Describable<MoGlobalAdvancedSettings> {
   private static final Logger LOGGER = Logger.getLogger(MoGlobalAdvancedSettings.class.getName());
+  private static final String PREMIUM_WARNING_MESSAGE = "Included in Premium Edition. <a href=\"#\" class=\"mo-premium-upgrade-link\">Upgrade</a>";
 
   private final MoAdvanceSettingsDTO moAdvanceSettingsDto;
 
@@ -106,42 +107,42 @@ public class MoGlobalAdvancedSettings implements Action, Describable<MoGlobalAdv
     @SuppressWarnings("unused")
     public FormValidation doCheckSkipTfaForApi(@QueryParameter Boolean skipTfaForApi) {
       Jenkins.get().checkPermission(Jenkins.ADMINISTER);
-      return FormValidation.warning("Available in premium version");
+      return FormValidation.warningWithMarkup(PREMIUM_WARNING_MESSAGE);
     }
 
     @POST
     @SuppressWarnings("unused")
     public FormValidation doCheckEnableTfaOnBuild(@QueryParameter Boolean enableTfaOnBuild) {
       Jenkins.get().checkPermission(Jenkins.ADMINISTER);
-      return FormValidation.warning("Available in premium version");
+      return FormValidation.warningWithMarkup(PREMIUM_WARNING_MESSAGE);
     }
 
     @POST
     @SuppressWarnings("unused")
     public FormValidation doCheckEnableRememberMe(@QueryParameter Boolean enableRememberMe) {
       Jenkins.get().checkPermission(Jenkins.ADMINISTER);
-      return FormValidation.warning("Available in premium version");
+      return FormValidation.warningWithMarkup(PREMIUM_WARNING_MESSAGE);
     }
 
     @POST
     @SuppressWarnings("unused")
     public FormValidation doCheckEnforceRestApi2fa(@QueryParameter Boolean enforceRestApi2fa) {
       Jenkins.get().checkPermission(Jenkins.ADMINISTER);
-      return FormValidation.warning("Available in premium version");
+      return FormValidation.warningWithMarkup(PREMIUM_WARNING_MESSAGE);
     }
 
     @POST
     @SuppressWarnings("unused")
     public FormValidation doCheckDuoAutoPushForRestApi(@QueryParameter Boolean duoAutoPushForRestApi) {
       Jenkins.get().checkPermission(Jenkins.ADMINISTER);
-      return FormValidation.warning("Available in premium version");
+      return FormValidation.warningWithMarkup(PREMIUM_WARNING_MESSAGE);
     }
 
     @POST
     @SuppressWarnings("unused")
     public FormValidation doCheckSkipRestApi2faForTokens(@QueryParameter Boolean skipRestApi2faForTokens) {
       Jenkins.get().checkPermission(Jenkins.ADMINISTER);
-      return FormValidation.warning("Available in premium version");
+      return FormValidation.warningWithMarkup(PREMIUM_WARNING_MESSAGE);
     }
     public ListBoxModel doFillRememberMeTimeUnitItems() {
       return new ListBoxModel(

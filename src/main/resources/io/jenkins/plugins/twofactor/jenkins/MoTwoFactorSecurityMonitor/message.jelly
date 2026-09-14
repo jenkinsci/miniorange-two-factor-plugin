@@ -1,0 +1,62 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:st="jelly:stapler">
+    <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.moTwoFactorSecurityMonitor"/>
+    <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.modal"/>
+    <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.JS.monitor-dismiss"/>
+    <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.JS.modal"/>
+    <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.MoGlobalConfigView.premiumDiscoveryModals"/>
+
+    <div class="alert-warning mo-tfa-security-monitor">
+        <div class="mo-tfa-security-monitor__layout">
+            <div class="mo-tfa-security-monitor__icon-wrap" aria-hidden="true">
+                <l:icon src="symbol-lock-closed"/>
+            </div>
+
+            <div class="mo-tfa-security-monitor__content">
+                <p class="mo-tfa-security-monitor__title">
+                    Recommended security enhancements available
+                </p>
+                <p class="mo-tfa-security-monitor__body">
+                    Your Jenkins instance is protected with miniOrange 2FA.
+                    Additional production-grade controls are available for stronger authentication and policy enforcement.
+                </p>
+
+                <ul class="mo-tfa-security-monitor__highlights">
+                    <li>
+                        <span class="mo-tfa-security-monitor__highlight-icon" aria-hidden="true">
+                            <l:icon src="symbol-lock-closed"/>
+                        </span>
+                        <span>Enterprise authentication methods</span>
+                    </li>
+                    <li>
+                        <span class="mo-tfa-security-monitor__highlight-icon" aria-hidden="true">
+                            <l:icon src="symbol-people"/>
+                        </span>
+                        <span>Group and user policies</span>
+                    </li>
+                    <li>
+                        <span class="mo-tfa-security-monitor__highlight-icon" aria-hidden="true">
+                            <l:icon src="symbol-settings"/>
+                        </span>
+                        <span>REST API protection</span>
+                    </li>
+                </ul>
+
+                <div class="mo-tfa-security-monitor__actions">
+                    <button type="button"
+                            class="jenkins-button jenkins-button--primary"
+                            id="mo-monitor-view-enhancements"
+                            data-fallback-href="${rootURL}/manage/tfaGlobalConfig/?moOpenEvaluation=1">
+                        View security enhancements
+                    </button>
+                    <button type="button"
+                            class="jenkins-button jenkins-button--secondary mo-tfa-security-monitor__remind"
+                            id="mo-monitor-remind-later">
+                        Remind me later
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+<br/>
+</j:jelly>

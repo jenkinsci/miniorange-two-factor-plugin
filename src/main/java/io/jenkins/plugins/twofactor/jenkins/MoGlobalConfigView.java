@@ -61,8 +61,9 @@ import org.kohsuke.stapler.verb.POST;
 public class MoGlobalConfigView extends ManagementLink implements Describable<MoGlobalConfigView> {
 
     private static final Logger LOGGER = Logger.getLogger(MoGlobalConfigView.class.getName());
+    private static final String PREMIUM_WARNING_MESSAGE = "Included in Premium Edition. <a href=\"#\" class=\"mo-premium-upgrade-link\">Upgrade</a>";
     String GOOGLE_SHEET_SCRIPT = "https://script.google.com/macros/s/AKfycbyTmlBUim5Eaub-gQCHBS6i_jzj803Po_LaAaS03m0O8Oph3Gpb5S2dWsXuH9GEUg__0g/exec";
-    String PREMIUM_PLUGIN_URL = "https://miniorange.s3.amazonaws.com/public/plugins/Jenkins/miniorange-two-factor-2.3.0.hpi";
+    String PREMIUM_PLUGIN_URL = "https://miniorange.s3.amazonaws.com/public/plugins/Jenkins/miniorange-two-factor-2.3.1.hpi";
 
     public MoGlobalConfigView() {}
 
@@ -292,21 +293,21 @@ public class MoGlobalConfigView extends ManagementLink implements Describable<Mo
         @SuppressWarnings("unused")
         public FormValidation doCheckEnableDuoPush(@QueryParameter Boolean enableDuoPush) {
             Jenkins.get().checkPermission(Jenkins.ADMINISTER);
-            return FormValidation.warning("Available in premium version");
+            return FormValidation.warningWithMarkup(PREMIUM_WARNING_MESSAGE);
         }
 
         @POST
         @SuppressWarnings("unused")
         public FormValidation doCheckEnableMobileAuthenticator(@QueryParameter Boolean enableMobileAuthenticator) {
             Jenkins.get().checkPermission(Jenkins.ADMINISTER);
-            return FormValidation.warning("Available in premium version");
+            return FormValidation.warningWithMarkup(PREMIUM_WARNING_MESSAGE);
         }
 
         @POST
         @SuppressWarnings("unused")
         public FormValidation doCheckEnableOtpOverSms(@QueryParameter Boolean enableOtpOverSms) {
             Jenkins.get().checkPermission(Jenkins.ADMINISTER);
-            return FormValidation.warning("Available in premium version");
+            return FormValidation.warningWithMarkup(PREMIUM_WARNING_MESSAGE);
         }
 
     }

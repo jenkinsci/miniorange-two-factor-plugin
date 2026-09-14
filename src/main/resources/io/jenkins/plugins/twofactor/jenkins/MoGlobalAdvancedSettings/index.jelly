@@ -3,7 +3,6 @@
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:l="/lib/layout" xmlns:st="jelly:stapler">
 
     <l:layout title="advanced-settings-manager">
-        <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.JS.moGlobalAdvancedSettings"/>
         <l:side-panel>
             <l:tasks>
                 <l:task title="back" href="../" icon="symbol-arrow-up"/>
@@ -19,7 +18,7 @@
                 <input type="hidden" name="formPage" value="advanceSettingsConfig"/>
                 <f:section title="Enter groups to skip TFA">
                     <f:entry title="Skip TFA for groups" field="skipTfaForGroups">
-                        <f:textbox placeholder="Available in premium version" disabled="true"/>
+                        <f:textbox placeholder="Included in Premium Edition" disabled="true"/>
                     </f:entry>
                 </f:section>
                 <f:section title="Custom Email Template">
@@ -59,31 +58,38 @@
                 </f:section>
 
                 <f:section title="2FA Enforcement for REST APIS">
-                    <j:if test="true">
-                        <j:set var="readOnlyMode" value="true"/>
-                    </j:if>
-                    <f:optionalBlock title="Enforce 2FA for all REST API requests" field="enforceRestApi2fa"
-                                     checked="false" negative="true">
-                        <br/>
-                        <div style="margin-bottom: 20px;">
-                            <f:entry title="Validate using token for REST API" field="skipRestApi2faForTokens">
-                                <f:checkbox field="skipRestApi2faForTokens" checked="${it.getSkipRestApi2faForTokens()}"/>
+                    <div class="disable_">
+                        <j:if test="true">
+                            <j:set var="readOnlyMode" value="true"/>
+                        </j:if>
+                        <p>
+                            REST API 2FA enforcement is included in the
+                            <a href="#" class="mo-premium-upgrade-link">Premium Edition</a>.
+                        </p>
+                        <f:optionalBlock title="Enforce 2FA for all REST API requests" field="enforceRestApi2fa"
+                                         checked="false" negative="true">
+                            <br/>
+                            <div style="margin-bottom: 20px;">
+                                <f:entry title="Validate using token for REST API" field="skipRestApi2faForTokens">
+                                    <f:checkbox field="skipRestApi2faForTokens" checked="${it.getSkipRestApi2faForTokens()}"/>
+                                </f:entry>
+                            </div>
+                            <f:entry title="Validate using auto Duo Push Notification for REST API"
+                                     field="duoAutoPushForRestApi">
+                                <f:checkbox field="duoAutoPushForRestApi" checked="${it.getDuoAutoPushForRestApi()}"/>
                             </f:entry>
-                        </div>
-                        <f:entry title="Validate using auto Duo Push Notification for REST API"
-                                 field="duoAutoPushForRestApi">
-                            <f:checkbox field="duoAutoPushForRestApi" checked="${it.getDuoAutoPushForRestApi()}"/>
-                        </f:entry>
-                        <br/>
-                    </f:optionalBlock>
+                            <br/>
+                        </f:optionalBlock>
+                    </div>
                 </f:section>
 
                 <f:bottomButtonBar>
                     <f:submit value="${%Save}"/>
                 </f:bottomButtonBar>
-            </f:form>
 
-            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.JS.modal"/>
+                <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.JS.modal"/>
+
+            </f:form>
 
         </l:main-panel>
 

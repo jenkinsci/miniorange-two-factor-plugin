@@ -13,6 +13,9 @@
         </l:side-panel>
 
         <l:main-panel>
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.modal"/>
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.MoGlobalConfigView.freeTrialModal"/>
+
             <div class="config body" style="padding: 40px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
                     <h1>Manage Group: ${groupName}</h1>
@@ -44,11 +47,10 @@
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                         <h2>Group Users</h2>
                         <div style="display: flex; flex-direction: column; align-items: flex-end;">
-                            <button class="jenkins-button jenkins-button--primary"
-                                    style="opacity: 0.6; cursor: not-allowed;">
+                            <button type="button" class="jenkins-button jenkins-button--primary mo-premium-gated-action">
                                 Add User
                             </button>
-                            <div class="warning">
+                            <div class="warning mo-premium-gated-action" style="cursor: pointer;">
                                 Available in Premium version.
                             </div>
                        </div>
@@ -122,6 +124,8 @@
 
     
     <!-- Include external CSS and JS files -->
+    <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.JS.modal"/>
+    <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.JS.moUserManagement"/>
     <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.moManageGroup"/>
     <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.JS.moManageGroup"/>
 </j:jelly>

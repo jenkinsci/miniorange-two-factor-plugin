@@ -1,0 +1,293 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+
+    <j:new var="h" className="hudson.Functions" />
+    ${h.initPageVariables(context)}
+
+    <j:set var="installPluginAction" value="${rootURL}/manage/tfaGlobalConfig/installPlugin"/>
+    <j:set var="confirmationAction" value="${rootURL}/manage/tfaGlobalConfig/confirmationFormSubmit"/>
+
+    <!-- Edition comparison modal -->
+    <div id="mo-compare-modal-dialog" class="modal mo-compare-modal" role="dialog" aria-modal="true"
+         aria-labelledby="mo-compare-modal-title" aria-describedby="mo-compare-modal-desc" aria-hidden="true">
+        <div class="modal-content mo-compare-modal__panel">
+            <button type="button" class="mo-compare-modal__close" id="mo-compare-close-btn" aria-label="Close dialog">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/>
+                </svg>
+            </button>
+
+            <header class="mo-compare-modal__header">
+                <span class="mo-upsell-badge mo-upsell-badge--modal">Edition comparison</span>
+                <h2 id="mo-compare-modal-title" class="mo-compare-modal__title">Community vs Premium Edition</h2>
+                <p id="mo-compare-modal-desc" class="mo-compare-modal__description">
+                    Premium includes everything in Community, plus enterprise authentication methods, access control, and API protection.
+                </p>
+            </header>
+
+            <div class="mo-compare-modal__scroll">
+            <div class="mo-compare-matrix" role="table" aria-label="Feature comparison by edition">
+                <div class="mo-compare-matrix__row mo-compare-matrix__row--head" role="row">
+                    <div class="mo-compare-matrix__feature" role="columnheader">Capability</div>
+                    <div class="mo-compare-matrix__edition" role="columnheader">Community</div>
+                    <div class="mo-compare-matrix__edition mo-compare-matrix__edition--premium" role="columnheader">Premium</div>
+                </div>
+
+                <div class="mo-compare-matrix__section" role="row"><span role="cell">Core 2FA</span></div>
+                <div class="mo-compare-matrix__row" role="row">
+                    <div class="mo-compare-matrix__feature" role="cell">Enable 2FA for all users</div>
+                    <div class="mo-compare-matrix__edition" role="cell"><span class="mo-compare-mark mo-compare-mark--yes" title="Included">✓</span></div>
+                    <div class="mo-compare-matrix__edition mo-compare-matrix__edition--premium" role="cell"><span class="mo-compare-mark mo-compare-mark--yes" title="Included">✓</span></div>
+                </div>
+                <div class="mo-compare-matrix__row" role="row">
+                    <div class="mo-compare-matrix__feature" role="cell">Security questions</div>
+                    <div class="mo-compare-matrix__edition" role="cell"><span class="mo-compare-mark mo-compare-mark--yes" title="Included">✓</span></div>
+                    <div class="mo-compare-matrix__edition mo-compare-matrix__edition--premium" role="cell"><span class="mo-compare-mark mo-compare-mark--yes" title="Included">✓</span></div>
+                </div>
+                <div class="mo-compare-matrix__row" role="row">
+                    <div class="mo-compare-matrix__feature" role="cell">OTP over email</div>
+                    <div class="mo-compare-matrix__edition" role="cell"><span class="mo-compare-mark mo-compare-mark--yes" title="Included">✓</span></div>
+                    <div class="mo-compare-matrix__edition mo-compare-matrix__edition--premium" role="cell"><span class="mo-compare-mark mo-compare-mark--yes" title="Included">✓</span></div>
+                </div>
+                <div class="mo-compare-matrix__row" role="row">
+                    <div class="mo-compare-matrix__feature" role="cell">Custom OTP email template</div>
+                    <div class="mo-compare-matrix__edition" role="cell"><span class="mo-compare-mark mo-compare-mark--yes" title="Included">✓</span></div>
+                    <div class="mo-compare-matrix__edition mo-compare-matrix__edition--premium" role="cell"><span class="mo-compare-mark mo-compare-mark--yes" title="Included">✓</span></div>
+                </div>
+
+                <div class="mo-compare-matrix__section" role="row"><span role="cell">Authentication methods</span></div>
+                <div class="mo-compare-matrix__row" role="row">
+                    <div class="mo-compare-matrix__feature" role="cell">Mobile Authenticator (TOTP)</div>
+                    <div class="mo-compare-matrix__edition" role="cell"><span class="mo-compare-mark mo-compare-mark--no" title="Not included">—</span></div>
+                    <div class="mo-compare-matrix__edition mo-compare-matrix__edition--premium" role="cell"><span class="mo-compare-mark mo-compare-mark--yes" title="Included">✓</span></div>
+                </div>
+                <div class="mo-compare-matrix__row" role="row">
+                    <div class="mo-compare-matrix__feature" role="cell">Duo Push</div>
+                    <div class="mo-compare-matrix__edition" role="cell"><span class="mo-compare-mark mo-compare-mark--no" title="Not included">—</span></div>
+                    <div class="mo-compare-matrix__edition mo-compare-matrix__edition--premium" role="cell"><span class="mo-compare-mark mo-compare-mark--yes" title="Included">✓</span></div>
+                </div>
+                <div class="mo-compare-matrix__row" role="row">
+                    <div class="mo-compare-matrix__feature" role="cell">OTP over SMS</div>
+                    <div class="mo-compare-matrix__edition" role="cell"><span class="mo-compare-mark mo-compare-mark--no" title="Not included">—</span></div>
+                    <div class="mo-compare-matrix__edition mo-compare-matrix__edition--premium" role="cell"><span class="mo-compare-mark mo-compare-mark--yes" title="Included">✓</span></div>
+                </div>
+
+                <div class="mo-compare-matrix__section" role="row"><span role="cell">Access control</span></div>
+                <div class="mo-compare-matrix__row" role="row">
+                    <div class="mo-compare-matrix__feature" role="cell">Group-based 2FA enforcement</div>
+                    <div class="mo-compare-matrix__edition" role="cell"><span class="mo-compare-mark mo-compare-mark--no" title="Not included">—</span></div>
+                    <div class="mo-compare-matrix__edition mo-compare-matrix__edition--premium" role="cell"><span class="mo-compare-mark mo-compare-mark--yes" title="Included">✓</span></div>
+                </div>
+                <div class="mo-compare-matrix__row" role="row">
+                    <div class="mo-compare-matrix__feature" role="cell">Group-based 2FA exemptions</div>
+                    <div class="mo-compare-matrix__edition" role="cell"><span class="mo-compare-mark mo-compare-mark--no" title="Not included">—</span></div>
+                    <div class="mo-compare-matrix__edition mo-compare-matrix__edition--premium" role="cell"><span class="mo-compare-mark mo-compare-mark--yes" title="Included">✓</span></div>
+                </div>
+                <div class="mo-compare-matrix__row" role="row">
+                    <div class="mo-compare-matrix__feature" role="cell">Per-user 2FA enable / disable</div>
+                    <div class="mo-compare-matrix__edition" role="cell"><span class="mo-compare-mark mo-compare-mark--no" title="Not included">—</span></div>
+                    <div class="mo-compare-matrix__edition mo-compare-matrix__edition--premium" role="cell"><span class="mo-compare-mark mo-compare-mark--yes" title="Included">✓</span></div>
+                </div>
+                <div class="mo-compare-matrix__row" role="row">
+                    <div class="mo-compare-matrix__feature" role="cell">IP whitelisting</div>
+                    <div class="mo-compare-matrix__edition" role="cell"><span class="mo-compare-mark mo-compare-mark--no" title="Not included">—</span></div>
+                    <div class="mo-compare-matrix__edition mo-compare-matrix__edition--premium" role="cell"><span class="mo-compare-mark mo-compare-mark--yes" title="Included">✓</span></div>
+                </div>
+                <div class="mo-compare-matrix__row" role="row">
+                    <div class="mo-compare-matrix__feature" role="cell">IP blacklisting</div>
+                    <div class="mo-compare-matrix__edition" role="cell"><span class="mo-compare-mark mo-compare-mark--no" title="Not included">—</span></div>
+                    <div class="mo-compare-matrix__edition mo-compare-matrix__edition--premium" role="cell"><span class="mo-compare-mark mo-compare-mark--yes" title="Included">✓</span></div>
+                </div>
+                <div class="mo-compare-matrix__row" role="row">
+                    <div class="mo-compare-matrix__feature" role="cell">Remember trusted device</div>
+                    <div class="mo-compare-matrix__edition" role="cell"><span class="mo-compare-mark mo-compare-mark--no" title="Not included">—</span></div>
+                    <div class="mo-compare-matrix__edition mo-compare-matrix__edition--premium" role="cell"><span class="mo-compare-mark mo-compare-mark--yes" title="Included">✓</span></div>
+                </div>
+
+                <div class="mo-compare-matrix__section" role="row"><span role="cell">Automation &amp; API</span></div>
+                <div class="mo-compare-matrix__row" role="row">
+                    <div class="mo-compare-matrix__feature" role="cell">REST API 2FA enforcement</div>
+                    <div class="mo-compare-matrix__edition" role="cell"><span class="mo-compare-mark mo-compare-mark--no" title="Not included">—</span></div>
+                    <div class="mo-compare-matrix__edition mo-compare-matrix__edition--premium" role="cell"><span class="mo-compare-mark mo-compare-mark--yes" title="Included">✓</span></div>
+                </div>
+                <div class="mo-compare-matrix__row" role="row">
+                    <div class="mo-compare-matrix__feature" role="cell">API token bypass option</div>
+                    <div class="mo-compare-matrix__edition" role="cell"><span class="mo-compare-mark mo-compare-mark--no" title="Not included">—</span></div>
+                    <div class="mo-compare-matrix__edition mo-compare-matrix__edition--premium" role="cell"><span class="mo-compare-mark mo-compare-mark--yes" title="Included">✓</span></div>
+                </div>
+                <div class="mo-compare-matrix__row" role="row">
+                    <div class="mo-compare-matrix__feature" role="cell">Duo auto-push for REST API</div>
+                    <div class="mo-compare-matrix__edition" role="cell"><span class="mo-compare-mark mo-compare-mark--no" title="Not included">—</span></div>
+                    <div class="mo-compare-matrix__edition mo-compare-matrix__edition--premium" role="cell"><span class="mo-compare-mark mo-compare-mark--yes" title="Included">✓</span></div>
+                </div>
+
+                <div class="mo-compare-matrix__section" role="row"><span role="cell">Administration</span></div>
+                <div class="mo-compare-matrix__row" role="row">
+                    <div class="mo-compare-matrix__feature" role="cell">Bulk user 2FA actions</div>
+                    <div class="mo-compare-matrix__edition" role="cell"><span class="mo-compare-mark mo-compare-mark--no" title="Not included">—</span></div>
+                    <div class="mo-compare-matrix__edition mo-compare-matrix__edition--premium" role="cell"><span class="mo-compare-mark mo-compare-mark--yes" title="Included">✓</span></div>
+                </div>
+                <div class="mo-compare-matrix__row" role="row">
+                    <div class="mo-compare-matrix__feature" role="cell">Group dashboard &amp; management</div>
+                    <div class="mo-compare-matrix__edition" role="cell"><span class="mo-compare-mark mo-compare-mark--no" title="Not included">—</span></div>
+                    <div class="mo-compare-matrix__edition mo-compare-matrix__edition--premium" role="cell"><span class="mo-compare-mark mo-compare-mark--yes" title="Included">✓</span></div>
+                </div>
+                <div class="mo-compare-matrix__row" role="row">
+                    <div class="mo-compare-matrix__feature" role="cell">Allow users to reset 2FA</div>
+                    <div class="mo-compare-matrix__edition" role="cell"><span class="mo-compare-mark mo-compare-mark--no" title="Not included">—</span></div>
+                    <div class="mo-compare-matrix__edition mo-compare-matrix__edition--premium" role="cell"><span class="mo-compare-mark mo-compare-mark--yes" title="Included">✓</span></div>
+                </div>
+            </div>
+
+            <p class="mo-compare-modal__legend">
+                <span><span class="mo-compare-mark mo-compare-mark--yes">✓</span> Included</span>
+                <span><span class="mo-compare-mark mo-compare-mark--no">—</span> Not in this edition</span>
+            </p>
+            </div>
+
+            <footer class="mo-compare-modal__footer">
+                <button type="button" class="mo-btn mo-btn--primary" id="mo-compare-start-eval">Start your free trial</button>
+                <button type="button" class="mo-btn mo-btn--secondary" id="mo-compare-close-footer">Close</button>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Evaluation conversion modal -->
+    <div id="modal-dialog" class="modal mo-premium-modal" role="dialog" aria-modal="true"
+         aria-labelledby="mo-premium-modal-title" aria-describedby="mo-premium-modal-desc" aria-hidden="true">
+        <div class="modal-content mo-premium-modal__panel trial-modal-top-margin">
+            <button type="button" class="mo-premium-modal__close" id="close-btn" aria-label="Close dialog">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/>
+                </svg>
+            </button>
+
+            <header class="mo-premium-modal__header">
+                <span class="mo-upsell-badge mo-upsell-badge--modal">Premium Edition</span>
+                <h2 id="mo-premium-modal-title" class="mo-premium-modal__title">Harden Jenkins 2FA for production teams</h2>
+                <p id="mo-premium-modal-desc" class="mo-premium-modal__description">
+                    Community Edition secures browser logins with security questions and email OTP.
+                    Premium extends protection to APIs, groups, and enterprise authentication methods.
+                    <strong>Your current 2FA configuration is preserved.</strong>
+                </p>
+            </header>
+
+            <div class="mo-feature-grid mo-feature-grid--four mo-feature-grid--compact">
+                <article class="mo-feature-card mo-feature-card--highlight">
+                    <div class="mo-feature-card__head">
+                        <div class="mo-feature-card__icon" aria-hidden="true">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M8 4h8v4H8V4zM4 10h16v10H4V10z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                                <path d="M9 14h6M12 11v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <h3 class="mo-feature-card__title">REST API 2FA Protection</h3>
+                    </div>
+                    <p class="mo-feature-card__text">Enforce second factor on API requests from Postman, curl, and CI tools. Optionally validate via API token or Duo auto-push.</p>
+                </article>
+
+                <article class="mo-feature-card">
+                    <div class="mo-feature-card__head">
+                        <div class="mo-feature-card__icon" aria-hidden="true">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="7" y="2" width="10" height="20" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M10 18h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <path d="M9 6h6M9 9h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <h3 class="mo-feature-card__title">Mobile Authenticator (TOTP)</h3>
+                    </div>
+                    <p class="mo-feature-card__text">Support Google Authenticator, Microsoft Authenticator, and other TOTP apps with QR-based enrollment.</p>
+                </article>
+
+                <article class="mo-feature-card">
+                    <div class="mo-feature-card__head">
+                        <div class="mo-feature-card__icon" aria-hidden="true">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="9" cy="8" r="3" stroke="currentColor" stroke-width="1.5"/>
+                                <circle cx="17" cy="10" r="2.5" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M3 20c0-3.3 2.7-6 6-6M14 20c0-2.2 1.8-4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <h3 class="mo-feature-card__title">Group-Based Enforcement</h3>
+                    </div>
+                    <p class="mo-feature-card__text">Enable 2FA for specific Jenkins groups, exempt trusted groups, and roll out gradually without disrupting all users.</p>
+                </article>
+
+                <article class="mo-feature-card">
+                    <div class="mo-feature-card__head">
+                        <div class="mo-feature-card__icon" aria-hidden="true">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4z" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M4 20v-1c0-2.2 3.6-4 8-4s8 1.8 8 4v1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <path d="M16 8h4v4M18 6v8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <h3 class="mo-feature-card__title">Admin User Management</h3>
+                    </div>
+                    <p class="mo-feature-card__text">Enable, disable, or reset 2FA for individual users or in bulk from a central dashboard.</p>
+                </article>
+            </div>
+
+            <div class="mo-evaluation-strip mo-evaluation-strip--invite" role="note">
+                <p class="mo-evaluation-strip__line">
+                    <span class="mo-evaluation-strip__muted">Evaluate Premium in this controller, or</span><!--
+                    --><a href="#" class="mo-evaluation-strip__compare-link" id="mo-modal-goto-compare" role="button">Compare editions</a><!--
+                    --><span class="mo-evaluation-strip__muted">before you decide.</span>
+                </p>
+            </div>
+
+            <footer class="mo-premium-modal__footer">
+                <div class="mo-premium-modal__cta">
+                    <form method="post" action="${installPluginAction}" id="installPluginForm" class="mo-premium-modal__form">
+                        <input type="hidden" name="${h.getCrumbRequestField()}" value="${h.getCrumb(request)}"/>
+                        <button type="button" class="mo-btn mo-btn--primary" id="GetYourPremiumTrialBtn">
+                            Start your free trial
+                        </button>
+                    </form>
+                    <button type="button" class="mo-btn mo-btn--secondary" id="mo-premium-continue-free">
+                        Continue with Community Edition
+                    </button>
+                </div>
+                <div class="mo-premium-modal__links">
+                    <a class="mo-link-quiet"
+                       href="https://www.miniorange.com/atlassian/jenkins-two-factor-authentication-2fa-mfa"
+                       target="_blank" rel="noopener noreferrer">Documentation</a>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <div id="overlay" style="display:none"></div>
+
+    <!-- Confirmation Popup -->
+    <div id="confirmationPopup" style="display: none;">
+        <button type="button" class="close-btn" id="confirmation-popup-close-btn" aria-label="Close dialog">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/>
+            </svg>
+        </button>
+        <h2>Confirm Plugin Installation</h2>
+        <p>The premium trial will work for 30 days. After installation, <strong>Jenkins must be restarted</strong> for the changes to take effect.</p>
+        <br/>
+
+        <form method="post" action="${confirmationAction}" name="confirmationForm">
+            <input type="hidden" name="${h.getCrumbRequestField()}" value="${h.getCrumb(request)}"/>
+            <p>
+                <label for="name">Name:</label><br/>
+                <input type="text" id="name" name="name" placeholder="What is your name?" class="jenkins-input" style="width: 100%;"/>
+            </p>
+            <p>
+                <label for="email">Email:</label><br/>
+                <input type="text" id="email" name="email" placeholder="What is your email address?" class="jenkins-input" style="width: 100%;"/>
+            </p>
+            <p>
+                <label for="orgName">Organisation Name:</label><br/>
+                <input type="text" id="orgName" name="orgName" placeholder="What is your organisation name?" class="jenkins-input" style="width: 100%;"/>
+            </p>
+        </form>
+
+        <button id="confirm-button" class="jenkins-button jenkins-button--positive">Confirm and Install</button>
+        <button id="cancel-button" class="jenkins-button jenkins-button--negative">Cancel</button>
+    </div>
+</j:jelly>

@@ -11,7 +11,7 @@
             <h2>IP Restrictions</h2>
 
             <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.modal"/>
-            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.MoGlobalConfigView.freeTrialModal"/>
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.MoGlobalConfigView.premiumDiscoveryModals"/>
 
             <div class="ip-restrictions-info">
                 <p class="ip-info-description">
@@ -31,10 +31,10 @@
                     </p>
                 </div>
                 <div class="ip-info-link">
-                    <p>🚀 Unlock these features now! <a
-                            href="https://www.miniorange.com/atlassian/jenkins-two-factor-authentication-2fa-mfa/#free-plugin"
-                            target="_blank">Take a free trial of Premium Plugin
-                    </a> and get advanced IP restriction controls.
+                    <p>
+                        Unlock advanced IP restriction controls with Premium.
+                        <button type="button" class="mo-btn mo-btn--secondary mo-banner-compare-btn">Compare editions</button>
+
                     </p>
                 </div>
 

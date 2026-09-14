@@ -1,3 +1,18 @@
 .validation-error-area{
     height: 21px !important;
 }
+
+.sms-block {
+    margin-top: 6px;
+    padding: 8px 10px;
+    background-color: #f2f4f8;
+    border: 1px dashed #ccc;
+    border-radius: 6px;
+    font-size: 11px;
+    width: 50%;
+    color: #333;
+}
+
+.gateway-color {
+    color: #f47c20;
+}
