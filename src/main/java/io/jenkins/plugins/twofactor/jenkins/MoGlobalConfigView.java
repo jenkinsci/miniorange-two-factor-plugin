@@ -30,7 +30,6 @@ import hudson.model.Descriptor;
 import hudson.model.ManagementLink;
 import hudson.util.FormApply;
 import hudson.util.FormValidation;
-import org.apache.commons.lang.StringUtils;
 import io.jenkins.plugins.twofactor.constants.MoPluginUrls;
 
 import java.io.File;
@@ -55,6 +54,7 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.interceptor.RequirePOST;
 import org.kohsuke.stapler.verb.POST;
+import hudson.Util;
 
 @SuppressWarnings("unused")
 @Extension
@@ -280,7 +280,7 @@ public class MoGlobalConfigView extends ManagementLink implements Describable<Mo
             String regex = "^(.+)@(.+)$";
             Pattern pattern = Pattern.compile(regex);
             Matcher matcher = pattern.matcher(senderEmailAddress);
-            if (StringUtils.isEmpty(senderEmailAddress)) {
+            if (Util.fixEmpty(senderEmailAddress) == null) {
                 return FormValidation.error("Email is required.");
             } else if (!matcher.matches()) {
                 return FormValidation.error("Please enter valid email");
